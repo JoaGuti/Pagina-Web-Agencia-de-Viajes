@@ -13,11 +13,8 @@ const salida = path.resolve(aqui, '../bocetos/media');
 const tmp = path.join(aqui, '.descargas');
 const fuentes = JSON.parse(await readFile(path.join(aqui, 'fuentes.json'), 'utf8'));
 
-async function bajar(url, destino) {
-  const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-  if (!r.ok) throw new Error(`No se pudo descargar ${url} (${r.status})`);
-  await writeFile(destino, Buffer.from(await r.arrayBuffer()));
-}
+// curl respeta el proxy del sistema (HTTPS_PROXY), fetch de Node no.
+const bajar = (url, destino) => run('curl', ['-sSfL', '-m', '600', '-A', 'Mozilla/5.0', '-o', destino, url]);
 const ff = (...args) => run(ffmpeg.path, ['-y', '-loglevel', 'error', ...args], { maxBuffer: 1 << 26 });
 
 await mkdir(path.join(salida, 'fotos'), { recursive: true });
@@ -28,13 +25,19 @@ for (const [nombre, v] of Object.entries(fuentes.videos)) {
   if (!v.url) { console.log(`- video ${nombre}: sin URL, se omite`); continue; }
   const crudo = path.join(tmp, nombre + '.src');
   console.log(`- video ${nombre}: descargando`); await bajar(v.url, crudo);
-  const corte = ['-ss', String(v.inicio || 0), '-t', String(v.duracion || 12), '-i', crudo, '-an'];
-  for (const [suf, alto, crf] of [['', 1080, 24], ['-720', 720, 27]]) {
-    const vf = `scale=-2:${alto}:flags=lanczos,fps=30`;
-    await ff(...corte, '-vf', vf, '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'slow', '-crf', String(crf), '-pix_fmt', 'yuv420p', '-movflags', '+faststart', path.join(salida, `${nombre}${suf}.mp4`));
-    await ff(...corte, '-vf', vf, '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', String(crf + 8), '-row-mt', '1', path.join(salida, `${nombre}${suf}.webm`));
+  const T = v.duracion || 12, F = v.fundido ?? 1;
+  const corte = ['-ss', String(v.inicio || 0), '-t', String(T), '-i', crudo, '-an'];
+  for (const [suf, alto, crf] of [['', 1080, 23], ['-720', 720, 26]]) {
+    // El último segundo se funde con el primero: el video se repite sin salto.
+    const fc = `[0:v]scale=-2:${alto}:flags=lanczos,fps=30,setsar=1,split[a][b];` +
+      `[a]trim=start=${F},setpts=PTS-STARTPTS[m];` +
+      `[b]trim=end=${F},setpts=PTS-STARTPTS,format=yuva420p,fade=t=in:st=0:d=${F}:alpha=1,setpts=PTS+${T - 2 * F}/TB[h];` +
+      `[m][h]overlay=eof_action=pass,format=yuv420p[o]`;
+    const base = [...corte, '-filter_complex', fc, '-map', '[o]'];
+    await ff(...base, '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'slow', '-crf', String(crf), '-movflags', '+faststart', path.join(salida, `${nombre}${suf}.mp4`));
+    await ff(...base, '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', String(crf + 10), '-row-mt', '1', '-deadline', 'good', '-cpu-used', '2', path.join(salida, `${nombre}${suf}.webm`));
   }
-  await ff('-ss', String(v.inicio || 0), '-i', crudo, '-frames:v', '1', '-vf', 'scale=-2:1080', path.join(tmp, nombre + '.png'));
+  await ff('-i', path.join(salida, `${nombre}.mp4`), '-frames:v', '1', path.join(tmp, nombre + '.png'));
   await sharp(path.join(tmp, nombre + '.png')).jpeg({ quality: 80, mozjpeg: true }).toFile(path.join(salida, `${nombre}.jpg`));
   creditos.push(`- Video \`${nombre}\`: ${v.autor} — ${v.pagina}`);
 }

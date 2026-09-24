@@ -15,8 +15,8 @@ Para verlos: abrí `bocetos/index.html` en el navegador. Para probar la conexió
 
 ### Sitio público (`index.html`)
 
-- **Portada animada**: isla tropical al atardecer dibujada en tiempo real (sol, reflejos en el agua, palmeras que se mueven con el viento, aves y nubes). Reacciona al movimiento del mouse.
-- **Zambullida con el scroll**: al bajar, la cámara se sumerge. Aparece la línea del agua, rayos de luz, burbujas, un cardumen, corales y algas. Es el momento principal de la página.
+- **Portada con video real**: una pareja caminando entre palmeras en Punta Cana, filmada con dron en 4K y entregada en 1080p (720p en celulares). El video se repite sin saltos, hace un zoom suave con el scroll y reacciona al mouse.
+- **Zambullida con el scroll**: al bajar, una ola revela un video submarino de arrecife de coral, con la línea del agua, rayos de luz y burbujas encima. Es el momento principal de la página.
 - **Destinos** con desplazamiento horizontal fijado en pantalla, tarjetas con inclinación 3D y coordenadas reales.
 - **Oferta relámpago** con cuenta regresiva, precio tachado y borde animado. Se oculta sola cuando vence.
 - **Paquetes** con filtros por región, fechas de salida, régimen, cupos, precio en USD y referencia en pesos. El botón "Consultar" abre WhatsApp con el mensaje ya escrito.
@@ -29,7 +29,9 @@ Para verlos: abrí `bocetos/index.html` en el navegador. Para probar la conexió
 - **Accesibilidad**: navegación con teclado, "saltar al contenido", textos alternativos y respeto por la opción "reducir movimiento" del sistema.
 - Botón flotante de WhatsApp y menú a pantalla completa en celulares.
 
-Las ilustraciones de los destinos se dibujan por código porque todavía no hay fotos. En la versión final se reemplazan por las fotos que suba cada agencia.
+Las fotos y videos son de Pexels (licencia libre para uso comercial, sin atribución obligatoria); el detalle está en `bocetos/media/CREDITOS.md`. Cada agencia puede reemplazarlas desde el panel. Si falta algún archivo, la página dibuja una ilustración en su lugar.
+
+`herramientas/preparar-medios.mjs` descarga y optimiza los medios a partir de `herramientas/fuentes.json`: video en MP4 y WebM en dos resoluciones con fundido para repetir sin corte, y fotos recortadas en dos tamaños.
 
 ### Panel de administración (`admin.html`)
 

@@ -4,6 +4,8 @@ Sitio público animado con temática de isla tropical y panel de administración
 
 - `bocetos/index.html`: boceto del sitio público.
 - `bocetos/admin.html`: boceto del panel de administración.
+- `bocetos/media/`: video y fotos optimizados (créditos en `CREDITOS.md`).
+- `herramientas/`: script que descarga y optimiza los medios (`npm install && npm run medios`).
 - `PROPUESTA.md`: alcance, arquitectura, seguridad, SEO, GEO y aspectos legales.
 
 ## Ver los bocetos
