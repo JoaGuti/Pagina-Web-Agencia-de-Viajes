@@ -116,6 +116,7 @@ ${raw(SPRITE)}
       </div>
       <a class="btn" id="siteLink" href="/" target="_blank" rel="noopener">Ver la web ↗</a>
       <div class="me" id="me"></div>
+      <button type="button" class="linkish" id="miClave" style="font-size:.86rem;justify-self:center">Cambiar mi contraseña</button>
     </div>
   </aside>
 

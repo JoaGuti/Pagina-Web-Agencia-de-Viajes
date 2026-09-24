@@ -344,3 +344,4 @@ dialog::backdrop{background:rgba(28,34,48,.45)}
 .tile.vacio .delta{font-size:.82rem}
 .copiable{user-select:all;word-break:break-all}
 .pk-name small a{color:var(--accent)}
+.src .dot.off{background:var(--mark-muted)}

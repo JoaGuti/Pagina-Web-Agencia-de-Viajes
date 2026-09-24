@@ -21,6 +21,7 @@ const rel = iso => { if (!iso) return 'nunca'; const m = Math.round((Date.now() 
 const localDT = iso => new Date(new Date(iso) - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
 const hoy = () => new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
 const parseNum = v => Number(String(v).replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '')) || 0;
+const destinoDe = c => c.destino && c.destino !== 'Todavía no sé' ? c.destino : '';
 const money = (v, cur = 'USD') => `${cur} ${nf.format(Math.round(v))}`;
 const iata = p => (p.iata || (p.destino || 'XXX').normalize('NFD').replace(/[^A-Za-z]/g, '').slice(0, 3)).toUpperCase();
 const slug = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
@@ -246,13 +247,13 @@ VIEWS.resumen = () => {
   V(`
   ${puede('metricas') ? `<div class="filters">
     <div class="seg" role="group" aria-label="Período">${[7, 28, 90].map(d => `<button type="button" data-range="${d}" aria-pressed="${range === d}"><span class="lg">Últimos </span>${d} días</button>`).join('')}</div>
-    <span class="src">${GA_LOGO}<span class="dot"></span><b>Google Analytics</b>${m ? (m.ga.conectado ? 'conectado' : 'sin conectar') : '…'}</span>
-    <span class="src">${SC_LOGO}<span class="dot"></span><b>Search Console</b>${m ? (m.sc.conectado ? 'conectado' : 'sin conectar') : '…'}</span>
+    <span class="src">${GA_LOGO}<span class="dot${m && m.ga.conectado ? '' : ' off'}"></span><b>Google Analytics</b>${m ? (m.ga.conectado ? 'conectado' : 'sin conectar') : '…'}</span>
+    <span class="src">${SC_LOGO}<span class="dot${m && m.sc.conectado ? '' : ' off'}"></span><b>Search Console</b>${m ? (m.sc.conectado ? 'conectado' : 'sin conectar') : '…'}</span>
   </div>
   <div id="metricas" style="display:grid;gap:22px">${bloqueMetricas(m)}</div>` : ''}
   <div class="dash">
     ${puede('consultas') ? `<div class="card"><div class="card-h"><h2>Consultas recientes ${nuevas ? `<span class="pill info">${nuevas} nueva${nuevas === 1 ? '' : 's'}</span>` : ''}</h2><button class="btn sm" data-go="consultas">Ver todas</button></div>
-      <ul class="list">${S.consultas.slice(0, 5).map(c => `<li class="clic" data-abrir-consulta="${esc(c.id)}">${c.estado === 'nueva' ? '<span class="dot-new" aria-label="Nueva"></span>' : '<span style="width:9px;flex:none"></span>'}<div class="grow"><div class="t">${esc(c.nombre)}${c.destino ? ' · ' + esc(c.destino) : ''}</div><div class="s">${esc(c.mensaje || c.telefono)}</div></div><span class="s">${rel(c.creado)}</span></li>`).join('') || '<li class="empty">Todavía no llegaron consultas desde la web.</li>'}</ul></div>` : ''}
+      <ul class="list">${S.consultas.slice(0, 5).map(c => `<li class="clic" data-abrir-consulta="${esc(c.id)}">${c.estado === 'nueva' ? '<span class="dot-new" aria-label="Nueva"></span>' : '<span style="width:9px;flex:none"></span>'}<div class="grow"><div class="t">${esc(c.nombre)}${destinoDe(c) ? ' · ' + esc(destinoDe(c)) : ''}</div><div class="s">${esc(c.mensaje || c.telefono)}</div></div><span class="s">${rel(c.creado)}</span></li>`).join('') || '<li class="empty">Todavía no llegaron consultas desde la web.</li>'}</ul></div>` : ''}
     <div style="display:grid;gap:22px;align-content:start">
       ${puede('contenido') ? `<div class="card"><div class="card-h"><h2>Accesos rápidos</h2></div><div class="card-b row">
         <button class="btn pri" data-act="new-pk">+ Nuevo paquete</button><button class="btn" data-act="new-of">+ Nueva oferta</button><button class="btn" data-act="bulk">Actualizar precios</button></div></div>` : ''}
@@ -645,9 +646,9 @@ VIEWS.consultas = () => {
   const c = S.consultas.find(x => x.id === cSel);
   const wa = c && c.telefono.replace(/\D/g, '');
   V(`<div class="card"><div class="toolbar"><div class="row" role="group" aria-label="Filtrar consultas">${[['todas', 'Todas'], ['nueva', 'Nuevas'], ['contactada', 'Contactadas'], ['cerrada', 'Cerradas']].map(([k, v]) => `<button class="btn sm ${cFil === k ? 'pri' : ''}" data-cf="${k}">${v}</button>`).join('')}</div><span class="row" style="margin-left:auto;gap:8px"><a class="btn sm" href="/api/panel/exportar?que=consultas" download>Descargar en Excel</a></span></div>
-  <div class="inbox"><ul class="list" role="listbox" aria-label="Consultas">${list.map(x => `<li role="option" data-cid="${x.id}" aria-selected="${x.id === cSel}">${x.estado === 'nueva' ? '<span class="dot-new" aria-label="Nueva"></span>' : '<span style="width:9px;flex:none"></span>'}<div class="grow"><div class="t">${esc(x.nombre)}</div><div class="s">${esc(x.destino || 'Sin destino')} · ${esc((x.mensaje || x.telefono).slice(0, 60))}</div></div><span class="s">${rel(x.creado)}</span></li>`).join('') || '<li class="empty">No hay consultas en esta bandeja. Llegan desde el formulario de la web.</li>'}</ul>
+  <div class="inbox"><ul class="list" role="listbox" aria-label="Consultas">${list.map(x => `<li role="option" data-cid="${x.id}" aria-selected="${x.id === cSel}">${x.estado === 'nueva' ? '<span class="dot-new" aria-label="Nueva"></span>' : '<span style="width:9px;flex:none"></span>'}<div class="grow"><div class="t">${esc(x.nombre)}</div><div class="s">${esc(destinoDe(x) || 'Sin destino definido')} · ${esc((x.mensaje || x.telefono).slice(0, 60))}</div></div><span class="s">${rel(x.creado)}</span></li>`).join('') || '<li class="empty">No hay consultas en esta bandeja. Llegan desde el formulario de la web.</li>'}</ul>
   <div class="detail">${c ? `<div class="row" style="justify-content:space-between"><h2 style="margin:0;font-size:1.3rem">${esc(c.nombre)}</h2><label class="sr-only" for="c-est">Estado</label><select class="in" id="c-est" style="width:auto">${['nueva', 'contactada', 'cerrada'].map(s => `<option value="${s}" ${c.estado === s ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}</select></div>
-    <div class="g2" style="font-size:.95rem"><div><span class="muted">Teléfono</span><br><a href="tel:${esc(c.telefono.replace(/[^\d+]/g, ''))}">${esc(c.telefono)}</a></div><div><span class="muted">Email</span><br><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></div><div><span class="muted">Destino</span><br>${esc(c.destino || '—')}</div><div><span class="muted">Quiere viajar</span><br>${c.fechaViaje ? esc(c.fechaViaje.split('-').reverse().join('/')) : 'Sin fecha'}</div></div>
+    <div class="g2" style="font-size:.95rem"><div><span class="muted">Teléfono</span><br><a href="tel:${esc(c.telefono.replace(/[^\d+]/g, ''))}">${esc(c.telefono)}</a></div><div><span class="muted">Email</span><br><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></div><div><span class="muted">Destino</span><br>${esc(destinoDe(c) || 'Todavía no sabe')}</div><div><span class="muted">Quiere viajar</span><br>${c.fechaViaje ? esc(c.fechaViaje.split('-').reverse().join('/')) : 'Sin fecha'}</div></div>
     <p style="margin:0;padding:14px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line);white-space:pre-wrap">${esc(c.mensaje) || '<span class="muted">Sin mensaje.</span>'}</p>
     <div class="row"><a class="btn pri" href="https://wa.me/${wa}?text=${encodeURIComponent('Hola ' + c.nombre.split(' ')[0] + '! Te escribimos de ' + S.config.agencia.nombre + ' por tu consulta' + (c.destino && c.destino !== 'Todavía no sé' ? ' de ' + c.destino : '') + '.')}" target="_blank" rel="noopener">Responder por WhatsApp</a><a class="btn" href="mailto:${esc(c.email)}?subject=${encodeURIComponent('Tu consulta en ' + S.config.agencia.nombre)}">Responder por email</a><span class="muted" style="font-size:.88rem">Recibida ${rel(c.creado)}</span><button class="btn sm danger" id="c-del" style="margin-left:auto">Eliminar</button></div>` : '<p class="empty">Elegí una consulta para ver el detalle.</p>'}</div></div></div>
   <div class="card"><div class="card-h"><div><h2>Club de ofertas</h2><span class="sub">${nf.format(S.suscriptores)} persona${S.suscriptores === 1 ? '' : 's'} se sumaron desde el pie de la web</span></div><a class="btn sm" href="/api/panel/exportar?que=suscriptores" download>Descargar emails</a></div></div>
@@ -768,6 +769,26 @@ $('#view').addEventListener('click', e => {
   if (e.target.closest('[data-rmu]')) ask(`¿Quitar a ${u.nombre}?`, 'No va a poder entrar más al panel.', 'Quitar', () => accion(null, async () => { await api('DELETE', `/api/panel/usuarios/${u.id}`); S.usuarios = S.usuarios.filter(x => x.id !== u.id); toast('Acceso quitado.'); VIEWS.usuarios(); refrescarActividad(); }));
   if (e.target.closest('[data-link]')) accion(e.target.closest('[data-link]'), async () => { const j = await api('POST', `/api/panel/usuarios/${u.id}/enlace`, {}); mostrarEnlace(u.pendiente ? 'Nuevo enlace de invitación' : 'Restablecer contraseña', `Mandale este enlace a ${u.nombre} para que cree ${u.pendiente ? 'su' : 'una nueva'} contraseña:`, j.enlace); refrescarActividad(); });
 });
+
+/* ---------- mi contraseña ---------- */
+$('#miClave').onclick = () => {
+  const dl = $('#confirm');
+  dl.innerHTML = `<div class="dlg-h"><h2 id="cf-t">Cambiar mi contraseña</h2></div><form class="dlg-b" id="mcForm" novalidate>
+    <label class="f" for="mc-a">Contraseña actual<input class="in" id="mc-a" type="password" autocomplete="current-password" maxlength="200"></label>
+    <label class="f" for="mc-n">Contraseña nueva<input class="in" id="mc-n" type="password" autocomplete="new-password" maxlength="200"></label>
+    <ul class="rules" id="rules3">${[['len', '8 caracteres o más'], ['up', 'Una mayúscula'], ['num', 'Un número'], ['sym', 'Un símbolo (!@#$…)']].map(([k, t]) => `<li data-r="${k}">${t}</li>`).join('')}</ul>
+    <label class="f" for="mc-r">Repetila<input class="in" id="mc-r" type="password" autocomplete="new-password" maxlength="200"></label>
+    <p class="help" style="margin:0">Se cierran las sesiones abiertas en otros dispositivos.</p>
+    <div class="row" style="justify-content:flex-end"><button class="btn" type="button" id="mcNo">Cancelar</button><button class="btn pri" type="submit">Cambiar contraseña</button></div></form>`;
+  dl.showModal(); $('#mcNo').onclick = () => dl.close();
+  $('#mc-n').addEventListener('input', () => checkRules('#mc-n', '#rules3'));
+  $('#mcForm').onsubmit = e => {
+    e.preventDefault(); const n = $('#mc-n').value;
+    if (!passOk(n)) { toast('La contraseña nueva no cumple las reglas.'); return; }
+    if (n !== $('#mc-r').value) { toast('Las dos contraseñas nuevas no coinciden.'); return; }
+    accion(e.submitter, async () => { await api('POST', '/api/panel/mi-clave', { actual: $('#mc-a').value, nueva: n }); dl.close(); toast('Listo, tu contraseña cambió.'); refrescarActividad(); });
+  };
+};
 
 /* ---------- arranque ---------- */
 (async () => {
