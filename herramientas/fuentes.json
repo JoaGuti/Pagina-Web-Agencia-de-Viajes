@@ -1,0 +1,17 @@
+{
+  "_ayuda": "Completá 'url' con el enlace directo al archivo (MP4 o JPG) de un banco con licencia libre para uso comercial (Pexels, Unsplash, Pixabay). 'autor' y 'pagina' quedan en CREDITOS.md.",
+  "videos": {
+    "hero-playa": { "url": "", "autor": "", "pagina": "", "inicio": 0, "duracion": 12 },
+    "buceo": { "url": "", "autor": "", "pagina": "", "inicio": 0, "duracion": 12 }
+  },
+  "fotos": {
+    "puntacana": { "url": "", "autor": "", "pagina": "" },
+    "maldivas": { "url": "", "autor": "", "pagina": "" },
+    "borabora": { "url": "", "autor": "", "pagina": "" },
+    "tulum": { "url": "", "autor": "", "pagina": "" },
+    "noronha": { "url": "", "autor": "", "pagina": "" },
+    "aruba": { "url": "", "autor": "", "pagina": "" },
+    "bali": { "url": "", "autor": "", "pagina": "" },
+    "morro": { "url": "", "autor": "", "pagina": "" }
+  }
+}

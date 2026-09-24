@@ -1,0 +1,12 @@
+{
+  "name": "herramientas-medios",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "medios": "node preparar-medios.mjs"
+  },
+  "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "sharp": "^0.34.0"
+  }
+}
