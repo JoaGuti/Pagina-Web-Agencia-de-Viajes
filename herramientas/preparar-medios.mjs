@@ -9,7 +9,7 @@ import ffmpeg from '@ffmpeg-installer/ffmpeg';
 
 const run = promisify(execFile);
 const aqui = path.dirname(new URL(import.meta.url).pathname);
-const salida = path.resolve(aqui, '../bocetos/media');
+const salida = path.resolve(aqui, '../public/media');
 const tmp = path.join(aqui, '.descargas');
 const fuentes = JSON.parse(await readFile(path.join(aqui, 'fuentes.json'), 'utf8'));
 
