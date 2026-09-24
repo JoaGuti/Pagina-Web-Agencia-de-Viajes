@@ -11,5 +11,4 @@ Todos los archivos provienen de bancos con licencia libre para uso comercial.
 - Foto `aruba`: Ryan Anderson — https://www.pexels.com/photo/stunning-aerial-view-of-aruba-s-turquoise-coastline-31823402/
 - Foto `bali`: Pexels — https://www.pexels.com/photo/gate-of-heaven-bali-28154007/
 - Foto `morro`: Robyn W (foto ilustrativa de playa tropical) — https://www.pexels.com/photo/beautiful-tropical-beach-with-palm-trees-and-turquoise-water-12858509/
-- Foto `viajeros`: Pexels — https://www.pexels.com/photo/friends-smiling-at-the-camera-8777831/
-- Foto `pareja-valijas`: Gustavo Fring — https://www.pexels.com/photo/man-in-red-coat-and-woman-in-red-poncho-holding-hands-and-suitcases-7446973/
+- Foto `pareja-playa`: Bhubaneswar Wedding Photography — https://www.pexels.com/photo/smiling-couple-holding-hands-and-walking-on-beach-21837078/
