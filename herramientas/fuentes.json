@@ -50,6 +50,18 @@
       "url": "https://images.pexels.com/photos/12858509/pexels-photo-12858509.jpeg?auto=compress&cs=tinysrgb&w=2400",
       "autor": "Robyn W (foto ilustrativa de playa tropical)",
       "pagina": "https://www.pexels.com/photo/beautiful-tropical-beach-with-palm-trees-and-turquoise-water-12858509/"
+    },
+    "viajeros": {
+      "url": "https://images.pexels.com/photos/8777831/pexels-photo-8777831.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "autor": "Pexels",
+      "pagina": "https://www.pexels.com/photo/friends-smiling-at-the-camera-8777831/",
+      "cuadrada": 1100
+    },
+    "pareja-valijas": {
+      "url": "https://images.pexels.com/photos/7446973/pexels-photo-7446973.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "autor": "Gustavo Fring",
+      "pagina": "https://www.pexels.com/photo/man-in-red-coat-and-woman-in-red-poncho-holding-hands-and-suitcases-7446973/",
+      "cuadrada": 700
     }
   }
 }

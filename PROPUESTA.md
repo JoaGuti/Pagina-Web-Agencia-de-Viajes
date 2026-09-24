@@ -22,9 +22,10 @@ Para verlos: abrí `bocetos/index.html` en el navegador. Para probar la conexió
 - **Oferta relámpago como tarjeta de embarque**: COR → destino, fecha, noches, régimen, precio tachado, cuenta regresiva y código de barras. Se oculta sola cuando vence.
 - **Paquetes** con filtros por región, fechas de salida, régimen, cupos, precio en USD y referencia en pesos. El botón "Consultar" abre WhatsApp con el mensaje ya escrito.
 - **Cómo trabajamos**: ruta dibujada con el scroll y un avión que la recorre. Números animados.
-- **Testimonios** como cartas de correo aéreo en carrusel continuo, **preguntas frecuentes**, **formulario de contacto** validado y con protección anti-spam.
+- **Por qué elegirnos**: cuatro motivos en tarjetas con íconos, dos fotos circulares de viajeros que crecen al pasar el mouse, líneas punteadas de rutas y dibujos de valija y globo.
+- **Testimonios** con formato de reseñas de Google en carrusel continuo, **preguntas frecuentes**, **formulario de contacto** validado y con protección anti-spam.
 - **Mapa ilustrado** en blanco y rojo de Villa Carlos Paz (lago San Roque, acceso desde Córdoba) con el pin de la agencia, botón "Cómo llegar" y "Copiar dirección".
-- **Pie rojo** con franja de correo aéreo, dibujos en blanco y suscripción al club de ofertas.
+- **Pie rojo** con dibujos en blanco, suscripción al club de ofertas, países de destino (salen solos de los paquetes publicados), contacto y recuadro de agencia registrada (legajo, CUIT, razón social y Data Fiscal).
 - **Legales**: política de privacidad (Ley 25.326), términos, cookies, botón de arrepentimiento (Ley 24.240, Res. 424/2020), legajo EVyT, CUIT y lugar para el QR de Data Fiscal.
 - **Aviso de cookies** con opción de rechazar las analíticas.
 - **Accesibilidad**: navegación con teclado, "saltar al contenido", textos alternativos y respeto por la opción "reducir movimiento" del sistema.
@@ -36,26 +37,19 @@ Las fotos y videos son de Pexels (licencia libre para uso comercial, sin atribuc
 
 ### Panel de administración (`panel/`)
 
-Tiene la misma estética que el sitio: fondo blanco, rojo de correo aéreo, títulos con la tipografía de la web y dibujos de viaje. Las ofertas se muestran como tarjetas de embarque y las miniaturas de paquetes como postales.
+Fondo blanco con dibujos de viaje en rojo, tipografía tipo Calibri y modo claro por defecto (el oscuro queda como opción).
 
-**Acceso privado.** El sitio público no tiene ningún botón ni enlace al panel. En la versión final vive en una dirección aparte (por ejemplo `panel.arrecifeviajes.com.ar`) con estas capas:
+**Acceso privado.** El sitio público no tiene ningún botón ni enlace al panel. En la versión final vive en una dirección aparte (por ejemplo `panel.arrecifeviajes.com.ar`), no se indexa en Google, pide contraseña con al menos 8 caracteres, una mayúscula, un número y un símbolo, y bloquea tras intentos fallidos. La pantalla de acceso muestra el logo de la agencia.
 
-- No se enlaza desde ninguna página y se marca para que Google no la indexe (`noindex` y cabecera `X-Robots-Tag`).
-- Contraseña, código de verificación en dos pasos y bloqueo tras intentos fallidos.
-- Opcional: permitir el acceso solo desde la red de la oficina o detrás de Cloudflare Access.
+- **Resumen**: métricas de Google Analytics (visitantes, páginas más vistas) y Google Search Console (clics, apariciones, posición promedio, búsquedas que traen gente), con filtro de 7, 28 o 90 días y gráfico de visitas con cursor. Además, consultas recientes, accesos rápidos y actividad del equipo. En el boceto los números son de ejemplo.
+- **Paquetes**: tabla con búsqueda y filtros; el precio se cambia directo en la tabla. El editor tiene siete pestañas: general (tipo de viaje, etiqueta y su color, descripción), precios (moneda, base doble, single, triple, menor, cuotas, seña, lugares), salidas y hotel (transporte, ciudad de salida, fechas, hotel y estrellas), itinerario día por día, qué incluye y qué no, fotos (con portada elegible) y cómo se ve en Google.
+- **Actualizar precios en bloque** por porcentaje, región o selección, con vista previa.
+- **Ofertas**: varias activas a la vez, cada una con descuento en % o precio final fijo, fecha de inicio y fin, etiqueta, lugares, nota y cuenta regresiva opcional. La web las muestra todas como tarjetas de embarque.
+- **Consultas** del formulario con estado y respuesta por WhatsApp.
+- **Configuración**: logo, conexión con Google Analytics y Search Console, datos de la agencia (incluida razón social) y dólar de referencia.
+- **Usuarios**: equipo con roles (administración, edición, ventas) e invitaciones.
 
-
-- **Ingreso** con email, contraseña y código de verificación en dos pasos.
-- **Resumen**: consultas nuevas, paquetes publicados, ofertas activas, visitas y registro de actividad del equipo.
-- **Paquetes**: tabla con búsqueda y filtros. **El precio se cambia directo en la tabla** y se guarda solo. Destacar en portada, duplicar, eliminar.
-- **Editor de paquete** en cuatro pestañas: datos generales, precio y fechas de salida, fotos (arrastrar y soltar) y **vista previa de cómo sale en Google**.
-- **Actualizar precios en bloque**: subir un porcentaje a todos, a una región o a los seleccionados, con redondeo y vista previa antes de aplicar. Pensado para la inflación y el tipo de cambio.
-- **Ofertas**: descuento, fecha de vencimiento y encendido o apagado.
-- **Consultas**: bandeja con lo que llega del formulario, estado (nueva, contactada, cerrada) y respuesta por WhatsApp en un clic.
-- **Textos de la web** con vista previa en vivo.
-- **Configuración**: datos de la agencia, WhatsApp, horarios, legajo, CUIT y dólar de referencia.
-- **Usuarios y seguridad**: roles (administración, edición, ventas) y protecciones activas.
-- Modo claro y oscuro.
+Los textos de la web no se editan desde el panel: los cambia quien mantiene el sitio.
 
 ## Arquitectura propuesta para la versión final
 

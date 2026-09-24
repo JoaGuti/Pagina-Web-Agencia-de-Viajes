@@ -45,7 +45,8 @@ for (const [nombre, f] of Object.entries(fuentes.fotos)) {
   if (!f.url) { console.log(`- foto ${nombre}: sin URL, se usa la ilustración`); continue; }
   const crudo = path.join(tmp, nombre + '.img');
   console.log(`- foto ${nombre}: descargando`); await bajar(f.url, crudo);
-  for (const [suf, ancho, q] of [['', 1600, 78], ['-800', 800, 76]]) {
+  if (f.cuadrada) await sharp(crudo).rotate().resize(f.cuadrada, f.cuadrada, { fit: 'cover', position: 'attention' }).jpeg({ quality: 78, mozjpeg: true }).toFile(path.join(salida, 'fotos', `${nombre}.jpg`));
+  else for (const [suf, ancho, q] of [['', 1600, 78], ['-800', 800, 76]]) {
     await sharp(crudo).rotate().resize({ width: ancho, height: Math.round(ancho * .75), fit: 'cover', position: 'attention' }).jpeg({ quality: q, mozjpeg: true }).toFile(path.join(salida, 'fotos', `${nombre}${suf}.jpg`));
   }
   creditos.push(`- Foto \`${nombre}\`: ${f.autor} — ${f.pagina}`);

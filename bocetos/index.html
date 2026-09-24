@@ -310,6 +310,45 @@ button{font:inherit;color:inherit}
 .sec-head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:clamp(28px,4vw,48px)}
 .sec-head .lede{color:var(--ink-2);opacity:1}
 
+/* por qué elegirnos: fotos circulares */
+.why{overflow:hidden}
+.why-lines{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.why-lines path{fill:none;stroke:var(--red);stroke-width:2;stroke-dasharray:7 9;opacity:.28;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.why-suitcase,.why-balloon{position:absolute;z-index:-1;color:var(--red);pointer-events:none}
+.why-suitcase{left:1%;bottom:4%;width:clamp(90px,12vw,170px);height:clamp(90px,12vw,170px);opacity:.5;transform:rotate(-8deg)}
+.why-balloon{left:9%;top:34%;width:70px;height:70px;opacity:.45;animation:float 7s ease-in-out infinite}
+.why-suitcase svg,.why-balloon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:url(#sketch)}
+@keyframes float{50%{transform:translateY(-14px) rotate(4deg)}}
+.why-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(30px,5vw,80px);align-items:center}
+.why-pill{display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 16px 8px 12px;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);box-shadow:0 10px 24px -16px rgba(28,34,48,.4)}
+.why-pill svg{width:22px;height:22px;fill:#fff;stroke:var(--red);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+.feats{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 30px 60px -40px rgba(28,34,48,.45);overflow:hidden}
+.feats li{display:flex;gap:16px;align-items:center;padding:24px 22px}
+.feats li:nth-child(odd){border-right:1px solid var(--line)}
+.feats li:nth-child(-n+2){border-bottom:1px solid var(--line)}
+.feats b{display:block;font-size:1.06rem;line-height:1.25;margin-bottom:2px}
+.feats li > div > span{display:block;font-size:.9rem;color:var(--ink-2);line-height:1.45}
+.f-ic{width:62px;height:62px;border-radius:50%;background:var(--red-soft);display:grid;place-items:center;flex:none;transition:transform .5s var(--ease)}
+.f-ic svg{width:36px;height:36px;fill:none;stroke:var(--red);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.feats li:hover .f-ic{transform:rotate(-10deg) scale(1.08)}
+.circles{position:relative;aspect-ratio:1/1;max-width:560px;width:100%;justify-self:end}
+.blob{position:absolute;right:-18%;bottom:-6%;width:78%;height:62%;background:var(--red);border-radius:62% 38% 0 58%/58% 46% 0 42%;opacity:.95}
+.c{position:absolute;margin:0;border-radius:50%;overflow:hidden;border:8px solid #fff;box-shadow:0 30px 60px -30px rgba(28,34,48,.55);transition:transform .6s var(--ease),box-shadow .6s var(--ease);will-change:transform}
+.c img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s var(--ease)}
+.c.big{right:0;top:0;width:86%;height:86%}
+.c.small{left:0;bottom:2%;width:48%;height:48%;z-index:2}
+.circles:hover .c{transform:scale(.96)}
+.circles .c:hover{transform:scale(1.07);box-shadow:0 40px 70px -30px rgba(28,34,48,.6);z-index:3}
+.circles .c:hover img{transform:scale(1.06)}
+.c-route{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;overflow:visible}
+.c-route path{fill:none;stroke:#fff;stroke-width:2.4;stroke-dasharray:6 7;stroke-linecap:round}
+.c-plane{position:absolute;left:58%;top:12%;width:54px;height:54px;z-index:3;pointer-events:none;animation:float 6s ease-in-out infinite}
+.c-plane svg{width:100%;height:100%;fill:#fff;stroke:var(--red);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transform:rotate(-30deg);filter:drop-shadow(0 4px 8px rgba(0,0,0,.25))}
+.c-palm{position:absolute;right:-4%;bottom:-2%;width:22%;height:22%;z-index:3;pointer-events:none}
+.c-palm svg{width:100%;height:100%;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:900px){.why-grid{grid-template-columns:1fr}.circles{justify-self:center;max-width:440px}.why-balloon{display:none}}
+@media (max-width:560px){.feats{grid-template-columns:1fr}.feats li:nth-child(odd){border-right:0}.feats li:not(:last-child){border-bottom:1px solid var(--line)}}
+
 /* paquetes */
 .filters{display:flex;gap:8px;flex-wrap:wrap}
 .filters button{border:1px solid var(--line);background:#fff;padding:.6em 1.1em;border-radius:999px;cursor:pointer;font-weight:600;font-size:.9rem;transition:background .3s,color .3s,border-color .3s}
@@ -421,28 +460,51 @@ button{font:inherit;color:inherit}
 @media (max-width:900px){.contact{grid-template-columns:1fr}}
 @media (max-width:520px){.form{grid-template-columns:1fr}}
 
-/* pie rojo con franja de correo aéreo */
+/* pie rojo */
 .foot{position:relative;background:var(--red);color:#fff;overflow:hidden;isolation:isolate}
-.foot::before{content:"";display:block;height:12px;background:repeating-linear-gradient(-45deg,#fff 0 10px,var(--navy) 10px 22px,#fff 22px 32px,var(--red-d) 32px 44px)}
 .foot .doodles{color:#fff}
 .foot .eyebrow{color:#ffd9dc}
-.club{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:end;padding-block:clamp(70px,9vw,120px) clamp(40px,5vw,60px)}
+.club{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:end;padding-block:clamp(70px,9vw,120px) clamp(40px,5vw,56px)}
 .club .h2{color:#fff;--accent:#ffe2b0}
 .club form{display:flex;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px}
 .club input{flex:1;min-width:0;background:transparent;border:0;color:#fff;font:inherit;padding:.7em 1.1em;outline:none}
 .club input::placeholder{color:rgba(255,255,255,.7)}
-.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px;padding-block:40px;border-top:1px solid rgba(255,255,255,.28)}
-.foot-grid h4{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;opacity:.75;margin:0 0 12px;font-weight:400}
-.foot-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.foot-grid a,.foot-grid button.linkish{text-align:left;color:#fff;text-decoration:none;opacity:.9;font-size:.95rem}
+.foot-top{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-block:28px;border-top:1px solid rgba(255,255,255,.28);border-bottom:1px solid rgba(255,255,255,.28)}
+.foot-top .brand{font-size:1.7rem}
+.foot-top .brand-mark{width:40px;height:40px}
+.social{display:flex;gap:10px}
+.social a{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.14);color:#fff;transition:background .3s,color .3s,transform .3s var(--ease)}
+.social a:hover{background:#fff;color:var(--red);transform:translateY(-2px)}
+.social svg{width:20px;height:20px}
+.foot-grid{display:grid;grid-template-columns:.8fr .9fr 1.3fr 1.3fr;gap:32px;padding-block:44px 48px;align-items:start}
+.foot-grid h4{font-size:1.02rem;font-weight:700;margin:0 0 16px;letter-spacing:0}
+.foot-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.foot-grid a,.foot-grid button.linkish{text-align:left;color:#fff;text-decoration:none;opacity:.88;font-size:.96rem}
 .foot-grid a:hover,.foot-grid button.linkish:hover{opacity:1;text-decoration:underline}
-.legal{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;padding-block:22px 34px;border-top:1px solid rgba(255,255,255,.28);font-size:.8rem}
-.legal .mono{font-size:.74rem}
-.fiscal{display:flex;gap:12px;align-items:center}
+.c-list li{display:flex;gap:10px;align-items:flex-start;font-size:.95rem;opacity:.92;line-height:1.5}
+.c-list svg{width:18px;height:18px;flex:none;margin-top:3px;color:#ffd9dc}
+.reg-card{background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.2);border-radius:22px;padding:22px 24px;display:grid;gap:14px;box-shadow:0 24px 50px -30px rgba(0,0,0,.5)}
+.reg-head{display:flex;gap:12px;align-items:center}
+.reg-ic{width:46px;height:46px;border-radius:12px;background:#fff;color:var(--red);display:grid;place-items:center;flex:none}
+.reg-ic svg{width:28px;height:28px}
+.reg-head b{display:block;font-size:1.1rem}
+.reg-head small{opacity:.8;font-size:.82rem}
+.reg-card ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.reg-card li{display:flex;gap:10px;align-items:center;font-size:.94rem}
+.reg-card li svg{width:18px;height:18px;flex:none;color:#fff}
+.fiscal{display:flex;gap:10px;align-items:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.2)}
+.fiscal small{opacity:.8}
 .qr{width:48px;height:48px;border-radius:6px;background:#fff;padding:5px}
-.regret{border:1.5px solid #fff;color:#fff;background:transparent;padding:.55em 1em;border-radius:999px;cursor:pointer;font-weight:700;font-size:.82rem}
+.legal-bar{background:rgba(0,0,0,.18)}
+.legal{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;align-items:center;padding-block:18px 22px;font-size:.84rem}
+.legal-links{display:flex;gap:6px 18px;flex-wrap:wrap;align-items:center}
+.legal-links .linkish,.legal-links a{color:#fff;opacity:.85;text-decoration:none;font-size:.84rem}
+.legal-links .linkish:hover,.legal-links a:hover{opacity:1;text-decoration:underline}
+.regret{border:1.5px solid #fff;color:#fff;background:transparent;padding:.5em 1em;border-radius:999px;cursor:pointer;font-weight:700;font-size:.8rem}
 .regret:hover{background:#fff;color:var(--red)}
-@media (max-width:860px){.club{grid-template-columns:1fr}.foot-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:1000px){.foot-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:860px){.club{grid-template-columns:1fr}}
+@media (max-width:560px){.foot-grid{grid-template-columns:1fr}.foot-top{flex-direction:column;align-items:flex-start}}
 
 /* whatsapp flotante */
 .wa-float{position:fixed;right:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:80;width:60px;height:60px;border-radius:50%;background:#1fae5b;color:#fff;display:grid;place-items:center;box-shadow:0 14px 30px -8px rgba(31,174,91,.6);text-decoration:none}
@@ -632,6 +694,28 @@ dialog::backdrop{background:rgba(28,34,48,.55);backdrop-filter:blur(6px)}
     </div>
   </section>
 
+  <!-- POR QUÉ ELEGIRNOS -->
+  <section class="paper sec why" id="por-que-elegirnos" aria-labelledby="why-title" style="padding-top:0">
+    <svg class="why-lines" viewBox="0 0 1440 760" preserveAspectRatio="none" aria-hidden="true"><path d="M-40 120 C 160 40 260 260 120 360 S 40 620 260 700"/><path d="M1480 60 C 1260 20 1180 220 1300 320 S 1500 520 1320 640 S 1040 760 980 700"/><path d="M560 40 C 700 -20 820 120 760 180"/></svg>
+    <span class="why-suitcase" aria-hidden="true"><svg viewBox="0 0 64 64"><use href="#d-suitcase"/></svg></span>
+    <span class="why-balloon" aria-hidden="true"><svg viewBox="0 0 64 64"><use href="#d-balloon"/></svg></span>
+    <div class="wrap why-grid">
+      <div>
+        <span class="why-pill"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#d-plane"/></svg>Por qué elegirnos</span>
+        <h2 class="h2" id="why-title">Estamos con vos,<br><em>así de simple.</em></h2>
+        <ul class="feats"><li><span class="f-ic"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#d-compass"/></svg></span><div><b>18 años de experiencia</b><span>Recorrimos cada destino antes de venderlo.</span></div></li><li><span class="f-ic"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#d-ticket"/></svg></span><div><b>Mejor precio asegurado</b><span>Si lo encontrás más barato, lo igualamos.</span></div></li><li><span class="f-ic"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#d-suitcase"/></svg></span><div><b>Sin vueltas, todo armado</b><span>Vuelos, hotel, traslados y seguro en un solo lugar.</span></div></li><li><span class="f-ic"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#d-passport"/></svg></span><div><b>Con vos durante el viaje</b><span>Una línea directa las 24 h mientras estás afuera.</span></div></li></ul>
+      </div>
+      <div class="circles" aria-hidden="true">
+        <span class="blob"></span>
+        <svg class="c-route" viewBox="0 0 400 400"><path d="M70 250 C 120 160 230 330 290 220 S 330 90 250 70"/></svg>
+        <figure class="c big"><img src="media/fotos/viajeros.jpg" alt="" loading="lazy" decoding="async"></figure>
+        <figure class="c small"><img src="media/fotos/pareja-valijas.jpg" alt="" loading="lazy" decoding="async"></figure>
+        <span class="c-plane"><svg viewBox="0 0 64 64"><use href="#d-plane"/></svg></span>
+        <span class="c-palm"><svg viewBox="0 0 64 64"><use href="#d-palm"/></svg></span>
+      </div>
+    </div>
+  </section>
+
   <!-- CÓMO TRABAJAMOS -->
   <section class="paper sec" id="como-trabajamos" aria-labelledby="ct-title" data-doodles="7" style="padding-top:0">
     <div class="wrap">
@@ -758,24 +842,34 @@ dialog::backdrop{background:rgba(28,34,48,.55);backdrop-filter:blur(6px)}
       <button class="btn light" type="submit">Sumarme</button>
     </form>
   </div>
-  <div class="wrap foot-grid">
-    <div>
-      <a class="brand" href="#inicio" style="color:#fff;--mark:#ffe2b0"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle class="bm-sun" cx="16" cy="13" r="6.5"/><path d="M2 20c3.5 0 3.5-2.4 7-2.4s3.5 2.4 7 2.4 3.5-2.4 7-2.4 3.5 2.4 7 2.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M2 25.5c3.5 0 3.5-2.4 7-2.4s3.5 2.4 7 2.4 3.5-2.4 7-2.4 3.5 2.4 7 2.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity=".55"/></svg><span data-bind="agencia.nombre">Arrecife Viajes</span></a>
-      <p style="opacity:.85;font-size:.92rem;max-width:34ch;margin-top:12px">Agencia de viajes y turismo en Villa Carlos Paz. Viajes a medida, paquetes y grupos desde Córdoba.</p>
-    </div>
-    <div><h4>Viajes</h4><ul><li><a href="#destinos">Destinos</a></li><li><a href="#paquetes">Paquetes</a></li><li><a href="#ofertas">Ofertas</a></li><li><a href="#como-trabajamos">Luna de miel</a></li></ul></div>
-    <div><h4>Agencia</h4><ul><li><a href="#contacto">Contacto</a></li><li><a href="#preguntas">Preguntas frecuentes</a></li><li><a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a></li></ul></div>
-    <div><h4>Legales</h4><ul><li><button class="linkish" data-open="dlg-privacidad">Política de privacidad</button></li><li><button class="linkish" data-open="dlg-terminos">Términos y condiciones</button></li><li><button class="linkish" data-open="dlg-cookies">Política de cookies</button></li><li><a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor" target="_blank" rel="noopener">Defensa del consumidor</a></li></ul></div>
+  <div class="wrap foot-top">
+    <a class="brand" href="#inicio" style="color:#fff;--mark:#ffe2b0"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle class="bm-sun" cx="16" cy="13" r="6.5"/><path d="M2 20c3.5 0 3.5-2.4 7-2.4s3.5 2.4 7 2.4 3.5-2.4 7-2.4 3.5 2.4 7 2.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M2 25.5c3.5 0 3.5-2.4 7-2.4s3.5 2.4 7 2.4 3.5-2.4 7-2.4 3.5 2.4 7 2.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity=".55"/></svg><span data-bind="agencia.nombre">Arrecife Viajes</span></a>
+    <div class="social"><a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a><a href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></a></div>
   </div>
-  <div class="wrap legal">
-    <div class="fiscal">
-      <svg class="qr" viewBox="0 0 21 21" aria-label="Código QR de Data Fiscal (reemplazar por el oficial)"><path fill="#1c2230" d="M0 0h7v7H0zM1 1v5h5V1zM2 2h3v3H2zM14 0h7v7h-7zM15 1v5h5V1zM16 2h3v3h-3zM0 14h7v7H0zM1 15v5h5v-5zM2 16h3v3H2zM8 0h1v2H8zM10 1h2v1h-2zM9 3h2v2H9zM12 4h1v3h-1zM8 6h2v2H8zM0 8h2v1H0zM3 8h3v1H3zM8 9h3v1H8zM12 8h2v2h-2zM15 8h2v1h-2zM18 8h3v2h-3zM1 10h2v2H1zM5 10h2v2H5zM9 11h2v3H9zM13 11h3v1h-3zM17 11h1v3h-1zM19 12h2v1h-2zM8 15h2v1H8zM11 15h3v2h-3zM15 14h2v2h-2zM19 15h2v3h-2zM8 18h3v1H8zM12 18h2v3h-2zM15 18h3v1h-3zM16 20h5v1h-5z"/></svg>
-      <div>
-        <div class="mono">Legajo EVyT N° <span data-bind="agencia.legajo">00000</span> · CUIT <span data-bind="agencia.cuit">30-00000000-0</span></div>
-        <div>© 2026 <span data-bind="agencia.nombre">Arrecife Viajes</span>. Todos los derechos reservados.</div>
-      </div>
+  <div class="wrap foot-grid">
+    <div><h4>Destinos</h4><ul id="footDest"></ul></div>
+    <div><h4>Páginas</h4><ul><li><a href="#inicio">Inicio</a></li><li><a href="#paquetes">Paquetes</a></li><li><a href="#ofertas">Ofertas</a></li><li><a href="#por-que-elegirnos">Por qué elegirnos</a></li><li><a href="#preguntas">Preguntas frecuentes</a></li><li><a href="#contacto">Contacto</a></li></ul></div>
+    <div><h4>Contacto</h4><ul class="c-list">
+      <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><span data-bind="agencia.direccion">José Hernández 110</span>, <span data-bind="agencia.ciudad">Villa Carlos Paz</span>, <span data-bind="agencia.provincia">Córdoba</span></span></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span data-bind="agencia.telefono">+54 3541 00-0000</span></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span data-bind="agencia.email">hola@arrecifeviajes.com.ar</span></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-bind="agencia.horario">Lun a Vie 9 a 13 y 16 a 20 h · Sáb 9:30 a 13 h</span></li>
+    </ul></div>
+    <div class="reg-card">
+      <div class="reg-head"><span class="reg-ic"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M24 4l16 6v12c0 10-7 18-16 22C15 40 8 32 8 22V10z"/><path d="M16 24l6 6 10-12" stroke-linecap="round"/></svg></span><div><b>Agencia registrada</b><small>Registro de Agentes de Viajes</small></div></div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="var(--red)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Legajo EVyT N° <span data-bind="agencia.legajo">00000</span></span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="var(--red)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>CUIT <span data-bind="agencia.cuit">30-00000000-0</span></span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="var(--red)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Razón social: <span data-bind="agencia.razonSocial">Arrecife Viajes S.R.L.</span></span></li>
+      </ul>
+      <div class="fiscal"><svg class="qr" viewBox="0 0 21 21" aria-label="Código QR de Data Fiscal (reemplazar por el oficial)"><path fill="#1c2230" d="M0 0h7v7H0zM1 1v5h5V1zM2 2h3v3H2zM14 0h7v7h-7zM15 1v5h5V1zM16 2h3v3h-3zM0 14h7v7H0zM1 15v5h5v-5zM2 16h3v3H2zM8 0h1v2H8zM10 1h2v1h-2zM9 3h2v2H9zM12 4h1v3h-1zM8 6h2v2H8zM0 8h2v1H0zM3 8h3v1H3zM8 9h3v1H8zM12 8h2v2h-2zM15 8h2v1h-2zM18 8h3v2h-3zM1 10h2v2H1zM5 10h2v2H5zM9 11h2v3H9zM13 11h3v1h-3zM17 11h1v3h-1zM19 12h2v1h-2zM8 15h2v1H8zM11 15h3v2h-3zM15 14h2v2h-2zM19 15h2v3h-2zM8 18h3v1H8zM12 18h2v3h-2zM15 18h3v1h-3zM16 20h5v1h-5z"/></svg><small>Data Fiscal</small></div>
     </div>
-    <button class="regret" data-open="dlg-arrepentimiento">Botón de arrepentimiento</button>
+  </div>
+  <div class="legal-bar">
+    <div class="wrap legal">
+      <div>© 2026 <span data-bind="agencia.nombre">Arrecife Viajes</span>. Todos los derechos reservados.</div>
+      <nav class="legal-links" aria-label="Legales"><button class="linkish" data-open="dlg-privacidad">Privacidad</button><button class="linkish" data-open="dlg-terminos">Términos</button><button class="linkish" data-open="dlg-cookies">Cookies</button><a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor" target="_blank" rel="noopener">Defensa del consumidor</a><button class="regret" data-open="dlg-arrepentimiento">Botón de arrepentimiento</button></nav>
+    </div>
   </div>
 </footer>
 
@@ -866,7 +960,7 @@ const MEDIA = {
   hero: { video: 'media/hero-playa', poster: 'media/hero-playa.jpg' }
 };
 const SEED = {
-  agencia: { nombre: 'Arrecife Viajes', direccion: 'José Hernández 110', ciudad: 'Villa Carlos Paz', provincia: 'Córdoba', cp: 'X5152', telefono: '+54 3541 00-0000', whatsapp: '5493541000000', email: 'hola@arrecifeviajes.com.ar', legajo: '00000', cuit: '30-00000000-0', horario: 'Lun a Vie 9 a 13 y 16 a 20 h · Sáb 9:30 a 13 h' },
+  agencia: { nombre: 'Arrecife Viajes', direccion: 'José Hernández 110', ciudad: 'Villa Carlos Paz', provincia: 'Córdoba', cp: 'X5152', telefono: '+54 3541 00-0000', whatsapp: '5493541000000', email: 'hola@arrecifeviajes.com.ar', legajo: '00000', cuit: '30-00000000-0', razonSocial: 'Arrecife Viajes S.R.L.', horario: 'Lun a Vie 9 a 13 y 16 a 20 h · Sáb 9:30 a 13 h' },
   cotizacion: 1450,
   textos: { heroLinea1: 'El paraíso tiene', heroLinea2: 'fecha de salida.', heroBajada: 'Paquetes al Caribe, Brasil y las islas más lindas del mundo, con salida desde Córdoba y alguien que te atiende de verdad.' },
   paquetes: [
@@ -1056,6 +1150,9 @@ function bindTexts() {
   const addr = `${DB.agencia.direccion}, ${DB.agencia.ciudad}, ${DB.agencia.provincia}`;
   $('#mapGo').href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addr)}`;
   $('#fxNote').textContent = `(USD 1 = ARS ${nf.format(DB.cotizacion)})`;
+  const PAIS = { 'Océano Índico': 'Maldivas', 'Caribe neerlandés': 'Aruba' };
+  const paises = [...new Map(pub().map(p => [PAIS[p.pais] || p.pais.split(', ').pop(), p.region])).entries()].sort((a, b) => a[0].localeCompare(b[0], 'es'));
+  $('#footDest').innerHTML = paises.map(([pais, reg]) => `<li><a href="#paquetes" data-pick="${esc(reg)}">${esc(pais)}</a></li>`).join('');
   if (DB.agencia.logo) $$('.brand').forEach(b => { b.innerHTML = `<img class="brand-logo" src="${esc(DB.agencia.logo)}" alt="${esc(DB.agencia.nombre)}">`; });
 }
 const IATA = { puntacana: 'PUJ', maldivas: 'MLE', borabora: 'BOB', tulum: 'TQO', noronha: 'FEN', aruba: 'AUA', bali: 'DPS', morro: 'SSA' };
@@ -1455,6 +1552,8 @@ function reveals() {
   gsap.from('#offer', { y: 80, rotate: -2, opacity: 0, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '#offer', start: 'top 85%' } });
   gsap.from('#destTrack .dcard', { y: 80, rotate: (i) => (i % 2 ? 8 : -8), opacity: 0, duration: 1, stagger: .08, ease: 'back.out(1.4)', scrollTrigger: { trigger: '#destTrack', start: 'top 85%' } });
   ScrollTrigger.batch('#pkGrid .pcard', { start: 'top 90%', onEnter: els => gsap.from(els, { y: 60, opacity: 0, duration: .9, stagger: .08, ease: 'power3.out' }) });
+  gsap.from('.feats li', { y: 30, opacity: 0, duration: .8, stagger: .1, ease: 'power3.out', clearProps: 'transform,opacity', scrollTrigger: { trigger: '.feats', start: 'top 85%' } });
+  gsap.from('.circles .c', { scale: .6, opacity: 0, duration: 1.2, stagger: .2, ease: 'back.out(1.4)', clearProps: 'transform,opacity', scrollTrigger: { trigger: '.circles', start: 'top 80%' } });
   gsap.from('.step', { y: 40, opacity: 0, duration: .9, stagger: .15, ease: 'power3.out', scrollTrigger: { trigger: '.steps', start: 'top 80%' } });
   gsap.from('.faq details', { y: 20, opacity: 0, duration: .7, stagger: .08, scrollTrigger: { trigger: '.faq', start: 'top 80%' } });
   gsap.from('.contact > *', { y: 60, opacity: 0, duration: 1, stagger: .15, ease: 'power3.out', scrollTrigger: { trigger: '.contact', start: 'top 85%' } });

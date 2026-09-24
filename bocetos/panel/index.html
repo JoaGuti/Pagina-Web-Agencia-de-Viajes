@@ -471,7 +471,7 @@ const SC_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy=
 /* ---------- datos (compartidos con la web en este navegador) ---------- */
 const INCLUYE = ['Aéreo ida y vuelta', 'Traslados aeropuerto - hotel', 'Asistencia al viajero', 'Impuestos y tasas'];
 const SEED = {
-  agencia: { nombre: 'Arrecife Viajes', direccion: 'José Hernández 110', ciudad: 'Villa Carlos Paz', provincia: 'Córdoba', cp: 'X5152', telefono: '+54 3541 00-0000', whatsapp: '5493541000000', email: 'hola@arrecifeviajes.com.ar', legajo: '00000', cuit: '30-00000000-0', horario: 'Lun a Vie 9 a 13 y 16 a 20 h · Sáb 9:30 a 13 h', logo: '' },
+  agencia: { nombre: 'Arrecife Viajes', direccion: 'José Hernández 110', ciudad: 'Villa Carlos Paz', provincia: 'Córdoba', cp: 'X5152', telefono: '+54 3541 00-0000', whatsapp: '5493541000000', email: 'hola@arrecifeviajes.com.ar', legajo: '00000', cuit: '30-00000000-0', razonSocial: 'Arrecife Viajes S.R.L.', horario: 'Lun a Vie 9 a 13 y 16 a 20 h · Sáb 9:30 a 13 h', logo: '' },
   cotizacion: 1450,
   integraciones: { ga: { conectado: true, id: 'G-7Q2R4XK1LM' }, sc: { conectado: true, id: 'sc-domain:arrecifeviajes.com.ar' } },
   textos: { heroLinea1: 'El paraíso tiene', heroLinea2: 'fecha de salida.', heroBajada: 'Paquetes al Caribe, Brasil y las islas más lindas del mundo, con salida desde Córdoba y alguien que te atiende de verdad.' },
@@ -1002,7 +1002,7 @@ VIEWS.config = () => {
     <div class="g2">${fld('nombre', 'Nombre comercial', 'maxlength="40"')}${fld('email', 'Email de contacto', 'type="email"')}</div>
     <div class="g3">${fld('direccion', 'Dirección')}${fld('ciudad', 'Ciudad')}${fld('cp', 'Código postal')}</div>
     <div class="g3">${fld('telefono', 'Teléfono')}${fld('whatsapp', 'WhatsApp (con código de país)', 'inputmode="numeric"')}${fld('horario', 'Horario')}</div>
-    <div class="g2">${fld('legajo', 'Legajo EVyT')}${fld('cuit', 'CUIT')}</div>
+    <div class="g3">${fld('legajo', 'Legajo EVyT')}${fld('cuit', 'CUIT')}${fld('razonSocial', 'Razón social')}</div>
     <div class="g2"><label class="f" for="a-fx">Dólar de referencia (ARS por USD)<input class="in num" id="a-fx" inputmode="numeric" value="${nf.format(DB.cotizacion)}"><small class="muted">Se usa para mostrar el precio aproximado en pesos.</small></label></div>
   </div>
   <div class="drawer-f" style="border-radius:0 0 16px 16px"><button class="btn pri" type="submit">Guardar configuración</button></div></form>`);
