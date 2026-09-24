@@ -3,7 +3,6 @@
 Todos los archivos provienen de bancos con licencia libre para uso comercial.
 
 - Video `hero-playa`: Paulo Renato — https://www.pexels.com/video/a-couple-waking-hand-in-hand-on-a-beach-shore-3576378/
-- Video `buceo`: Magda Ehlers — https://www.pexels.com/video/marine-life-of-fishes-and-corals-underwater-3765078/
 - Foto `puntacana`: Pexels — https://www.pexels.com/photo/palm-trees-on-beach-10708652/
 - Foto `maldivas`: Asad Photo Maldives — https://www.pexels.com/photo/luxury-water-villas-in-maldives-at-sunset-30037393/
 - Foto `borabora`: Vincent Gerbouin — https://www.pexels.com/photo/an-island-with-cottages-and-beach-chairs-1174732/

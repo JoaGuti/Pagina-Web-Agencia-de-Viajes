@@ -1,17 +1,55 @@
 {
   "_ayuda": "Enlaces directos a archivos de Pexels (licencia libre para uso comercial, sin atribución obligatoria). 'autor' y 'pagina' quedan en bocetos/media/CREDITOS.md.",
   "videos": {
-    "hero-playa": { "url": "https://videos.pexels.com/video-files/3576378/3576378-uhd_3840_2160_25fps.mp4", "autor": "Paulo Renato", "pagina": "https://www.pexels.com/video/a-couple-waking-hand-in-hand-on-a-beach-shore-3576378/", "inicio": 0, "duracion": 10.4, "fundido": 1 },
-    "buceo": { "url": "https://videos.pexels.com/video-files/3765078/3765078-hd_1920_1080_30fps.mp4", "autor": "Magda Ehlers", "pagina": "https://www.pexels.com/video/marine-life-of-fishes-and-corals-underwater-3765078/", "inicio": 4, "duracion": 12, "fundido": 1 }
+    "hero-playa": {
+      "url": "https://videos.pexels.com/video-files/3576378/3576378-uhd_3840_2160_25fps.mp4",
+      "autor": "Paulo Renato",
+      "pagina": "https://www.pexels.com/video/a-couple-waking-hand-in-hand-on-a-beach-shore-3576378/",
+      "inicio": 0,
+      "duracion": 10.4,
+      "fundido": 1
+    }
   },
   "fotos": {
-    "puntacana": { "url": "https://images.pexels.com/photos/10708652/pexels-photo-10708652.jpeg?auto=compress&cs=tinysrgb&w=2400", "autor": "Pexels", "pagina": "https://www.pexels.com/photo/palm-trees-on-beach-10708652/" },
-    "maldivas": { "url": "https://images.pexels.com/photos/30037393/pexels-photo-30037393.jpeg?auto=compress&cs=tinysrgb&w=2400", "autor": "Asad Photo Maldives", "pagina": "https://www.pexels.com/photo/luxury-water-villas-in-maldives-at-sunset-30037393/" },
-    "borabora": { "url": "https://images.pexels.com/photos/1174732/pexels-photo-1174732.jpeg?auto=compress&cs=tinysrgb&w=2400", "autor": "Vincent Gerbouin", "pagina": "https://www.pexels.com/photo/an-island-with-cottages-and-beach-chairs-1174732/" },
-    "tulum": { "url": "https://images.pexels.com/photos/13718270/pexels-photo-13718270.jpeg?auto=compress&cs=tinysrgb&w=2400", "autor": "Luis Aguilar", "pagina": "https://www.pexels.com/photo/drone-photography-of-mayan-ruins-on-a-coastline-13718270/" },
-    "noronha": { "url": "https://images.pexels.com/photos/20358931/pexels-photo-20358931.jpeg?auto=compress&cs=tinysrgb&w=2400", "autor": "Márcio Teixeira", "pagina": "https://www.pexels.com/photo/view-of-the-two-brothers-rock-fernando-de-noronha-brazil-20358931/" },
-    "aruba": { "url": "https://images.pexels.com/photos/31823402/pexels-photo-31823402.jpeg?auto=compress&cs=tinysrgb&w=2400", "autor": "Ryan Anderson", "pagina": "https://www.pexels.com/photo/stunning-aerial-view-of-aruba-s-turquoise-coastline-31823402/" },
-    "bali": { "url": "https://images.pexels.com/photos/28154007/pexels-photo-28154007.jpeg?auto=compress&cs=tinysrgb&w=2400", "autor": "Pexels", "pagina": "https://www.pexels.com/photo/gate-of-heaven-bali-28154007/" },
-    "morro": { "url": "https://images.pexels.com/photos/12858509/pexels-photo-12858509.jpeg?auto=compress&cs=tinysrgb&w=2400", "autor": "Robyn W (foto ilustrativa de playa tropical)", "pagina": "https://www.pexels.com/photo/beautiful-tropical-beach-with-palm-trees-and-turquoise-water-12858509/" }
+    "puntacana": {
+      "url": "https://images.pexels.com/photos/10708652/pexels-photo-10708652.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "autor": "Pexels",
+      "pagina": "https://www.pexels.com/photo/palm-trees-on-beach-10708652/"
+    },
+    "maldivas": {
+      "url": "https://images.pexels.com/photos/30037393/pexels-photo-30037393.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "autor": "Asad Photo Maldives",
+      "pagina": "https://www.pexels.com/photo/luxury-water-villas-in-maldives-at-sunset-30037393/"
+    },
+    "borabora": {
+      "url": "https://images.pexels.com/photos/1174732/pexels-photo-1174732.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "autor": "Vincent Gerbouin",
+      "pagina": "https://www.pexels.com/photo/an-island-with-cottages-and-beach-chairs-1174732/"
+    },
+    "tulum": {
+      "url": "https://images.pexels.com/photos/13718270/pexels-photo-13718270.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "autor": "Luis Aguilar",
+      "pagina": "https://www.pexels.com/photo/drone-photography-of-mayan-ruins-on-a-coastline-13718270/"
+    },
+    "noronha": {
+      "url": "https://images.pexels.com/photos/20358931/pexels-photo-20358931.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "autor": "Márcio Teixeira",
+      "pagina": "https://www.pexels.com/photo/view-of-the-two-brothers-rock-fernando-de-noronha-brazil-20358931/"
+    },
+    "aruba": {
+      "url": "https://images.pexels.com/photos/31823402/pexels-photo-31823402.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "autor": "Ryan Anderson",
+      "pagina": "https://www.pexels.com/photo/stunning-aerial-view-of-aruba-s-turquoise-coastline-31823402/"
+    },
+    "bali": {
+      "url": "https://images.pexels.com/photos/28154007/pexels-photo-28154007.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "autor": "Pexels",
+      "pagina": "https://www.pexels.com/photo/gate-of-heaven-bali-28154007/"
+    },
+    "morro": {
+      "url": "https://images.pexels.com/photos/12858509/pexels-photo-12858509.jpeg?auto=compress&cs=tinysrgb&w=2400",
+      "autor": "Robyn W (foto ilustrativa de playa tropical)",
+      "pagina": "https://www.pexels.com/photo/beautiful-tropical-beach-with-palm-trees-and-turquoise-water-12858509/"
+    }
   }
 }

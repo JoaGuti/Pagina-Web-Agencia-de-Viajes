@@ -16,14 +16,15 @@ Para verlos: abrí `bocetos/index.html` en el navegador. Para probar la conexió
 ### Sitio público (`index.html`)
 
 - **Portada con video real**: una pareja caminando entre palmeras en Punta Cana, filmada con dron en 4K y entregada en 1080p (720p en celulares). El video se repite sin saltos, hace un zoom suave con el scroll y reacciona al mouse.
-- **Zambullida con el scroll**: al bajar, una ola revela un video submarino de arrecife de coral, con la línea del agua, rayos de luz y burbujas encima. Es el momento principal de la página.
-- **Destinos** con desplazamiento horizontal fijado en pantalla, tarjetas con inclinación 3D y coordenadas reales.
-- **Oferta relámpago** con cuenta regresiva, precio tachado y borde animado. Se oculta sola cuando vence.
+- **Transición**: la portada termina en un horizonte blanco que un avión cruza dejando una estela punteada.
+- **Estilo de todo lo demás**: fondo blanco con dibujos a mano en rojo (aviones, mapas, valijas, pasaportes, brújulas, globos, cámaras) que flotan y se mueven a distinta velocidad con el scroll. Detalles de correo aéreo en rojo y azul.
+- **Destinos como postales**: desplazamiento horizontal fijado en pantalla, estampilla con el código del aeropuerto (PUJ, MLE, BOB…) y matasellos de Villa Carlos Paz con la fecha de salida.
+- **Oferta relámpago como tarjeta de embarque**: COR → destino, fecha, noches, régimen, precio tachado, cuenta regresiva y código de barras. Se oculta sola cuando vence.
 - **Paquetes** con filtros por región, fechas de salida, régimen, cupos, precio en USD y referencia en pesos. El botón "Consultar" abre WhatsApp con el mensaje ya escrito.
 - **Cómo trabajamos**: ruta dibujada con el scroll y un avión que la recorre. Números animados.
-- **Testimonios** en carrusel continuo, **preguntas frecuentes**, **formulario de contacto** validado y con protección anti-spam.
-- **Mapa ilustrado** de Villa Carlos Paz (lago San Roque, acceso desde Córdoba) con el pin de la agencia, botón "Cómo llegar" y "Copiar dirección".
-- **Pie nocturno** con estrellas y olas bioluminiscentes, suscripción al club de ofertas.
+- **Testimonios** como cartas de correo aéreo en carrusel continuo, **preguntas frecuentes**, **formulario de contacto** validado y con protección anti-spam.
+- **Mapa ilustrado** en blanco y rojo de Villa Carlos Paz (lago San Roque, acceso desde Córdoba) con el pin de la agencia, botón "Cómo llegar" y "Copiar dirección".
+- **Pie rojo** con franja de correo aéreo, dibujos en blanco y suscripción al club de ofertas.
 - **Legales**: política de privacidad (Ley 25.326), términos, cookies, botón de arrepentimiento (Ley 24.240, Res. 424/2020), legajo EVyT, CUIT y lugar para el QR de Data Fiscal.
 - **Aviso de cookies** con opción de rechazar las analíticas.
 - **Accesibilidad**: navegación con teclado, "saltar al contenido", textos alternativos y respeto por la opción "reducir movimiento" del sistema.
