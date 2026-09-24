@@ -102,3 +102,26 @@ export async function ingresar(req: NextRequest, email: string, clave: string): 
 export function usuarioPublico(u: Usuario) {
   return { id: u.id, nombre: u.nombre, email: u.email, rol: u.rol, rolNombre: ROLES[u.rol as Rol]?.nombre, permisos: PERMISOS[u.rol as Rol] || [] };
 }
+
+const VENCE_ENLACE_MS = 72 * 36e5;
+
+/** Crea un enlace de un solo uso para definir la contraseña (invitación o recuperación). */
+export async function crearEnlaceClave(db: Db, usuarioId: string, base: string) {
+  const t = token();
+  await db.update(usuarios).set({ invitacionHash: sha256(t), invitacionVence: new Date(Date.now() + VENCE_ENLACE_MS) }).where(eq(usuarios.id, usuarioId));
+  return `${base}/panel#clave=${t}`;
+}
+
+export async function usarEnlaceClave(req: NextRequest, t: string, clave: string): Promise<{ usuario?: Usuario; error?: string }> {
+  const db = await getDb();
+  if (!(await dentroDelLimite(db, 'enlace:' + ipDe(req), 20, 900))) return { error: 'Demasiados intentos. Esperá 15 minutos.' };
+  if (!t || t.length > 100) return { error: 'El enlace no es válido.' };
+  const [u] = await db.select().from(usuarios).where(and(eq(usuarios.invitacionHash, sha256(t)), gt(usuarios.invitacionVence, new Date()))).limit(1);
+  if (!u || !u.activo) return { error: 'El enlace venció o ya se usó. Pedí uno nuevo a una persona con rol Administración.' };
+  const problema = problemaClave(clave);
+  if (problema) return { error: problema };
+  const [act] = await db.update(usuarios).set({ hash: await hashear(clave), invitacionHash: null, invitacionVence: null, intentosFallidos: 0, bloqueadoHasta: null, ultimoIngreso: new Date() }).where(eq(usuarios.id, u.id)).returning();
+  await db.delete(sesiones).where(eq(sesiones.usuarioId, u.id)); // cierra sesiones anteriores
+  await registrar(db, act, u.hash ? 'cambió su contraseña con un enlace' : 'activó su cuenta');
+  return { usuario: act };
+}
