@@ -7,9 +7,9 @@ Estado: **bocetos para aprobar**. Todavía no hay cliente; la agencia de los boc
 | Archivo | Qué muestra |
 | --- | --- |
 | `bocetos/index.html` | Sitio público completo, navegable y animado |
-| `bocetos/admin.html` | Panel de administración para que la agencia edite sin programador |
+| `bocetos/panel/` | Panel de administración para que la agencia edite sin programador |
 
-Los dos bocetos comparten los datos del navegador. Si abrís `admin.html` y `index.html` en dos pestañas y cambiás un precio en el panel, la web se actualiza sola. Así se le puede hacer la demo a un cliente.
+Los dos bocetos comparten los datos del navegador. Si abrís `panel/` e `index.html` en dos pestañas y cambiás un precio en el panel, la web se actualiza sola. Así se le puede hacer la demo a un cliente.
 
 Para verlos: abrí `bocetos/index.html` en el navegador. Para probar la conexión entre el panel y la web, conviene servirlos desde una carpeta, por ejemplo con `npx serve bocetos`.
 
@@ -34,7 +34,16 @@ Las fotos y videos son de Pexels (licencia libre para uso comercial, sin atribuc
 
 `herramientas/preparar-medios.mjs` descarga y optimiza los medios a partir de `herramientas/fuentes.json`: video en MP4 y WebM en dos resoluciones con fundido para repetir sin corte, y fotos recortadas en dos tamaños.
 
-### Panel de administración (`admin.html`)
+### Panel de administración (`panel/`)
+
+Tiene la misma estética que el sitio: fondo blanco, rojo de correo aéreo, títulos con la tipografía de la web y dibujos de viaje. Las ofertas se muestran como tarjetas de embarque y las miniaturas de paquetes como postales.
+
+**Acceso privado.** El sitio público no tiene ningún botón ni enlace al panel. En la versión final vive en una dirección aparte (por ejemplo `panel.arrecifeviajes.com.ar`) con estas capas:
+
+- No se enlaza desde ninguna página y se marca para que Google no la indexe (`noindex` y cabecera `X-Robots-Tag`).
+- Contraseña, código de verificación en dos pasos y bloqueo tras intentos fallidos.
+- Opcional: permitir el acceso solo desde la red de la oficina o detrás de Cloudflare Access.
+
 
 - **Ingreso** con email, contraseña y código de verificación en dos pasos.
 - **Resumen**: consultas nuevas, paquetes publicados, ofertas activas, visitas y registro de actividad del equipo.

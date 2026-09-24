@@ -202,7 +202,6 @@ button{font:inherit;color:inherit}
   .nav-cta .btn.wa{display:none}
   .nav-in{padding:8px 8px 8px 16px}
   .cookies{left:12px;right:12px;width:auto;max-width:none;bottom:calc(env(safe-area-inset-bottom,0px) + 88px);padding:14px;font-size:.8rem;gap:10px}
-  .demo-chip .long{display:none}
 }
 
 /* secciones claras con dibujos de viaje */
@@ -471,9 +470,7 @@ dialog::backdrop{background:rgba(28,34,48,.55);backdrop-filter:blur(6px)}
 /* toast + chip de demo */
 .toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 90px);transform:translate(-50%,-20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:14px;z-index:160;opacity:0;pointer-events:none;transition:opacity .35s,transform .35s var(--ease);font-weight:600;max-width:calc(100% - 32px)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-.demo-chip{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:79;background:var(--ink);color:#fff;padding:8px 14px;border-radius:999px;font-size:.8rem;font-weight:700;text-decoration:none;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);display:flex;align-items:center;white-space:nowrap}
-@media (max-width:640px){.demo-chip{left:16px;transform:none;bottom:calc(env(safe-area-inset-bottom,0px) + 88px)}}
-
+@media (max-width:640px){
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
   .loader{display:none}
@@ -780,7 +777,6 @@ dialog::backdrop{background:rgba(28,34,48,.55);backdrop-filter:blur(6px)}
 </footer>
 
 <a class="wa-float js-wa" href="https://wa.me/5493541000000" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 11.5a8.5 8.5 0 0 1-12.4 7.6L3 20.5l1.5-4.4A8.5 8.5 0 1 1 20 11.5Z"/><path d="M9 8.8c.3 2.6 2.4 4.8 5.2 5.4l1-1.3 2 .9-.4 1.6c-3.8.4-8.3-3.4-8.6-7.6l1.6-.5.9 2Z" fill="currentColor" stroke="none"/></svg></a>
-<a class="demo-chip" id="demoChip" href="admin.html" target="_blank" rel="noopener"><span class="long">Boceto · Abrir el&nbsp;</span>panel de administración ↗</a>
 
 <div class="cookies" id="cookies" role="region" aria-label="Aviso de cookies" hidden>
   <p><b>Usamos cookies.</b> Las esenciales hacen funcionar el sitio. Con tu permiso sumamos analíticas para saber qué destinos buscan más. <button class="linkish" data-open="dlg-cookies">Más información</button></p>
@@ -1464,7 +1460,7 @@ function loop(now) {
 }
 let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { paintAll(); measureDest(); MapView.size(); Doodles.build(); }, 150); });
 setInterval(tickCount, 1000);
-addEventListener('storage', e => { if (e.key === KEY) { DB = load(); renderAll(); splitTitle(); toast('Contenido actualizado desde el panel.'); } });
+addEventListener('storage', e => { if (e.key === KEY) { DB = load(); renderAll(); splitTitle(); toast('Contenido actualizado.'); } });
 
 renderAll(); renderReviews(); splitTitle(); intro(); reveals();
 if (document.fonts) document.fonts.ready.then(() => { paintAll(); measureDest(); });
