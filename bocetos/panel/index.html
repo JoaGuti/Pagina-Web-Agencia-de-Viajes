@@ -4,299 +4,347 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Panel Arrecife</title>
-<meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Hanken+Grotesk:wght@300..800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap">
 <style>
 :root{
-  --bg:#f7f7f8; --panel:#ffffff; --panel-2:#f6f6f7; --ink:#1c2230; --muted:#5b6272; --line:rgba(28,34,48,.12);
-  --accent:#d62839; --accent-d:#a51d2d; --accent-ink:#ffffff; --accent-soft:#fdf0f1; --navy:#1d3461;
-  --coral:#d62839; --coral-soft:#fdf0f1;
-  --warn:#9a6300; --warn-soft:#fff3d6; --ok:#1c7c47; --ok-soft:#e2f3e9;
-  --shadow:0 1px 2px rgba(28,34,48,.05),0 18px 34px -26px rgba(28,34,48,.4);
-  --stripe:repeating-linear-gradient(-45deg,var(--accent) 0 10px,#fff 10px 16px,var(--navy) 16px 26px,#fff 26px 32px);
-  --f-display:"Fraunces","Iowan Old Style",Georgia,serif;
-  --f-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --f-mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --bg:#f7f7f8; --panel:#ffffff; --panel-2:#f5f5f7; --ink:#1c2230; --muted:#5b6272; --line:#e3e4e8; --grid:#ececef;
+  --accent:#d62839; --accent-d:#a51d2d; --accent-ink:#ffffff; --accent-soft:#fdf0f1;
+  --chart:#d62839; --chart-wash:rgba(214,40,57,.1); --mark-muted:#b8bcc6; --surface-ring:#ffffff;
+  --warn:#9a6300; --warn-soft:#fff3d6; --ok:#1c7c47; --ok-soft:#e2f3e9; --bad:#b3261e;
+  --shadow:0 1px 2px rgba(28,34,48,.05),0 16px 32px -26px rgba(28,34,48,.4);
+  --f:"Calibri","Carlito","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
   color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#11141b; --panel:#191d27; --panel-2:#141821; --ink:#eceef3; --muted:#9aa1b0; --line:rgba(255,255,255,.11);
-  --accent:#ff5a67; --accent-d:#ff8a94; --accent-ink:#ffffff; --accent-soft:#3a1a20; --navy:#6d8fd6;
-  --coral:#ff5a67; --coral-soft:#3a1a20;
-  --warn:#f2c14e; --warn-soft:#352a10; --ok:#4fd08a; --ok-soft:#12321f;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 18px 34px -26px rgba(0,0,0,.7); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#11141b; --panel:#191d27; --panel-2:#141821; --ink:#eceef3; --muted:#9aa1b0; --line:rgba(255,255,255,.11);
-  --accent:#ff5a67; --accent-d:#ff8a94; --accent-ink:#ffffff; --accent-soft:#3a1a20; --navy:#6d8fd6;
-  --coral:#ff5a67; --coral-soft:#3a1a20;
-  --warn:#f2c14e; --warn-soft:#352a10; --ok:#4fd08a; --ok-soft:#12321f;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 18px 34px -26px rgba(0,0,0,.7); color-scheme:dark}
+  --bg:#12151c; --panel:#1a1e28; --panel-2:#151922; --ink:#eceef3; --muted:#9aa1b0; --line:#2a303d; --grid:#252b37;
+  --accent:#f0485a; --accent-d:#ff8a94; --accent-ink:#ffffff; --accent-soft:#3a1a20;
+  --chart:#f0485a; --chart-wash:rgba(240,72,90,.12); --mark-muted:#5a6070; --surface-ring:#1a1e28;
+  --warn:#f2c14e; --warn-soft:#352a10; --ok:#4fd08a; --ok-soft:#12321f; --bad:#ff8a80;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 32px -26px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
-.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.num{font-variant-numeric:tabular-nums}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.eyebrow{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);display:inline-flex;align-items:center;gap:.7em;margin:0}
-.eyebrow::before{content:"";width:24px;height:1px;background:currentColor;opacity:.6}
-.display{font-family:var(--f-display);font-weight:400;letter-spacing:-.02em;line-height:1.02;font-variation-settings:"SOFT" 100,"WONK" 1,"opsz" 96;margin:0}
-.display em{font-style:italic;font-weight:360;color:var(--accent)}
-.stripe{height:8px;background:var(--stripe)}
-/* dibujos */
+.eyebrow{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0}
+h1,h2,h3{font-weight:700;letter-spacing:-.005em}
+h1 em,h2 em{font-style:normal;color:var(--accent)}
+.muted{color:var(--muted)}
+
+/* dibujos de viaje */
 .dd{position:absolute;color:var(--accent);opacity:var(--o,.22);transform:rotate(var(--r,0deg));pointer-events:none;animation:doodle 9s ease-in-out infinite alternate}
 @keyframes doodle{to{transform:rotate(calc(var(--r,0deg) + 6deg)) translateY(-8px)}}
 .dd svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;overflow:visible;filter:url(#sketch)}
 
+/* marca (logo del cliente o marca por defecto) */
+.mark{display:inline-flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}
+.mark img{display:block;max-height:100%;max-width:100%;object-fit:contain}
+.mark .name{font-weight:700;font-size:1.15rem;line-height:1.1}
+.mark .name small{display:block;font-weight:400;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
 /* acceso */
-.login{position:fixed;inset:0;z-index:50;display:grid;grid-template-columns:1.05fr 1fr;background:var(--panel)}
-.login-art{position:relative;overflow:hidden;color:#fff;padding:clamp(28px,4vw,48px);display:flex;flex-direction:column;justify-content:space-between;background:#0c1320 center/cover no-repeat}
-.login-art::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,14,24,.6),rgba(10,14,24,.2) 70%),linear-gradient(to top,rgba(10,14,24,.5),transparent 40%)}
-.login-art > *{position:relative}
-.login-art .brandline{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-style:italic;font-size:1.3rem}
-.login-art h1{font-family:var(--f-display);font-weight:360;font-size:clamp(2.2rem,4.2vw,3.8rem);line-height:.98;letter-spacing:-.03em;margin:0 0 .3em;max-width:15ch;font-variation-settings:"SOFT" 100,"WONK" 1,"opsz" 144}
-.login-art h1 em{display:block;font-style:italic;font-weight:300;color:#ffe2b0}
-.login-art p{max-width:40ch;opacity:.92;margin:0 0 70px}
-.login-edge{position:absolute;right:-1px;top:0;bottom:0;width:70px;pointer-events:none}
-.login-edge svg{width:100%;height:100%}
-.login-box{position:relative;display:grid;place-items:center;padding:28px 16px;overflow:hidden}
+.login{position:fixed;inset:0;z-index:50;display:grid;grid-template-columns:1fr 1fr;background:var(--panel);overflow:hidden}
+.login-brand{position:relative;display:grid;place-items:center;padding:40px;border-right:2px dashed color-mix(in srgb,var(--accent) 35%,transparent)}
+.login-logo{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;position:relative}
+.login-logo .slot{width:min(300px,60vw);height:150px;display:grid;place-items:center}
+.login-logo .slot svg{width:110px;height:110px}
+.login-logo .slot img{max-height:150px;max-width:300px;object-fit:contain}
+.login-logo h2{margin:0;font-size:2rem;line-height:1.1}
+.login-logo p{margin:0;color:var(--muted);max-width:34ch}
+.login-sep{position:absolute;right:-17px;top:50%;width:32px;height:32px;color:var(--accent);background:var(--panel);border-radius:50%;padding:4px}
+.login-sep svg{width:100%;height:100%;fill:var(--panel);stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transform:rotate(90deg)}
+.login-box{position:relative;display:grid;place-items:center;padding:28px 16px}
 .login-form{position:relative;width:100%;max-width:390px;display:grid;gap:14px}
-.login-form .display{font-size:2.3rem}
-.otp{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.otp input{text-align:center;font-family:var(--f-mono);font-size:1.2rem;padding:.6em 0}
-.hint{font-size:.82rem;color:var(--muted);margin:0}
-.sec-list{display:grid;gap:6px;font-size:.8rem;color:var(--muted);margin-top:4px}
-.sec-list span::before{content:"✓ ";color:var(--ok);font-weight:800}
-.private{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;width:max-content;max-width:100%}
-.private svg{width:14px;height:14px;color:var(--accent)}
-@media (max-width:820px){.login{grid-template-columns:1fr}.login-art{display:none}}
+.login-form h1{font-size:2rem;margin:0;line-height:1.1}
+.hint{font-size:.86rem;color:var(--muted);margin:0}
+.rules{list-style:none;margin:-4px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:.84rem;color:var(--muted)}
+.rules li{display:flex;gap:6px;align-items:center}
+.rules li::before{content:"";width:14px;height:14px;border-radius:50%;border:1.5px solid var(--line);flex:none}
+.rules li.ok{color:var(--ok)}
+.rules li.ok::before{border-color:var(--ok);background:var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+.pass-wrap{position:relative}
+.pass-wrap .in{padding-right:74px}
+.pass-wrap button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--accent);font-weight:700;font-size:.84rem;cursor:pointer;padding:6px 8px}
+.sec-list{display:grid;gap:4px;font-size:.84rem;color:var(--muted)}
+.sec-list span::before{content:"✓ ";color:var(--ok);font-weight:700}
+@media (max-width:820px){.login{grid-template-columns:1fr}.login-brand{display:none}}
 
 /* estructura */
 .app{display:grid;grid-template-columns:256px 1fr;min-height:100%}
-.side{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;height:100dvh;overflow:auto}
-.side-in{padding:18px 14px;display:flex;flex-direction:column;gap:16px;flex:1;position:relative}
-.brand{display:flex;align-items:center;gap:10px;padding:4px 8px;font-family:var(--f-display);font-style:italic;font-size:1.3rem;font-variation-settings:"SOFT" 100,"WONK" 1;line-height:1.1}
-.brand small{display:block;font-family:var(--f-mono);font-style:normal;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.side{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:14px;padding:18px 14px;position:sticky;top:0;height:100vh;height:100dvh;overflow:auto}
+.side .mark{padding:4px 8px;height:48px}
 .side nav{display:grid;gap:2px}
-.side .grp{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:14px 12px 4px}
-.side button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:transparent;border:0;padding:9px 12px;border-radius:999px;cursor:pointer;color:var(--ink);font-weight:600;transition:background .2s,color .2s}
+.side .grp{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:14px 12px 4px;font-weight:700}
+.side button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:transparent;border:0;padding:9px 12px;border-radius:999px;cursor:pointer;color:var(--ink);font-weight:700;font-size:.98rem;transition:background .2s,color .2s}
 .side button:hover{background:var(--accent-soft);color:var(--accent)}
 .side button[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
 .side button svg{width:18px;height:18px;flex:none}
-.side .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:.7rem;font-weight:800;border-radius:999px;padding:1px 7px}
+.side .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:.72rem;font-weight:700;border-radius:999px;padding:1px 8px}
 .side button[aria-current="page"] .badge{background:#fff;color:var(--accent)}
-.side-foot{margin-top:auto;display:grid;gap:10px;font-size:.82rem;position:relative}
-.side-doodles{position:relative;height:120px;margin-top:6px}
+.side-foot{margin-top:auto;display:grid;gap:10px;font-size:.86rem}
+.side-doodles{position:relative;height:110px}
 .me{display:flex;gap:10px;align-items:center;padding:10px;border-radius:14px;background:var(--panel-2);border:1px solid var(--line)}
-.me .av{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}
-.me small{display:block;color:var(--muted);font-size:.72rem}
+.me .av{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700}
+.me small{display:block;color:var(--muted);font-size:.76rem}
 .main{min-width:0;display:flex;flex-direction:column}
-.top{position:sticky;top:0;z-index:5;display:flex;align-items:end;gap:12px;padding:18px clamp(16px,3vw,36px) 16px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.top h1{font-size:clamp(1.6rem,2.6vw,2.2rem);margin:4px 0 0}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:16px clamp(16px,3vw,34px);background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top h1{font-size:clamp(1.5rem,2.3vw,1.9rem);margin:2px 0 0;line-height:1.1}
 .top .sp{flex:1}
 .top .tools{display:flex;gap:8px;align-items:center}
 .btn.menu-btn{display:none}
-.content{padding:clamp(16px,3vw,36px);display:grid;gap:22px;max-width:1300px;width:100%}
+.content{padding:clamp(16px,3vw,34px);display:grid;gap:22px;max-width:1320px;width:100%}
 .content > *{min-width:0}
 @media (max-width:900px){
   .app{grid-template-columns:1fr}
   .side{position:fixed;inset:0 auto 0 0;width:270px;z-index:30;transform:translateX(-100%);transition:transform .35s}
   .side.open{transform:none;box-shadow:0 0 0 100vmax rgba(0,0,0,.4)}
   .btn.menu-btn{display:inline-flex}
-  .top{align-items:center}
 }
 
 /* controles */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:.62em 1.15em;border-radius:999px;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-weight:650;font-size:.9rem;white-space:nowrap;text-decoration:none;color:var(--ink);transition:background .2s,border-color .2s,color .2s,transform .15s,box-shadow .2s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:.6em 1.15em;border-radius:999px;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-weight:700;font-size:.94rem;white-space:nowrap;text-decoration:none;color:var(--ink);transition:background .2s,border-color .2s,color .2s,box-shadow .2s}
 .btn:hover{border-color:var(--accent);color:var(--accent)}
 .btn:active{transform:translateY(1px)}
 .btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.pri:hover{color:var(--accent-ink);box-shadow:0 12px 24px -12px rgba(214,40,57,.6);transform:translateY(-1px)}
-.btn.danger{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
-.btn.sm{padding:.4em .85em;font-size:.82rem}
+.btn.pri:hover{color:var(--accent-ink);box-shadow:0 10px 22px -12px rgba(214,40,57,.6)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.btn.sm{padding:.38em .85em;font-size:.86rem}
 .btn svg{width:16px;height:16px}
 .icon-btn{width:38px;height:38px;padding:0}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
-.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
-.card-h h2{font-family:var(--f-display);font-weight:450;font-size:1.25rem;letter-spacing:-.01em;margin:0}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.card-h h2{font-size:1.12rem;margin:0}
+.card-h .sub{font-size:.84rem;color:var(--muted)}
 .card-b{padding:18px 20px}
-.muted{color:var(--muted)}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap}
 .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
 .pill.ok{background:var(--ok-soft);color:var(--ok)}
 .pill.warn{background:var(--warn-soft);color:var(--warn)}
 .pill.off{background:var(--panel-2);color:var(--muted);border:1px solid var(--line)}
 .pill.hot{background:var(--accent);color:#fff}
 .pill.info{background:var(--accent-soft);color:var(--accent)}
-label.f{display:grid;gap:6px;font-size:.84rem;font-weight:650}
-label.f .muted{font-weight:400}
-.in{width:100%;padding:.7em .9em;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);transition:border-color .2s,box-shadow .2s}
+label.f{display:grid;gap:6px;font-size:.9rem;font-weight:700}
+label.f .muted,.f small{font-weight:400}
+.in{width:100%;font-weight:400;padding:.65em .9em;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);transition:border-color .2s,box-shadow .2s}
 .in:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent)}
 textarea.in{min-height:90px;resize:vertical}
+.in.bad{border-color:var(--bad)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media (max-width:640px){.g2,.g3{grid-template-columns:1fr}}
-.count-hint{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);text-align:right}
-.count-hint.bad{color:var(--accent)}
-.switch{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:.88rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:760px){.g3,.g4{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.count-hint{font-size:.78rem;color:var(--muted);text-align:right}
+.count-hint.bad{color:var(--bad)}
+.switch{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;font-size:.92rem}
 .switch input{position:absolute;opacity:0;width:1px;height:1px}
 .switch i{width:40px;height:22px;border-radius:999px;background:var(--line);position:relative;transition:background .2s;flex:none}
 .switch i::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .switch input:checked + i{background:var(--accent)}
 .switch input:checked + i::after{transform:translateX(18px)}
 .switch input:focus-visible + i{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;padding:.4em .95em;border-radius:999px;font-weight:700;font-size:.9rem;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
 
-/* resumen */
-.hello{position:relative;overflow:hidden;padding:22px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-.hello .display{font-size:clamp(1.4rem,2.4vw,1.9rem)}
-.hello p{margin:6px 0 0;color:var(--muted)}
-.hello .route{position:relative;width:min(340px,100%);height:60px}
-.hello .route svg.trail{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.kpi{padding:18px 20px;display:grid;gap:2px}
-.kpi span{font-size:.8rem;color:var(--muted);font-weight:600}
-.kpi b{font-family:var(--f-display);font-weight:380;font-size:2.6rem;line-height:1.05;letter-spacing:-.02em;color:var(--accent);font-variant-numeric:tabular-nums;font-variation-settings:"SOFT" 100,"WONK" 1}
-.kpi .d{font-size:.78rem;font-weight:700}
-.kpi .d.up{color:var(--ok)} .kpi .d.down{color:var(--accent)}
-.kpi svg{width:100%;height:36px;margin-top:6px}
-@media (max-width:1000px){.kpis{grid-template-columns:1fr 1fr}}
-.dash{display:grid;grid-template-columns:1.4fr 1fr;gap:22px}
-@media (max-width:1000px){.dash{grid-template-columns:1fr}}
+/* resumen: filtros, indicadores y gráficos */
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.src{display:inline-flex;align-items:center;gap:8px;font-size:.86rem;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 8px}
+.src svg{width:18px;height:18px}
+.src b{color:var(--ink);font-weight:700}
+.src .dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.sample{font-size:.8rem;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media (max-width:1050px){.tiles{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.tiles{grid-template-columns:1fr}}
+.tile{padding:16px 18px;display:grid;gap:2px}
+.tile .lab{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);font-weight:700}
+.tile .lab .srcic{width:18px;height:18px;flex:none}
+.tile .lab .srcic svg{width:18px;height:18px;display:block}
+.tile .val{font-size:2.2rem;font-weight:700;line-height:1.1;letter-spacing:-.01em}
+.tile .delta{font-size:.84rem;font-weight:700}
+.tile .delta.good{color:var(--ok)} .tile .delta.badd{color:var(--bad)}
+.tile .delta span{color:var(--muted);font-weight:400}
+.spark{position:relative;height:34px;margin-top:6px}
+.spark svg{width:100%;height:100%;display:block;overflow:visible}
+.spark i{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--chart);box-shadow:0 0 0 2px var(--surface-ring);transform:translate(-50%,-50%)}
+.charts{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:22px}
+@media (max-width:1050px){.charts{grid-template-columns:minmax(0,1fr)}}
+.chart{position:relative;padding:8px 16px 6px}
+.chart svg{display:block;width:100%;overflow:visible}
+.chart text{fill:var(--muted);font-size:12px;font-family:var(--f)}
+.chart .grid line{stroke:var(--grid);stroke-width:1}
+.chart .base{stroke:var(--line);stroke-width:1}
+.chart .hair{stroke:var(--muted);stroke-width:1;opacity:0}
+.chart .hot{opacity:0}
+.chart.hover .hair,.chart.hover .hot{opacity:1}
+.chart .endlabel{fill:var(--ink);font-weight:700;font-size:13px}
+.datatbl summary{cursor:pointer;font-size:.86rem;color:var(--muted);padding:6px 16px 14px;list-style:none}
+.datatbl summary::-webkit-details-marker{display:none}
+.datatbl summary::before{content:"▸ ";color:var(--accent)}
+.datatbl[open] summary::before{content:"▾ "}
+.datatbl .tbl-wrap{max-height:220px;overflow:auto;margin:0 16px 16px;border:1px solid var(--line);border-radius:10px}
+.bars{list-style:none;margin:0;padding:10px 20px 18px;display:grid;gap:14px}
+.bars li{display:grid;gap:6px;cursor:default}
+.bars .top-row{display:flex;justify-content:space-between;gap:10px;font-size:.92rem}
+.bars .top-row span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bars .track{height:14px;position:relative}
+.bars .bar{height:100%;background:var(--chart);border-radius:0 4px 4px 0;transition:filter .2s}
+.bars li:hover .bar,.bars li:focus-visible .bar{filter:brightness(1.12)}
+.qbar{display:inline-block;height:8px;background:var(--chart);border-radius:0 4px 4px 0;vertical-align:middle;margin-right:8px}
+.tip{position:fixed;z-index:70;pointer-events:none;background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:0 12px 30px -12px rgba(0,0,0,.35);border-radius:10px;padding:8px 12px;font-size:.86rem;opacity:0;transition:opacity .12s;min-width:130px}
+.tip.on{opacity:1}
+.tip b{display:block;font-size:1.05rem}
+.tip .k{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.tip .k::before{content:"";width:12px;height:2px;background:var(--chart);border-radius:2px}
+.dash{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:22px}
+@media (max-width:1050px){.dash{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.seg .lg{display:none}}
 .list{list-style:none;margin:0;padding:0}
-.list li{display:flex;gap:12px;align-items:center;padding:13px 20px;border-top:1px solid var(--line)}
+.list li{display:flex;gap:12px;align-items:center;padding:12px 20px;border-top:1px solid var(--line)}
 .list li:first-child{border-top:0}
 .list .grow{flex:1;min-width:0}
-.list .t{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.list .s{font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.log li{font-size:.86rem}
-.log .when{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);white-space:nowrap}
+.list .t{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list .s{font-size:.86rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log li{font-size:.92rem}
+.log .when{font-size:.8rem;color:var(--muted);white-space:nowrap}
 
 /* tablas */
 .tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:.9rem}
-th{text-align:left;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}
-td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:.94rem}
+th{text-align:left;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--panel)}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
 tr:last-child td{border-bottom:0}
 tbody tr:hover{background:var(--panel-2)}
-.thumb{width:62px;height:46px;flex:none;border:3px solid #fff;border-radius:2px;box-shadow:0 2px 8px rgba(28,34,48,.25);overflow:hidden;transform:rotate(-2deg)}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+.thumb{width:62px;height:46px;flex:none;border:3px solid #fff;border-radius:2px;box-shadow:0 2px 8px rgba(28,34,48,.25);overflow:hidden;transform:rotate(-2deg);background:var(--panel-2)}
 tbody tr:nth-child(even) .thumb{transform:rotate(1.6deg)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.pk-name{display:flex;gap:14px;align-items:center;min-width:230px}
-.pk-name b{display:block;font-family:var(--f-display);font-weight:450;font-size:1.05rem;letter-spacing:-.01em}
+.pk-name{display:flex;gap:14px;align-items:center;min-width:240px}
+.pk-name b{display:block;font-size:1.02rem}
 .pk-name small{color:var(--muted)}
-.price-in{display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:10px;padding:0 9px;background:var(--panel-2);width:130px}
-.price-in span{font-family:var(--f-mono);font-size:.74rem;color:var(--muted)}
-.price-in input{border:0;background:transparent;width:100%;padding:.45em 0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;outline:none}
+.price-in{display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:10px;padding:0 9px;background:var(--panel-2);width:138px}
+.price-in span{font-size:.8rem;color:var(--muted);font-weight:700}
+.price-in input{border:0;background:transparent;width:100%;padding:.42em 0;font-variant-numeric:tabular-nums;outline:none}
 .price-in:focus-within{border-color:var(--accent)}
 .price-in.saved{border-color:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 20%,transparent)}
-.ars{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);margin-top:3px}
-.star{background:none;border:0;cursor:pointer;font-size:1.15rem;color:var(--line);padding:4px}
+.ars{font-size:.76rem;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
+.star{background:none;border:0;cursor:pointer;font-size:1.2rem;color:var(--line);padding:4px}
 .star[aria-pressed="true"]{color:var(--accent)}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
 .toolbar .in{width:auto;min-width:0}
 .toolbar .search{flex:1;min-width:180px}
+.lbl{display:inline-block;font-size:.76rem;font-weight:700;padding:2px 8px;border-radius:4px;color:#fff;margin-left:6px;vertical-align:middle}
 
-/* panel lateral de edición y diálogos */
+/* editor lateral y diálogos */
 .scrim{position:fixed;inset:0;background:rgba(28,34,48,.4);z-index:40;opacity:0;pointer-events:none;transition:opacity .25s}
 .scrim.on{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(660px,100%);background:var(--panel);z-index:41;transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
-.drawer::before{content:"";height:8px;background:var(--stripe);flex:none}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(720px,100%);background:var(--panel);z-index:41;transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
 .drawer.on{transform:none;box-shadow:-20px 0 60px -20px rgba(0,0,0,.35)}
 .drawer-h{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line)}
-.drawer-h h2{margin:0;font-family:var(--f-display);font-weight:450;font-size:1.5rem;flex:1;letter-spacing:-.01em}
-.tabs{display:flex;gap:4px;padding:8px 22px 0;border-bottom:1px solid var(--line);overflow-x:auto}
-.tabs button{border:0;background:none;padding:10px 12px;cursor:pointer;font-weight:650;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.drawer-h h2{margin:0;font-size:1.35rem;flex:1}
+.tabs{display:flex;gap:2px;padding:6px 16px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{border:0;background:none;padding:10px 12px;cursor:pointer;font-weight:700;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
 .tabs button[aria-selected="true"]{color:var(--accent);border-color:var(--accent)}
 .drawer-b{flex:1;overflow:auto;padding:22px;display:grid;gap:16px;align-content:start}
 .drawer-f{display:flex;gap:10px;justify-content:flex-end;padding:14px 22px;border-top:1px solid var(--line);background:var(--panel-2)}
+.pane{display:grid;gap:16px}
+.help{font-size:.86rem;color:var(--muted);margin:0}
 .drop{border:2px dashed color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:14px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;color:var(--muted)}
 .drop b{color:var(--ink)}
 .drop.over{border-color:var(--accent);background:var(--accent-soft)}
-.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
 .photos figure{margin:0;position:relative;aspect-ratio:4/3;background:#fff;padding:4px;box-shadow:0 2px 8px rgba(28,34,48,.2)}
 .photos img{width:100%;height:100%;object-fit:cover}
-.photos figcaption{position:absolute;left:8px;top:8px;font-size:.66rem;font-weight:800;background:var(--accent);color:#fff;padding:2px 6px;border-radius:4px}
-.photos button{position:absolute;right:8px;top:8px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;cursor:pointer}
+.photos figcaption{position:absolute;left:8px;top:8px;font-size:.72rem;font-weight:700;background:var(--accent);color:#fff;padding:2px 6px;border-radius:4px}
+.photos .x{position:absolute;right:8px;top:8px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;cursor:pointer}
+.photos .cover{position:absolute;left:8px;bottom:8px;border:0;background:rgba(255,255,255,.9);color:#1c2230;font-size:.72rem;font-weight:700;border-radius:4px;padding:2px 6px;cursor:pointer}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chips span{display:inline-flex;gap:6px;align-items:center;font-family:var(--f-mono);font-size:.78rem;padding:4px 6px 4px 10px;border-radius:8px;background:var(--accent-soft);color:var(--accent)}
-.chips button{border:0;background:none;cursor:pointer;color:inherit;font-size:.9rem;padding:0 2px}
+.chips span{display:inline-flex;gap:6px;align-items:center;font-size:.86rem;padding:4px 6px 4px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:700}
+.chips.neutral span{background:var(--panel-2);color:var(--ink);border:1px solid var(--line)}
+.chips button{border:0;background:none;cursor:pointer;color:inherit;font-size:.9rem;padding:0 4px}
+.adder{display:flex;gap:8px}
+.adder .in{flex:1}
+.days{display:grid;gap:10px;counter-reset:dia}
+.day{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2)}
+.day .n{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.86rem}
+.day .fields{display:grid;gap:8px}
+.swatches{display:flex;gap:8px}
+.swatches label{width:30px;height:30px;border-radius:50%;cursor:pointer;display:grid;place-items:center;position:relative}
+.swatches input{position:absolute;opacity:0}
+.swatches label:has(input:checked){box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--ink)}
 .serp{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--panel-2);font-family:Arial,sans-serif}
 .serp .u{font-size:.8rem;color:var(--muted)}
 .serp .t{color:#1a0dab;font-size:1.15rem;margin:2px 0;line-height:1.3}
 :root[data-theme="dark"] .serp .t{color:#8ab4f8}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .serp .t{color:#8ab4f8}}
 .serp .d{font-size:.86rem;color:var(--muted)}
 .radio-row{display:flex;gap:8px;flex-wrap:wrap}
-.radio-row label{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:.88rem}
+.radio-row label{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;font-weight:700;font-size:.92rem}
 .radio-row label:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
 .radio-row input{accent-color:var(--accent)}
-dialog{border:0;border-radius:18px;padding:0;background:var(--panel);color:var(--ink);width:min(580px,calc(100% - 32px));box-shadow:0 30px 80px -20px rgba(0,0,0,.5);overflow:hidden}
-dialog::before{content:"";display:block;height:8px;background:var(--stripe)}
+.preview-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+dialog{border:0;border-radius:18px;padding:0;background:var(--panel);color:var(--ink);width:min(580px,calc(100% - 32px));box-shadow:0 30px 80px -20px rgba(0,0,0,.5)}
 dialog::backdrop{background:rgba(28,34,48,.45)}
 .dlg-b{padding:20px;display:grid;gap:14px}
 .dlg-h{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
-.dlg-h h2{margin:0;font-family:var(--f-display);font-weight:450;font-size:1.35rem}
-.diff td{font-family:var(--f-mono);font-size:.84rem}
-.diff .up{color:var(--ok);font-weight:600}
+.dlg-h h2{margin:0;font-size:1.25rem}
+.diff td{font-variant-numeric:tabular-nums}
+.diff .up{color:var(--ok);font-weight:700}
 
-/* ofertas: tarjetas de embarque */
+/* ofertas */
 .offers{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:18px}
-.offer{display:grid;gap:14px;padding:0;overflow:hidden}
-.offer-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px dashed var(--line);font-family:var(--f-mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
-.offer-route{display:flex;align-items:center;gap:12px;padding:0 18px}
-.offer-route b{font-family:var(--f-display);font-weight:400;font-size:2.2rem;line-height:.9;letter-spacing:.02em}
-.offer-route small{display:block;font-size:.72rem;color:var(--muted)}
+.offer{display:grid;overflow:hidden}
+.offer-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px dashed var(--line);font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.offer-route{display:flex;align-items:center;gap:12px;padding:14px 18px 6px}
+.offer-route b{font-size:2.1rem;line-height:.9;letter-spacing:.02em}
+.offer-route small{display:block;font-size:.78rem;color:var(--muted)}
 .offer-route .line{flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--accent) 0 6px,transparent 6px 11px);position:relative}
 .offer-route .line svg{position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;fill:var(--panel);stroke:var(--accent);stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}
-.offer h3{margin:0;padding:0 18px;font-family:var(--f-display);font-weight:450;font-size:1.25rem}
-.offer .sub{padding:0 18px;margin-top:-10px;font-size:.84rem;color:var(--muted)}
-.offer .body{display:grid;gap:12px;padding:0 18px}
-.offer .big{font-family:var(--f-mono);font-size:1.5rem;font-weight:500;color:var(--accent)}
-.offer .cd{font-family:var(--f-mono);font-size:.84rem;color:var(--accent);font-weight:500}
+.offer h3{margin:6px 18px 0;font-size:1.15rem}
+.offer .sub{margin:2px 18px 0;font-size:.88rem;color:var(--muted)}
+.offer .prices{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px;margin:10px 18px 14px}
+.offer .prices s,.offer .big{white-space:nowrap}
+.offer .big{font-size:1.6rem;font-weight:700;color:var(--accent)}
+.offer .meta{display:flex;gap:6px 16px;flex-wrap:wrap;margin:0 18px 14px;font-size:.86rem;color:var(--muted)}
 .offer .stub{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;background:var(--accent-soft);border-top:2px dashed var(--line)}
 
 /* consultas */
-.inbox{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:0}
+.inbox{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}
 .inbox .list li{cursor:pointer}
 .inbox .list li[aria-selected="true"]{background:var(--accent-soft)}
 .inbox .detail{border-left:1px solid var(--line);padding:22px;display:grid;gap:14px;align-content:start}
-.inbox .detail h2{font-family:var(--f-display);font-weight:450}
 .dot-new{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none}
 @media (max-width:900px){.inbox{grid-template-columns:1fr}.inbox .detail{border-left:0;border-top:1px solid var(--line)}}
 
-/* textos */
-.preview-hero{position:relative;border-radius:14px;overflow:hidden;color:#fff;padding:26px;min-height:240px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;background:#0c1320 center/cover no-repeat}
-.preview-hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,14,24,.6),rgba(10,14,24,.15))}
-.preview-hero::after{content:"";position:absolute;left:-5%;right:-5%;bottom:-30px;height:50px;background:var(--panel);border-radius:50% 50% 0 0}
-.preview-hero > *{position:relative;z-index:1}
-.preview-hero h3{font-family:var(--f-display);font-weight:380;font-size:2.1rem;line-height:.95;margin:0;letter-spacing:-.02em;font-variation-settings:"SOFT" 100,"WONK" 1}
-.preview-hero h3 em{display:block;color:#ffe2b0;font-weight:300}
-.preview-hero p{margin:0 0 22px;font-size:.9rem;opacity:.94;max-width:44ch}
+/* configuración */
+.logo-box{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.logo-prev{width:220px;height:110px;border:1px dashed var(--line);border-radius:12px;display:grid;place-items:center;background:var(--panel-2);padding:10px}
+.logo-prev img{max-width:100%;max-height:100%;object-fit:contain}
+.logo-prev svg{width:64px;height:64px}
+.integ{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.integ:first-child{border-top:0;padding-top:0}
+.integ .ic{width:42px;height:42px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;background:var(--panel)}
+.integ .ic svg{width:24px;height:24px}
+.integ b{display:block}
+.integ small{color:var(--muted)}
 
-/* seguridad */
-.sec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px}
-.sec-item{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2)}
-.sec-item b{display:block;font-size:.9rem}
-.sec-item small{color:var(--muted)}
-.sec-item .ic{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--ok-soft);color:var(--ok);flex:none;font-weight:800}
-.access{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start}
-.access .ic{width:44px;height:44px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
-.access .ic svg{width:22px;height:22px}
-.access code{font-family:var(--f-mono);background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:.84rem}
-
-.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:999px;z-index:60;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;font-weight:650;max-width:calc(100% - 32px)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:var(--panel);padding:12px 18px;border-radius:999px;z-index:60;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;font-weight:700;max-width:calc(100% - 32px)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .empty{padding:30px;text-align:center;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <filter id="sketch" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.2"/></filter>
@@ -320,67 +368,72 @@ dialog::backdrop{background:rgba(28,34,48,.45)}
 
 <!-- ACCESO (dirección privada, no enlazada desde el sitio) -->
 <section class="login" id="login" aria-labelledby="lg-t">
-  <div class="login-art" id="loginArt">
-    <div class="brandline"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="13" r="6.5" fill="#d62839"/><path d="M2 20c3.5 0 3.5-2.4 7-2.4s3.5 2.4 7 2.4 3.5-2.4 7-2.4 3.5 2.4 7 2.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M2 25.5c3.5 0 3.5-2.4 7-2.4s3.5 2.4 7 2.4 3.5-2.4 7-2.4 3.5 2.4 7 2.4" fill="none" stroke="currentColor" opacity=".55" stroke-width="2.2" stroke-linecap="round"/></svg><span id="loginBrand">Arrecife Viajes</span></div>
-    <div>
-      <h1>Actualizá tu web <em>en dos minutos.</em></h1>
-      <p>Paquetes, precios, ofertas y consultas en un solo lugar. Sin llamar a nadie.</p>
-    </div>
-    <div class="login-edge" aria-hidden="true"><svg viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M70 0 H40 Q-10 50 40 100 H70 Z" fill="var(--panel)"/><path d="M34 -2 Q-18 50 34 102" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="6 7" vector-effect="non-scaling-stroke"/></svg></div>
+  <div class="login-brand">
+    <span class="dd" style="left:10%;top:12%;width:74px;height:74px;--r:-12deg"><svg viewBox="0 0 64 64"><use href="#d-plane"/></svg></span>
+    <span class="dd" style="left:74%;top:14%;width:62px;height:62px;--r:10deg"><svg viewBox="0 0 64 64"><use href="#d-map"/></svg></span>
+    <span class="dd" style="left:12%;top:72%;width:66px;height:66px;--r:8deg"><svg viewBox="0 0 64 64"><use href="#d-suitcase"/></svg></span>
+    <span class="dd" style="left:72%;top:74%;width:56px;height:56px;--r:-10deg"><svg viewBox="0 0 64 64"><use href="#d-compass"/></svg></span>
+    <span class="dd" style="left:44%;top:86%;width:44px;height:44px;--r:4deg;--o:.16"><svg viewBox="0 0 64 64"><use href="#d-passport"/></svg></span>
+    <div class="login-logo" id="loginLogo"></div>
+    <span class="login-sep" aria-hidden="true"><svg viewBox="0 0 64 64"><use href="#d-plane"/></svg></span>
   </div>
   <div class="login-box">
-    <span class="dd" style="left:8%;top:10%;width:70px;height:70px;--r:-12deg;--o:0.24"><svg viewBox="0 0 64 64"><use href="#d-plane"/></svg></span><span class="dd" style="left:78%;top:8%;width:64px;height:64px;--r:10deg;--o:0.24"><svg viewBox="0 0 64 64"><use href="#d-map"/></svg></span><span class="dd" style="left:82%;top:70%;width:70px;height:70px;--r:-8deg;--o:0.24"><svg viewBox="0 0 64 64"><use href="#d-suitcase"/></svg></span><span class="dd" style="left:6%;top:74%;width:58px;height:58px;--r:14deg;--o:0.24"><svg viewBox="0 0 64 64"><use href="#d-compass"/></svg></span><span class="dd" style="left:60%;top:88%;width:46px;height:46px;--r:-6deg;--o:0.18"><svg viewBox="0 0 64 64"><use href="#d-passport"/></svg></span>
+    <span class="dd" style="left:84%;top:8%;width:52px;height:52px;--r:12deg;--o:.16"><svg viewBox="0 0 64 64"><use href="#d-globe"/></svg></span>
+    <span class="dd" style="left:6%;top:86%;width:50px;height:50px;--r:-8deg;--o:.16"><svg viewBox="0 0 64 64"><use href="#d-ticket"/></svg></span>
     <form class="login-form" id="loginForm" novalidate>
       <p class="eyebrow">Acceso privado</p>
-      <h2 class="display" id="lg-t">Ingresar al <em>panel</em></h2>
-      <p class="hint">Boceto: escribí cualquier email, una contraseña de 8 caracteres o más y cualquier código de 6 dígitos.</p>
+      <h1 id="lg-t">Ingresar al <em>panel</em></h1>
+      <p class="hint">Boceto: cualquier email y una contraseña que cumpla las reglas. Ya viene una cargada de ejemplo.</p>
       <label class="f" for="lg-email">Email<input class="in" id="lg-email" type="email" autocomplete="username" value="maria@arrecifeviajes.com.ar" required></label>
-      <label class="f" for="lg-pass">Contraseña<input class="in" id="lg-pass" type="password" autocomplete="current-password" value="demo-demo-demo" required></label>
-      <fieldset style="border:0;padding:0;margin:0;display:grid;gap:6px">
-        <legend style="font-size:.84rem;font-weight:650;padding:0;margin-bottom:6px">Código de verificación (app autenticadora)</legend>
-        <div class="otp" id="otp">
-          <input class="in" id="otp1" inputmode="numeric" maxlength="1" aria-label="Dígito 1" value="4"><input class="in" id="otp2" inputmode="numeric" maxlength="1" aria-label="Dígito 2" value="8"><input class="in" id="otp3" inputmode="numeric" maxlength="1" aria-label="Dígito 3" value="1"><input class="in" id="otp4" inputmode="numeric" maxlength="1" aria-label="Dígito 4" value="0"><input class="in" id="otp5" inputmode="numeric" maxlength="1" aria-label="Dígito 5" value="2"><input class="in" id="otp6" inputmode="numeric" maxlength="1" aria-label="Dígito 6" value="7">
-        </div>
-      </fieldset>
-      <button class="btn pri" type="submit" style="padding:.85em">Ingresar al panel</button>
-      <div class="sec-list"><span>Verificación en dos pasos obligatoria</span><span>Bloqueo temporal tras 5 intentos fallidos</span><span>Sesión cifrada que expira a las 8 h</span></div>
-      <span class="private"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Esta dirección no aparece en el sitio ni en Google</span>
+      <label class="f" for="lg-pass">Contraseña
+        <span class="pass-wrap"><input class="in" id="lg-pass" type="password" autocomplete="current-password" value="Arrecife2026!" required aria-describedby="rules"><button type="button" id="showPass" aria-controls="lg-pass">Mostrar</button></span>
+      </label>
+      <ul class="rules" id="rules" aria-live="polite">
+        <li data-r="len">8 caracteres o más</li>
+        <li data-r="up">Una mayúscula</li>
+        <li data-r="num">Un número</li>
+        <li data-r="sym">Un símbolo (!@#$…)</li>
+      </ul>
+      <button class="btn pri" type="submit" style="padding:.8em">Ingresar al panel</button>
+      <div class="sec-list"><span>Bloqueo temporal tras 5 intentos fallidos</span><span>La sesión se cierra sola después de 8 horas</span></div>
     </form>
   </div>
 </section>
 
 <div class="app" id="app" hidden>
   <aside class="side" id="side" aria-label="Menú del panel">
-    <div class="stripe" aria-hidden="true"></div>
-    <div class="side-in">
-    <div class="brand"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="13" r="6.5" fill="#d62839"/><path d="M2 20c3.5 0 3.5-2.4 7-2.4s3.5 2.4 7 2.4 3.5-2.4 7-2.4 3.5 2.4 7 2.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M2 25.5c3.5 0 3.5-2.4 7-2.4s3.5 2.4 7 2.4 3.5-2.4 7-2.4 3.5 2.4 7 2.4" fill="none" stroke="currentColor" opacity=".55" stroke-width="2.2" stroke-linecap="round"/></svg><div><span id="sideName">Arrecife Viajes</span><small>Panel de gestión</small></div></div>
+    <div class="mark" id="sideMark"></div>
     <nav id="sideNav">
       <button data-view="resumen" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Resumen</button>
       <div class="grp">Contenido</div>
       <button data-view="paquetes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18v13H3zM8 7V4h8v3"/></svg>Paquetes</button>
       <button data-view="ofertas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Ofertas</button>
-      <button data-view="textos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h13"/></svg>Textos de la web</button>
       <div class="grp">Clientes</div>
       <button data-view="consultas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/></svg>Consultas<span class="badge" id="newBadge">0</span></button>
       <div class="grp">Agencia</div>
       <button data-view="config"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21 10h.1a2 2 0 1 1 0 4z"/></svg>Configuración</button>
-      <button data-view="usuarios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>Usuarios y seguridad</button>
+      <button data-view="usuarios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2 .7 3.2 2.5 3.5 5.2"/></svg>Usuarios</button>
     </nav>
     <div class="side-foot">
-      <div class="side-doodles" aria-hidden="true"><span class="dd" style="left:4%;top:10%;width:60px;height:60px;--r:-10deg;--o:0.24"><svg viewBox="0 0 64 64"><use href="#d-plane"/></svg></span><span class="dd" style="left:58%;top:0%;width:52px;height:52px;--r:8deg;--o:0.2"><svg viewBox="0 0 64 64"><use href="#d-map"/></svg></span><span class="dd" style="left:30%;top:40%;width:70px;height:70px;--r:0deg;--o:0.28"><svg viewBox="0 0 64 64"><use href="#d-loop"/></svg></span></div>
+      <div class="side-doodles" aria-hidden="true">
+        <span class="dd" style="left:4%;top:12%;width:56px;height:56px;--r:-10deg"><svg viewBox="0 0 64 64"><use href="#d-plane"/></svg></span>
+        <span class="dd" style="left:60%;top:0;width:48px;height:48px;--r:8deg;--o:.2"><svg viewBox="0 0 64 64"><use href="#d-map"/></svg></span>
+        <span class="dd" style="left:30%;top:42%;width:64px;height:64px;--r:0deg;--o:.26"><svg viewBox="0 0 64 64"><use href="#d-loop"/></svg></span>
+      </div>
       <a class="btn" id="siteLink" href="../index.html" target="_blank" rel="noopener">Ver la web ↗</a>
       <div class="me"><span class="av">M</span><div>María Gómez<small>Administradora</small></div></div>
-    </div>
     </div>
   </aside>
 
   <div class="main">
     <header class="top">
       <button class="btn icon-btn menu-btn" id="menuBtn" aria-label="Abrir menú"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-      <div><p class="eyebrow" id="viewEyebrow">Panel</p><h1 class="display" id="viewTitle">Resumen</h1></div>
+      <div><p class="eyebrow" id="viewEyebrow">Panel</p><h1 id="viewTitle">Resumen</h1></div>
       <span class="sp"></span>
-      <div class="tools"><button class="btn icon-btn" id="themeBtn" aria-label="Cambiar tema claro u oscuro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
-      <button class="btn" id="logout">Salir</button></div>
+      <div class="tools">
+        <button class="btn icon-btn" id="themeBtn" aria-label="Cambiar a modo oscuro" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+        <button class="btn" id="logout">Salir</button>
+      </div>
     </header>
     <div class="content" id="view"></div>
   </div>
@@ -390,6 +443,7 @@ dialog::backdrop{background:rgba(28,34,48,.45)}
 <aside class="drawer" id="drawer" aria-labelledby="dr-t" aria-hidden="true"></aside>
 <dialog id="bulk" aria-labelledby="bk-t"></dialog>
 <dialog id="confirm" aria-labelledby="cf-t"></dialog>
+<div class="tip" id="tip" role="tooltip"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -398,33 +452,43 @@ dialog::backdrop{background:rgba(28,34,48,.45)}
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const nf = new Intl.NumberFormat('es-AR');
+const nf1 = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const KEY = 'arrecife-demo-v1';
 const BASE = '../';
 const SITE_URL = '../index.html';
-const src = f => /^(data:|https?:|blob:|\/)/.test(f) ? f : BASE + f;
-const IATA = { puntacana: 'PUJ', maldivas: 'MLE', borabora: 'BOB', tulum: 'TQO', noronha: 'FEN', aruba: 'AUA', bali: 'DPS', morro: 'SSA' };
-const iata = p => p.iata || IATA[p.escena] || (p.destino || 'XXX').normalize('NFD').replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase();
-const PLANE = '<svg viewBox="0 0 64 64" aria-hidden="true"><use href="#d-plane"/></svg>';
 const DAY = 864e5;
+const src = f => /^(data:|https?:|blob:|\/)/.test(f) ? f : BASE + f;
 const ago = h => new Date(Date.now() - h * 36e5).toISOString();
+const rng = a => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const IATA = { puntacana: 'PUJ', maldivas: 'MLE', borabora: 'BOB', tulum: 'TQO', noronha: 'FEN', aruba: 'AUA', bali: 'DPS', morro: 'SSA' };
+const iata = p => (p.iata || IATA[p.escena] || (p.destino || 'XXX').normalize('NFD').replace(/[^A-Za-z]/g, '').slice(0, 3)).toUpperCase();
+const PLANE = '<svg viewBox="0 0 64 64" aria-hidden="true"><use href="#d-plane"/></svg>';
+const G_LOGO = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9h12.4c-.5 2.9-2.2 5.4-4.7 7.1l7.6 5.9c4.4-4.1 6.8-10.1 6.8-17.4z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
+const GA_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="16" y="3" width="5" height="18" rx="2.5" fill="#F9AB00"/><rect x="9.5" y="9" width="5" height="12" rx="2.5" fill="#E37400"/><circle cx="5.5" cy="18.5" r="2.5" fill="#E37400"/></svg>';
+const SC_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#4285F4" stroke-width="2.4"/><path d="M15 15l5.5 5.5" stroke="#34A853" stroke-width="2.6" stroke-linecap="round"/><path d="M7 11.5l2-2.5 2 1.5 2.2-3" fill="none" stroke="#EA4335" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* ---------- datos (compartidos con la web en este navegador) ---------- */
+const INCLUYE = ['Aéreo ida y vuelta', 'Traslados aeropuerto - hotel', 'Asistencia al viajero', 'Impuestos y tasas'];
 const SEED = {
-  agencia: { nombre: 'Arrecife Viajes', direccion: 'José Hernández 110', ciudad: 'Villa Carlos Paz', provincia: 'Córdoba', cp: 'X5152', telefono: '+54 3541 00-0000', whatsapp: '5493541000000', email: 'hola@arrecifeviajes.com.ar', legajo: '00000', cuit: '30-00000000-0', horario: 'Lun a Vie 9 a 13 y 16 a 20 h · Sáb 9:30 a 13 h' },
+  agencia: { nombre: 'Arrecife Viajes', direccion: 'José Hernández 110', ciudad: 'Villa Carlos Paz', provincia: 'Córdoba', cp: 'X5152', telefono: '+54 3541 00-0000', whatsapp: '5493541000000', email: 'hola@arrecifeviajes.com.ar', legajo: '00000', cuit: '30-00000000-0', horario: 'Lun a Vie 9 a 13 y 16 a 20 h · Sáb 9:30 a 13 h', logo: '' },
   cotizacion: 1450,
+  integraciones: { ga: { conectado: true, id: 'G-7Q2R4XK1LM' }, sc: { conectado: true, id: 'sc-domain:arrecifeviajes.com.ar' } },
   textos: { heroLinea1: 'El paraíso tiene', heroLinea2: 'fecha de salida.', heroBajada: 'Paquetes al Caribe, Brasil y las islas más lindas del mundo, con salida desde Córdoba y alguien que te atiende de verdad.' },
   paquetes: [
-    { id: 'punta-cana', nombre: 'Punta Cana all inclusive', destino: 'Punta Cana', pais: 'República Dominicana', region: 'caribe', noches: 7, precio: 1890, regimen: 'All inclusive', salidas: ['2026-11-14', '2026-12-05', '2027-01-16'], estado: 'publicado', destacado: true, etiqueta: 'Más vendido', escena: 'puntacana', foto: 'media/fotos/puntacana.jpg', coord: '18°34′N 68°24′O', cupos: 12, resumen: 'Resort frente al mar en Bávaro, traslados y asistencia al viajero incluidos.' },
-    { id: 'maldivas', nombre: 'Maldivas, villa sobre el agua', destino: 'Maldivas', pais: 'Océano Índico', region: 'asia', noches: 9, precio: 5490, regimen: 'Media pensión', salidas: ['2026-11-20', '2027-02-11'], estado: 'publicado', destacado: true, etiqueta: 'Luna de miel', escena: 'maldivas', foto: 'media/fotos/maldivas.jpg', coord: '3°12′N 73°13′E', cupos: 4, resumen: 'Hidroavión desde Malé y villa con escalera directa a la laguna.' },
-    { id: 'bora-bora', nombre: 'Bora Bora y Tahití', destino: 'Bora Bora', pais: 'Polinesia Francesa', region: 'oceania', noches: 10, precio: 6890, regimen: 'Desayuno', salidas: ['2027-03-08'], estado: 'publicado', destacado: false, etiqueta: '', escena: 'borabora', foto: 'media/fotos/borabora.jpg', coord: '16°30′S 151°44′O', cupos: 6, resumen: 'Cuatro noches en Papeete y seis frente al monte Otemanu.' },
-    { id: 'tulum', nombre: 'Tulum y Riviera Maya', destino: 'Tulum', pais: 'México', region: 'caribe', noches: 8, precio: 1690, regimen: 'All inclusive', salidas: ['2026-10-18', '2026-11-08', '2026-12-12'], estado: 'publicado', destacado: true, etiqueta: 'Oferta', escena: 'tulum', foto: 'media/fotos/tulum.jpg', coord: '20°13′N 87°28′O', cupos: 9, resumen: 'Ruinas mayas sobre el acantilado, cenotes y playas de arena blanca.' },
-    { id: 'noronha', nombre: 'Fernando de Noronha', destino: 'Fernando de Noronha', pais: 'Brasil', region: 'brasil', noches: 6, precio: 2150, regimen: 'Desayuno', salidas: ['2026-11-02', '2027-01-09'], estado: 'publicado', destacado: false, etiqueta: 'Últimos lugares', escena: 'noronha', foto: 'media/fotos/noronha.jpg', coord: '3°51′S 32°25′O', cupos: 3, resumen: 'Pousada con vista al Morro Dois Irmãos y buceo con tortugas.' },
-    { id: 'aruba', nombre: 'Aruba, playa Eagle', destino: 'Aruba', pais: 'Caribe neerlandés', region: 'caribe', noches: 7, precio: 2290, regimen: 'All inclusive', salidas: ['2026-12-19', '2027-02-06'], estado: 'publicado', destacado: false, etiqueta: '', escena: 'aruba', foto: 'media/fotos/aruba.jpg', coord: '12°33′N 70°03′O', cupos: 10, resumen: 'Arena blanca, agua calma y el famoso árbol divi-divi torcido por el viento.' },
-    { id: 'bali', nombre: 'Bali, templos y playas', destino: 'Bali', pais: 'Indonesia', region: 'asia', noches: 12, precio: 3190, regimen: 'Desayuno', salidas: ['2027-04-10'], estado: 'publicado', destacado: false, etiqueta: '', escena: 'bali', foto: 'media/fotos/bali.jpg', coord: '8°20′S 115°05′E', cupos: 7, resumen: 'Ubud, los arrozales de Tegallalang y atardeceres en Uluwatu.' },
-    { id: 'morro', nombre: 'Morro de São Paulo', destino: 'Morro de São Paulo', pais: 'Bahía, Brasil', region: 'brasil', noches: 7, precio: 1190, regimen: 'Desayuno', salidas: ['2026-12-27', '2027-01-23', '2027-02-13'], estado: 'publicado', destacado: false, etiqueta: 'Ideal familias', escena: 'morro', foto: 'media/fotos/morro.jpg', coord: '13°23′S 38°55′O', cupos: 14, resumen: 'Pueblo sin autos, piscinas naturales y el faro sobre el morro.' }
+    { id: 'punta-cana', nombre: 'Punta Cana all inclusive', destino: 'Punta Cana', pais: 'República Dominicana', region: 'caribe', tipo: 'Playa', noches: 7, precio: 1890, precioSingle: 2690, precioTriple: 1790, precioMenor: 990, moneda: 'USD', cuotas: 12, sena: 20, regimen: 'All inclusive', transporte: 'Aéreo', salidaDesde: 'Córdoba', hotel: 'Bávaro Palace Resort', estrellas: 5, salidas: ['2026-11-14', '2026-12-05', '2027-01-16'], estado: 'publicado', destacado: true, etiqueta: 'Más vendido', etiquetaColor: 'amarillo', escena: 'puntacana', foto: 'media/fotos/puntacana.jpg', coord: '18°34′N 68°24′O', cupos: 12, resumen: 'Resort frente al mar en Bávaro, traslados y asistencia al viajero incluidos.', incluye: ['Aéreo ida y vuelta desde Córdoba', 'Traslados aeropuerto - hotel', '7 noches all inclusive', 'Asistencia al viajero'], noIncluye: ['Excursiones opcionales', 'Propinas'], itinerario: [{ t: 'Córdoba - Punta Cana', d: 'Vuelo directo y traslado al hotel.' }, { t: 'Días libres en la playa', d: 'All inclusive en el resort.' }, { t: 'Regreso', d: 'Traslado al aeropuerto y vuelo a Córdoba.' }] },
+    { id: 'maldivas', nombre: 'Maldivas, villa sobre el agua', destino: 'Maldivas', pais: 'Océano Índico', region: 'asia', tipo: 'Luna de miel', noches: 9, precio: 5490, moneda: 'USD', cuotas: 6, regimen: 'Media pensión', transporte: 'Aéreo', salidaDesde: 'Buenos Aires', salidas: ['2026-11-20', '2027-02-11'], estado: 'publicado', destacado: true, etiqueta: 'Luna de miel', etiquetaColor: 'rojo', escena: 'maldivas', foto: 'media/fotos/maldivas.jpg', coord: '3°12′N 73°13′E', cupos: 4, resumen: 'Hidroavión desde Malé y villa con escalera directa a la laguna.' },
+    { id: 'bora-bora', nombre: 'Bora Bora y Tahití', destino: 'Bora Bora', pais: 'Polinesia Francesa', region: 'oceania', tipo: 'Luna de miel', noches: 10, precio: 6890, moneda: 'USD', regimen: 'Desayuno', transporte: 'Aéreo', salidaDesde: 'Buenos Aires', salidas: ['2027-03-08'], estado: 'publicado', destacado: false, etiqueta: '', escena: 'borabora', foto: 'media/fotos/borabora.jpg', coord: '16°30′S 151°44′O', cupos: 6, resumen: 'Cuatro noches en Papeete y seis frente al monte Otemanu.' },
+    { id: 'tulum', nombre: 'Tulum y Riviera Maya', destino: 'Tulum', pais: 'México', region: 'caribe', tipo: 'Playa', noches: 8, precio: 1690, moneda: 'USD', cuotas: 12, regimen: 'All inclusive', transporte: 'Aéreo', salidaDesde: 'Córdoba', salidas: ['2026-10-18', '2026-11-08', '2026-12-12'], estado: 'publicado', destacado: true, etiqueta: 'Oferta', etiquetaColor: 'rojo', escena: 'tulum', foto: 'media/fotos/tulum.jpg', coord: '20°13′N 87°28′O', cupos: 9, resumen: 'Ruinas mayas sobre el acantilado, cenotes y playas de arena blanca.' },
+    { id: 'noronha', nombre: 'Fernando de Noronha', destino: 'Fernando de Noronha', pais: 'Brasil', region: 'brasil', tipo: 'Aventura', noches: 6, precio: 2150, moneda: 'USD', regimen: 'Desayuno', transporte: 'Aéreo', salidaDesde: 'Córdoba', salidas: ['2026-11-02', '2027-01-09'], estado: 'publicado', destacado: false, etiqueta: 'Últimos lugares', etiquetaColor: 'rojo', escena: 'noronha', foto: 'media/fotos/noronha.jpg', coord: '3°51′S 32°25′O', cupos: 3, resumen: 'Pousada con vista al Morro Dois Irmãos y buceo con tortugas.' },
+    { id: 'aruba', nombre: 'Aruba, playa Eagle', destino: 'Aruba', pais: 'Caribe neerlandés', region: 'caribe', tipo: 'Playa', noches: 7, precio: 2290, moneda: 'USD', regimen: 'All inclusive', transporte: 'Aéreo', salidaDesde: 'Córdoba', salidas: ['2026-12-19', '2027-02-06'], estado: 'publicado', destacado: false, etiqueta: '', escena: 'aruba', foto: 'media/fotos/aruba.jpg', coord: '12°33′N 70°03′O', cupos: 10, resumen: 'Arena blanca, agua calma y el famoso árbol divi-divi torcido por el viento.' },
+    { id: 'bali', nombre: 'Bali, templos y playas', destino: 'Bali', pais: 'Indonesia', region: 'asia', tipo: 'Cultural', noches: 12, precio: 3190, moneda: 'USD', regimen: 'Desayuno', transporte: 'Aéreo', salidaDesde: 'Buenos Aires', salidas: ['2027-04-10'], estado: 'publicado', destacado: false, etiqueta: '', escena: 'bali', foto: 'media/fotos/bali.jpg', coord: '8°20′S 115°05′E', cupos: 7, resumen: 'Ubud, los arrozales de Tegallalang y atardeceres en Uluwatu.' },
+    { id: 'morro', nombre: 'Morro de São Paulo', destino: 'Morro de São Paulo', pais: 'Bahía, Brasil', region: 'brasil', tipo: 'Familias', noches: 7, precio: 1190, moneda: 'USD', cuotas: 12, regimen: 'Desayuno', transporte: 'Aéreo', salidaDesde: 'Córdoba', salidas: ['2026-12-27', '2027-01-23', '2027-02-13'], estado: 'publicado', destacado: false, etiqueta: 'Ideal familias', etiquetaColor: 'azul', escena: 'morro', foto: 'media/fotos/morro.jpg', coord: '13°23′S 38°55′O', cupos: 14, resumen: 'Pueblo sin autos, piscinas naturales y el faro sobre el morro.' }
   ],
   ofertas: [
-    { id: 'o1', paquete: 'tulum', titulo: 'Riviera Maya de último minuto', descuento: 18, vence: new Date(Date.now() + (3 * 24 + 7) * 36e5).toISOString(), activa: true },
-    { id: 'o2', paquete: 'morro', titulo: 'Vacaciones de invierno en Bahía', descuento: 10, vence: new Date(Date.now() + 12 * DAY).toISOString(), activa: false }
+    { id: 'o1', paquete: 'tulum', titulo: 'Riviera Maya de último minuto', etiqueta: 'Oferta relámpago', descuento: 18, precioFinal: 0, desde: ago(24), vence: new Date(Date.now() + (3 * 24 + 7) * 36e5).toISOString(), activa: true, contador: true, cupos: 0, nota: 'Cupos liberados por el hotel.' },
+    { id: 'o2', paquete: 'morro', titulo: 'Vacaciones de verano en Bahía', etiqueta: 'Preventa', descuento: 10, precioFinal: 0, desde: ago(2), vence: new Date(Date.now() + 12 * DAY).toISOString(), activa: true, contador: false, cupos: 0, nota: '' },
+    { id: 'o3', paquete: 'maldivas', titulo: 'Luna de miel en Maldivas', etiqueta: 'Especial novios', descuento: 0, precioFinal: 4990, desde: ago(1), vence: new Date(Date.now() + 20 * DAY).toISOString(), activa: false, contador: true, cupos: 2, nota: 'Incluye cena romántica en la playa.' }
   ],
   consultas: [
     { id: 'c1', nombre: 'Laura Bustos', tel: '+54 9 3541 55-1234', email: 'laura.b@example.com', destino: 'Punta Cana', fecha: '2027-01', mensaje: 'Somos 2 adultos y 2 chicos (8 y 11). ¿Hay habitación familiar con all inclusive?', estado: 'nueva', creada: ago(2) },
@@ -436,178 +500,326 @@ const SEED = {
     { quien: 'María', que: 'cambió el precio de Punta Cana all inclusive de USD 1.790 a USD 1.890', cuando: ago(3) },
     { quien: 'Julián', que: 'publicó la oferta "Riviera Maya de último minuto"', cuando: ago(26) },
     { quien: 'María', que: 'agregó la salida del 16 ene 27 a Punta Cana', cuando: ago(49) }
+  ],
+  equipo: [
+    { nombre: 'María Gómez', email: 'maria@arrecifeviajes.com.ar', rol: 'Administración', ultimo: ago(.05) },
+    { nombre: 'Julián Pereyra', email: 'julian@arrecifeviajes.com.ar', rol: 'Edición', ultimo: ago(20) },
+    { nombre: 'Sofía Luna', email: 'sofia@arrecifeviajes.com.ar', rol: 'Ventas', ultimo: ago(120) }
   ]
 };
-const SCENE_COLORS = { puntacana: ['#8fd9ee', '#3ad8c8'], maldivas: ['#f8ccb3', '#8fe8da'], borabora: ['#8a4e7a', '#1c5d74'], tulum: ['#f7b27a', '#3ccdc0'], noronha: ['#7fb7d8', '#1e9fb0'], aruba: ['#a6e1f2', '#4fe0d0'], bali: ['#b9434a', '#1b0c16'], morro: ['#fbc98a', '#2eb8b0'] };
-const REG = { caribe: 'Caribe', brasil: 'Brasil', asia: 'Asia e Índico', oceania: 'Polinesia' };
+const REG = { caribe: 'Caribe', brasil: 'Brasil', asia: 'Asia e Índico', oceania: 'Polinesia', nacional: 'Argentina', europa: 'Europa' };
+const TIPOS = ['Playa', 'Luna de miel', 'Familias', 'Aventura', 'Cultural', 'Grupal', 'Crucero', 'Escapada'];
 const EST = { publicado: ['ok', 'Publicado'], borrador: ['off', 'Borrador'], pausado: ['warn', 'Pausado'] };
+const COLORES = { rojo: '#d62839', amarillo: '#e0a000', azul: '#1d3461', verde: '#1c7c47', negro: '#1c2230' };
+const ROLES = { 'Administración': 'Todo, incluidos usuarios y configuración', 'Edición': 'Paquetes, ofertas y consultas', 'Ventas': 'Solo consultas' };
 const MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 const fdate = d => { const [y, m, dd] = d.split('-').map(Number); return `${dd} ${MONTHS[m - 1]} ${String(y).slice(2)}`; };
 const rel = iso => { const m = Math.round((Date.now() - new Date(iso)) / 6e4); if (m < 60) return `hace ${Math.max(1, m)} min`; const h = Math.round(m / 60); if (h < 24) return `hace ${h} h`; const d = Math.round(h / 24); return d === 1 ? 'ayer' : `hace ${d} días`; };
-const thumb = s => { const c = SCENE_COLORS[s] || ['#8fd9ee', '#3ad8c8']; return `linear-gradient(${c[0]} 0 55%, ${c[1]} 55%)`; };
+const localDT = iso => new Date(new Date(iso) - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
+const parseNum = v => Number(String(v).replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, ''));
+const money = (v, cur = 'USD') => `${cur} ${nf.format(Math.round(v))}`;
 
 let DB;
-function load() {
-  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.paquetes) { DB = { ...structuredClone(SEED), ...s }; DB.consultas = s.consultas || SEED.consultas; DB.log = s.log || SEED.log; return; } } catch (e) { }
-  DB = structuredClone(SEED);
+function norm(d) {
+  d.agencia = { ...SEED.agencia, ...d.agencia };
+  d.integraciones = d.integraciones || structuredClone(SEED.integraciones);
+  d.equipo = d.equipo || structuredClone(SEED.equipo);
+  d.paquetes.forEach(p => { p.moneda ||= 'USD'; p.transporte ||= 'Aéreo'; p.salidaDesde ||= 'Córdoba'; p.tipo ||= 'Playa'; p.incluye ||= INCLUYE.slice(); p.noIncluye ||= []; p.itinerario ||= []; p.fotos ||= []; p.etiquetaColor ||= 'rojo'; p.salidas ||= []; });
+  d.ofertas.forEach(o => { o.etiqueta ??= 'Oferta relámpago'; o.desde ||= new Date(Date.now() - DAY).toISOString(); o.contador ??= true; o.precioFinal ||= 0; o.cupos ||= 0; o.nota ||= ''; });
+  return d;
 }
-function save(msg) { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) { } if (msg) toast(msg); }
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.paquetes) { DB = norm({ ...structuredClone(SEED), ...s, consultas: s.consultas || SEED.consultas, log: s.log || SEED.log }); return; } } catch (e) { }
+  DB = norm(structuredClone(SEED));
+}
+function save(msg) { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) { toast('No se pudo guardar en este navegador: las fotos pesan demasiado para el boceto.'); return false; } if (msg) toast(msg); return true; }
 function log(que) { DB.log.unshift({ quien: 'María', que, cuando: new Date().toISOString() }); DB.log = DB.log.slice(0, 30); }
-const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 3200); };
+const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 3400); };
 load();
 
-/* ---------- login ---------- */
-const otp = $$('#otp input');
-otp.forEach((i, k) => { i.addEventListener('input', () => { i.value = i.value.replace(/\D/g, '').slice(0, 1); if (i.value && otp[k + 1]) otp[k + 1].focus(); }); i.addEventListener('keydown', e => { if (e.key === 'Backspace' && !i.value && otp[k - 1]) otp[k - 1].focus(); }); });
+/* ---------- marca: logo del cliente o marca por defecto ---------- */
+const DEFAULT_MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="13" r="6.5" fill="#d62839"/><path d="M2 20c3.5 0 3.5-2.4 7-2.4s3.5 2.4 7 2.4 3.5-2.4 7-2.4 3.5 2.4 7 2.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M2 25.5c3.5 0 3.5-2.4 7-2.4s3.5 2.4 7 2.4 3.5-2.4 7-2.4 3.5 2.4 7 2.4" fill="none" stroke="currentColor" opacity=".55" stroke-width="2.2" stroke-linecap="round"/></svg>';
+function renderBrand() {
+  const a = DB.agencia, logo = a.logo;
+  $('#sideMark').innerHTML = logo ? `<img src="${esc(logo)}" alt="${esc(a.nombre)}">` : `<span style="width:34px;height:34px;display:inline-block">${DEFAULT_MARK}</span><span class="name">${esc(a.nombre)}<small>Panel de gestión</small></span>`;
+  $('#loginLogo').innerHTML = `<div class="slot">${logo ? `<img src="${esc(logo)}" alt="Logo de ${esc(a.nombre)}">` : DEFAULT_MARK}</div>${logo ? '' : `<h2>${esc(a.nombre)}</h2>`}<p>Panel de gestión de la web. El logo se cambia en Configuración.</p>`;
+  const b = $('#newBadge'), n = DB.consultas.filter(c => c.estado === 'nueva').length; b.textContent = n; b.hidden = !n;
+}
+
+/* ---------- tema: claro por defecto ---------- */
+function setTheme(t) { document.documentElement.dataset.theme = t; const d = t === 'dark'; $('#themeBtn').setAttribute('aria-pressed', d); $('#themeBtn').setAttribute('aria-label', d ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'); try { localStorage.setItem('arrecife-panel-tema', t); } catch (e) { } }
+let savedTheme = 'light'; try { savedTheme = localStorage.getItem('arrecife-panel-tema') || 'light'; } catch (e) { }
+setTheme(savedTheme);
+$('#themeBtn').onclick = () => { setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); const v = location.hash.slice(1); if (v === 'resumen' || !v) VIEWS.resumen(); };
+
+/* ---------- acceso ---------- */
+const RULES = { len: v => v.length >= 8, up: v => /[A-ZÁÉÍÓÚÑ]/.test(v), num: v => /\d/.test(v), sym: v => /[^A-Za-z0-9ÁÉÍÓÚÑáéíóúñ\s]/.test(v) };
+const passOk = v => Object.values(RULES).every(f => f(v));
+function checkRules() { const v = $('#lg-pass').value; $$('#rules li').forEach(li => li.classList.toggle('ok', RULES[li.dataset.r](v))); }
+$('#lg-pass').addEventListener('input', checkRules); checkRules();
+$('#showPass').onclick = () => { const i = $('#lg-pass'), s = i.type === 'password'; i.type = s ? 'text' : 'password'; $('#showPass').textContent = s ? 'Ocultar' : 'Mostrar'; };
+let fails = 0;
 $('#loginForm').addEventListener('submit', e => {
   e.preventDefault();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('#lg-email').value) || $('#lg-pass').value.length < 8) { toast('Revisá el email y la contraseña (mínimo 8 caracteres).'); return; }
-  if (otp.map(i => i.value).join('').length !== 6) { toast('Ingresá los 6 dígitos del código de verificación.'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('#lg-email').value)) { toast('Revisá el email, parece incompleto.'); $('#lg-email').focus(); return; }
+  if (!passOk($('#lg-pass').value)) { fails++; $('#lg-pass').classList.add('bad'); toast(fails >= 5 ? 'Demasiados intentos. En la versión final se bloquea el acceso por 15 minutos.' : 'La contraseña no cumple las reglas: mirá la lista de abajo.'); return; }
+  $('#lg-pass').classList.remove('bad');
   try { sessionStorage.setItem('arrecife-sesion', '1'); } catch (err) { }
   enter();
 });
-function enter() { $('#login').hidden = true; $('#app').hidden = false; go(location.hash.slice(1) || 'resumen'); }
+function enter() { $('#login').hidden = true; $('#app').hidden = false; renderBrand(); go(location.hash.slice(1) || 'resumen'); }
 $('#logout').onclick = () => { try { sessionStorage.removeItem('arrecife-sesion'); } catch (e) { } $('#app').hidden = true; $('#login').hidden = false; };
 let hasSession = false; try { hasSession = sessionStorage.getItem('arrecife-sesion') === '1'; } catch (e) { }
 
-/* ---------- tema ---------- */
-$('#themeBtn').onclick = () => { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; r.dataset.theme = dark ? 'light' : 'dark'; };
-
 /* ---------- navegación ---------- */
-const TITLES = { resumen: ['Panel', 'Resumen <em>del día</em>'], paquetes: ['Contenido', 'Tus <em>paquetes</em>'], ofertas: ['Contenido', 'Ofertas <em>relámpago</em>'], textos: ['Contenido', 'Textos de <em>la web</em>'], consultas: ['Clientes', 'Consultas <em>de viajeros</em>'], config: ['Agencia', 'Datos de <em>la agencia</em>'], usuarios: ['Agencia', 'Usuarios y <em>seguridad</em>'] };
+const TITLES = { resumen: ['Panel', 'Resumen <em>del día</em>'], paquetes: ['Contenido', 'Tus <em>paquetes</em>'], ofertas: ['Contenido', 'Tus <em>ofertas</em>'], consultas: ['Clientes', 'Consultas <em>de viajeros</em>'], config: ['Agencia', 'Configuración'], usuarios: ['Agencia', 'Usuarios'] };
+let current = 'resumen';
 function go(v) {
-  if (!TITLES[v]) v = 'resumen';
-  $$('#sideNav button').forEach(b => b.toggleAttribute('aria-current', b.dataset.view === v)); $$('#sideNav button[aria-current]').forEach(b => b.setAttribute('aria-current', 'page'));
+  if (!TITLES[v]) v = 'resumen'; current = v;
+  $$('#sideNav button').forEach(b => b.dataset.view === v ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
   $('#viewEyebrow').textContent = TITLES[v][0]; $('#viewTitle').innerHTML = TITLES[v][1]; $('#side').classList.remove('open');
-  VIEWS[v](); refreshBadge(); $('#view').focus?.();
+  VIEWS[v](); renderBrand();
   try { history.replaceState(null, '', '#' + v); } catch (e) { }
 }
 $('#sideNav').addEventListener('click', e => { const b = e.target.closest('button[data-view]'); if (b) go(b.dataset.view); });
 $('#menuBtn').onclick = () => $('#side').classList.add('open');
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { $('#side').classList.remove('open'); closeDrawer(); } });
-function refreshBadge() { const n = DB.consultas.filter(c => c.estado === 'nueva').length; const b = $('#newBadge'); b.textContent = n; b.hidden = !n; $('#sideName').textContent = DB.agencia.nombre; $('#loginBrand').textContent = DB.agencia.nombre; }
 const V = h => { $('#view').innerHTML = h; };
-
-/* ---------- vistas ---------- */
-function spark(data, color = 'var(--accent)') {
-  const w = 200, h = 36, max = Math.max(...data), min = Math.min(...data);
-  const pts = data.map((v, i) => [i / (data.length - 1) * w, h - 3 - (v - min) / (max - min || 1) * (h - 8)]);
-  const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
-  const last = pts[pts.length - 1];
-  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><path d="${d} L${w} ${h} L0 ${h}Z" fill="${color}" opacity=".12"/><path d="${d}" fill="none" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cx="${last[0]}" cy="${last[1]}" r="3" fill="${color}"/></svg>`;
-}
 const VIEWS = {};
+
+/* ---------- tooltip compartido ---------- */
+const tip = $('#tip');
+function showTip(x, y, html) { tip.innerHTML = html; tip.classList.add('on'); const r = tip.getBoundingClientRect(); let l = x + 14, t = y - r.height - 12; if (l + r.width > innerWidth - 8) l = x - r.width - 14; if (t < 8) t = y + 16; tip.style.left = l + 'px'; tip.style.top = t + 'px'; }
+const hideTip = () => tip.classList.remove('on');
+
+/* ---------- métricas de Google (datos de ejemplo) ---------- */
+let range = 28;
+function metrics(days) {
+  const r = rng(days * 7 + 3), today = new Date(); today.setHours(0, 0, 0, 0);
+  const serie = (n, off) => Array.from({ length: n }, (_, i) => { const d = new Date(today - (n - 1 - i + off) * DAY), dow = d.getDay(); const v = 245 + (i + (days - n)) * 1.4 - off * .9 + (dow === 0 || dow === 6 ? -55 : 18) + Math.sin(i / 3) * 22 + (r() - .5) * 60; return { d, v: Math.max(40, Math.round(v)) }; });
+  const cur = serie(days, 0), prev = serie(days, days);
+  const sum = a => a.reduce((s, x) => s + x.v, 0);
+  const users = sum(cur), usersP = sum(prev);
+  const clicks = Math.round(users * .41), clicksP = Math.round(usersP * .37);
+  const impr = Math.round(clicks * 14.6), imprP = Math.round(clicksP * 15.9);
+  const pos = 7.8 + (days === 90 ? .6 : days === 7 ? -.3 : 0), posP = pos + 1.3;
+  const k = days / 28;
+  const queries = [['agencia de viajes carlos paz', 412, 2310, 1.8], ['viajes a punta cana desde cordoba', 238, 5120, 4.2], ['paquetes all inclusive caribe', 121, 6880, 9.6], ['luna de miel maldivas', 96, 3040, 7.1], ['agencia de viajes cordoba', 88, 7420, 11.3], ['morro de sao paulo paquete', 64, 1180, 5.4]].map(([q, c, i, p]) => ({ q, c: Math.round(c * k), i: Math.round(i * k), p }));
+  const pages = [['Inicio', '/', .41], ['Punta Cana all inclusive', '/paquetes/punta-cana-all-inclusive', .17], ['Ofertas', '/ofertas', .12], ['Maldivas, villa sobre el agua', '/paquetes/maldivas-villa-sobre-el-agua', .09], ['Contacto', '/contacto', .07]].map(([n, u, f]) => ({ n, u, v: Math.round(users * 1.6 * f) }));
+  const spark = a => { const step = Math.max(1, Math.floor(a.length / 12)); return a.filter((_, i) => (a.length - 1 - i) % step === 0).slice(-12).map(x => x.v); };
+  return { cur, users, usersP, clicks, clicksP, impr, imprP, pos, posP, queries, pages, sUsers: spark(cur), sClicks: spark(cur).map(v => v * .41), sImpr: spark(cur).map((v, i) => v * 14 + i * 30), sPos: spark(cur).map((_, i) => 9.2 - i * .12) };
+}
+function sparkSVG(vals) {
+  const w = 200, h = 34, max = Math.max(...vals), min = Math.min(...vals);
+  const pts = vals.map((v, i) => [i / (vals.length - 1) * w, h - 4 - (v - min) / (max - min || 1) * (h - 10)]);
+  const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const [lx, ly] = pts[pts.length - 1];
+  return `<div class="spark" aria-hidden="true"><svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path d="${d}" fill="none" stroke="var(--mark-muted)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg><i style="left:${(lx / w * 100).toFixed(1)}%;top:${(ly / h * 100).toFixed(1)}%"></i></div>`;
+}
+function tile(label, source, value, now, prev, fmt, higherIsBetter, spark) {
+  const ch = (now - prev) / prev * 100, up = ch >= 0, good = up === higherIsBetter;
+  return `<div class="card tile"><div class="lab"><span>${label}</span><span class="srcic" title="${source}">${source === 'Analytics' ? GA_LOGO : SC_LOGO}<span class="sr-only">${source}</span></span></div><div class="val">${fmt(value)}</div><div class="delta ${good ? 'good' : 'badd'}">${up ? '▲' : '▼'} ${nf1.format(Math.abs(ch))} % <span>vs. ${range} días anteriores</span></div>${sparkSVG(spark)}</div>`;
+}
+function niceMax(v) { const p = Math.pow(10, Math.floor(Math.log10(v))); const m = v / p; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * p; }
+function lineChart(box, data) {
+  const W = Math.max(280, box.clientWidth - 32), H = 230, L = 44, R = 46, T = 14, B = 26;
+  const max = niceMax(Math.max(...data.map(d => d.v)) * 1.1), n = data.length;
+  const x = i => L + i / (n - 1) * (W - L - R), y = v => T + (1 - v / max) * (H - T - B);
+  const ticks = [0, .25, .5, .75, 1].map(f => Math.round(max * f));
+  const line = data.map((d, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(d.v).toFixed(1)).join(' ');
+  const area = line + ` L${x(n - 1).toFixed(1)} ${y(0)} L${x(0)} ${y(0)} Z`;
+  const lblEvery = Math.ceil(n / Math.max(2, Math.min(6, Math.floor((W - L - R) / 80))));
+  const xl = data.map((d, i) => (i % lblEvery === 0 || i === n - 1) && (n - 1 - i >= lblEvery / 2 || i === n - 1) ? `<text x="${x(i).toFixed(1)}" y="${H - 6}" text-anchor="middle">${d.d.getDate()} ${MONTHS[d.d.getMonth()]}</text>` : '').join('');
+  const last = data[n - 1];
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Visitantes por día en los últimos ${n} días">
+    <g class="grid">${ticks.map(t => `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}"/><text x="${L - 8}" y="${y(t) + 4}" text-anchor="end">${nf.format(t)}</text>`).join('')}</g>
+    <path d="${area}" fill="var(--chart-wash)"/>
+    <path d="${line}" fill="none" stroke="var(--chart)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <line class="base" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}"/>${xl}
+    <circle cx="${x(n - 1)}" cy="${y(last.v)}" r="4" fill="var(--chart)" stroke="var(--surface-ring)" stroke-width="2"/>
+    <text class="endlabel" x="${x(n - 1) + 8}" y="${y(last.v) + 4}">${nf.format(last.v)}</text>
+    <line class="hair" id="hair" y1="${T}" y2="${y(0)}"/><circle class="hot" id="hot" r="5" fill="var(--chart)" stroke="var(--surface-ring)" stroke-width="2"/>
+    <rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent" id="hit" tabindex="0" aria-label="Recorrer los días con el mouse o las flechas"/></svg>`;
+  const svg = box.querySelector('svg'), hit = $('#hit', box), hair = $('#hair', box), hot = $('#hot', box);
+  let idx = n - 1;
+  const show = (i, cx, cy) => {
+    idx = Math.max(0, Math.min(n - 1, i)); const d = data[idx];
+    hair.setAttribute('x1', x(idx)); hair.setAttribute('x2', x(idx)); hot.setAttribute('cx', x(idx)); hot.setAttribute('cy', y(d.v)); box.classList.add('hover');
+    const b = svg.getBoundingClientRect(), k = b.width / W;
+    showTip(cx ?? b.left + x(idx) * k, cy ?? b.top + y(d.v) * k, `<b>${nf.format(d.v)}</b><span class="k">Visitantes · ${d.d.getDate()} ${MONTHS[d.d.getMonth()]}</span>`);
+  };
+  hit.addEventListener('pointermove', e => { const b = svg.getBoundingClientRect(), px = (e.clientX - b.left) * W / b.width; show(Math.round((px - L) / (W - L - R) * (n - 1)), e.clientX, e.clientY); });
+  hit.addEventListener('pointerleave', () => { box.classList.remove('hover'); hideTip(); });
+  hit.addEventListener('focus', () => show(idx));
+  hit.addEventListener('blur', () => { box.classList.remove('hover'); hideTip(); });
+  hit.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') { e.preventDefault(); show(idx - 1); } if (e.key === 'ArrowRight') { e.preventDefault(); show(idx + 1); } });
+}
 VIEWS.resumen = () => {
-  const pub = DB.paquetes.filter(p => p.estado === 'publicado').length, act = DB.ofertas.filter(o => o.activa && new Date(o.vence) > new Date()).length, nuevas = DB.consultas.filter(c => c.estado === 'nueva').length;
+  const m = metrics(range), I = DB.integraciones;
+  const nuevas = DB.consultas.filter(c => c.estado === 'nueva').length;
+  const maxPage = Math.max(...m.pages.map(p => p.v)), maxQ = Math.max(...m.queries.map(q => q.c));
   V(`
-  <div class="card hello"><div><h2 class="display">Hola, María. <em>¿A dónde vamos hoy?</em></h2><p>${nuevas ? `Tenés ${nuevas} consulta${nuevas === 1 ? '' : 's'} nueva${nuevas === 1 ? '' : 's'} esperando respuesta.` : 'No hay consultas nuevas. Buen momento para cargar una oferta.'} <span class="pill info">Visitas: datos de ejemplo</span></p></div>
-    <div class="route" aria-hidden="true"><svg class="trail" viewBox="0 0 340 60" preserveAspectRatio="none"><path d="M4 50 C80 50 90 8 170 20 S280 50 336 10" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 7" stroke-linecap="round"/></svg><span class="dd" style="left:84%;top:-18px;width:44px;height:44px;--r:-24deg;--o:.9"><svg viewBox="0 0 64 64"><use href="#d-plane"/></svg></span><span class="dd" style="left:-2%;top:18px;width:40px;height:40px;--r:0deg;--o:.5"><svg viewBox="0 0 64 64"><use href="#d-pin"/></svg></span></div></div>
-  <div class="kpis">
-    <div class="card kpi"><span>Consultas nuevas</span><b>${nuevas}</b><span class="d up">+${nuevas + 9} esta semana</span>${spark([3, 5, 4, 6, 8, 7, 9, 12, 10, 14])}</div>
-    <div class="card kpi"><span>Paquetes publicados</span><b>${pub}</b><span class="d muted">de ${DB.paquetes.length} cargados</span>${spark([5, 5, 6, 6, 6, 7, 7, 8, 8, pub], 'var(--navy)')}</div>
-    <div class="card kpi"><span>Ofertas activas</span><b>${act}</b><span class="d ${act ? 'up' : 'down'}">${act ? 'Visible en la portada' : 'Sin oferta en la portada'}</span>${spark([1, 2, 1, 1, 2, 2, 1, 2, 1, act || 0], 'var(--navy)')}</div>
-    <div class="card kpi"><span>Visitas (30 días)</span><b>8.412</b><span class="d up">+23 % vs. mes anterior</span>${spark([180, 210, 190, 240, 260, 230, 300, 320, 290, 350, 380, 410])}</div>
+  <div class="filters">
+    <div class="seg" role="group" aria-label="Período">${[7, 28, 90].map(d => `<button type="button" data-range="${d}" aria-pressed="${range === d}"><span class="lg">Últimos </span>${d} días</button>`).join('')}</div>
+    <span class="src">${GA_LOGO}<span class="dot"></span><b>Google Analytics</b>${I.ga.conectado ? 'conectado' : 'sin conectar'}</span>
+    <span class="src">${SC_LOGO}<span class="dot"></span><b>Search Console</b>${I.sc.conectado ? 'conectado' : 'sin conectar'}</span>
+    <span class="sample">Datos de ejemplo</span>
   </div>
+  <div class="tiles">
+    ${tile('Visitantes', 'Analytics', m.users, m.users, m.usersP, v => nf.format(v), true, m.sUsers)}
+    ${tile('Clics desde Google', 'Search Console', m.clicks, m.clicks, m.clicksP, v => nf.format(v), true, m.sClicks)}
+    ${tile('Apariciones en Google', 'Search Console', m.impr, m.impr, m.imprP, v => v >= 1e4 ? nf1.format(v / 1000) + ' mil' : nf.format(v), true, m.sImpr)}
+    ${tile('Posición promedio', 'Search Console', m.pos, m.pos, m.posP, v => nf1.format(v), false, m.sPos)}
+  </div>
+  <div class="charts">
+    <div class="card"><div class="card-h"><div><h2>Visitantes por día</h2><span class="sub">Google Analytics · últimos ${range} días</span></div></div>
+      <div class="chart" id="visits"></div>
+      <details class="datatbl"><summary>Ver los datos en tabla</summary><div class="tbl-wrap"><table><thead><tr><th>Día</th><th class="r">Visitantes</th></tr></thead><tbody>${m.cur.slice().reverse().map(d => `<tr><td>${d.d.getDate()} ${MONTHS[d.d.getMonth()]}</td><td class="r">${nf.format(d.v)}</td></tr>`).join('')}</tbody></table></div></details>
+    </div>
+    <div class="card"><div class="card-h"><div><h2>Páginas más vistas</h2><span class="sub">Google Analytics · vistas</span></div></div>
+      <ul class="bars">${m.pages.map(p => `<li tabindex="0" data-tip="<b>${nf.format(p.v)} vistas</b><span class='k'>${esc(p.u)}</span>"><div class="top-row"><span>${esc(p.n)}</span><span class="num">${nf.format(p.v)}</span></div><div class="track"><div class="bar" style="width:${(p.v / maxPage * 100).toFixed(1)}%"></div></div></li>`).join('')}</ul>
+    </div>
+  </div>
+  <div class="card"><div class="card-h"><div><h2>Búsquedas que traen gente</h2><span class="sub">Search Console · lo que escribieron en Google antes de entrar</span></div></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Búsqueda</th><th>Clics</th><th class="r">Apariciones</th><th class="r">% de clics</th><th class="r">Posición</th></tr></thead><tbody>
+    ${m.queries.map(q => `<tr><td>${esc(q.q)}</td><td class="num" style="white-space:nowrap"><span class="qbar" style="width:${(q.c / maxQ * 90).toFixed(0)}px"></span>${nf.format(q.c)}</td><td class="r">${nf.format(q.i)}</td><td class="r">${nf1.format(q.c / q.i * 100)} %</td><td class="r">${nf1.format(q.p)}</td></tr>`).join('')}
+    </tbody></table></div></div>
   <div class="dash">
-    <div class="card"><div class="card-h"><h2>Consultas recientes</h2><button class="btn sm" data-go="consultas">Ver todas</button></div>
-      <ul class="list">${DB.consultas.slice(0, 5).map(c => `<li>${c.estado === 'nueva' ? '<span class="dot-new" aria-label="Nueva"></span>' : '<span style="width:9px"></span>'}<div class="grow"><div class="t">${esc(c.nombre)} · ${esc(c.destino)}</div><div class="s">${esc(c.mensaje)}</div></div><span class="s mono">${rel(c.creada)}</span></li>`).join('')}</ul></div>
-    <div style="display:grid;gap:20px;align-content:start">
+    <div class="card"><div class="card-h"><h2>Consultas recientes ${nuevas ? `<span class="pill info">${nuevas} nueva${nuevas === 1 ? '' : 's'}</span>` : ''}</h2><button class="btn sm" data-go="consultas">Ver todas</button></div>
+      <ul class="list">${DB.consultas.slice(0, 5).map(c => `<li>${c.estado === 'nueva' ? '<span class="dot-new" aria-label="Nueva"></span>' : '<span style="width:9px;flex:none"></span>'}<div class="grow"><div class="t">${esc(c.nombre)} · ${esc(c.destino)}</div><div class="s">${esc(c.mensaje)}</div></div><span class="s">${rel(c.creada)}</span></li>`).join('')}</ul></div>
+    <div style="display:grid;gap:22px;align-content:start">
       <div class="card"><div class="card-h"><h2>Accesos rápidos</h2></div><div class="card-b row">
-        <button class="btn pri" data-act="new-pk">+ Nuevo paquete</button><button class="btn" data-act="bulk">Actualizar precios</button><button class="btn" data-go="ofertas">Crear oferta</button></div></div>
+        <button class="btn pri" data-act="new-pk">+ Nuevo paquete</button><button class="btn" data-act="new-of">+ Nueva oferta</button><button class="btn" data-act="bulk">Actualizar precios</button></div></div>
       <div class="card"><div class="card-h"><h2>Actividad del equipo</h2></div><ul class="list log">${DB.log.slice(0, 6).map(l => `<li><div class="grow"><b>${esc(l.quien)}</b> ${esc(l.que)}</div><span class="when">${rel(l.cuando)}</span></li>`).join('')}</ul></div>
     </div>
   </div>`);
+  lineChart($('#visits'), m.cur);
 };
-let pkQ = '', pkEst = 'todos', sel = new Set();
+$('#view').addEventListener('click', e => { const b = e.target.closest('[data-range]'); if (b) { range = +b.dataset.range; VIEWS.resumen(); } });
+$('#view').addEventListener('pointermove', e => { const li = e.target.closest('[data-tip]'); if (li) showTip(e.clientX, e.clientY, li.dataset.tip); });
+$('#view').addEventListener('pointerout', e => { const li = e.target.closest('[data-tip]'); if (li && !li.contains(e.relatedTarget)) hideTip(); });
+$('#view').addEventListener('focusin', e => { const li = e.target.closest('[data-tip]'); if (li) { const b = li.getBoundingClientRect(); showTip(b.right - 60, b.top, li.dataset.tip); } });
+$('#view').addEventListener('focusout', e => { if (e.target.closest('[data-tip]')) hideTip(); });
+let rsz; addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(() => { if (current === 'resumen' && $('#visits')) lineChart($('#visits'), metrics(range).cur); }, 150); });
+
+/* ---------- paquetes ---------- */
+let pkQ = '', pkEst = 'todos', pkReg = 'todas', sel = new Set();
 VIEWS.paquetes = () => {
   V(`<div class="card">
     <div class="toolbar">
       <label class="sr-only" for="pk-q">Buscar paquete</label><input class="in search" id="pk-q" placeholder="Buscar por nombre o destino…" value="${esc(pkQ)}">
+      <label class="sr-only" for="pk-reg">Región</label><select class="in" id="pk-reg"><option value="todas">Todas las regiones</option>${Object.entries(REG).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>
       <label class="sr-only" for="pk-est">Estado</label><select class="in" id="pk-est"><option value="todos">Todos los estados</option><option value="publicado">Publicados</option><option value="borrador">Borradores</option><option value="pausado">Pausados</option></select>
       <button class="btn" data-act="bulk">Actualizar precios en bloque</button>
       <button class="btn pri" data-act="new-pk">+ Nuevo paquete</button>
     </div>
-    <div class="tbl-wrap"><table><thead><tr><th><input type="checkbox" id="selAll" aria-label="Seleccionar todos"></th><th>Paquete</th><th>Región</th><th>Noches</th><th>Precio por persona</th><th>Estado</th><th>Portada</th><th></th></tr></thead><tbody id="pkRows"></tbody></table></div>
+    <div class="tbl-wrap"><table><thead><tr><th><input type="checkbox" id="selAll" aria-label="Seleccionar todos"></th><th>Paquete</th><th>Tipo</th><th>Noches</th><th>Precio base</th><th>Estado</th><th>Portada</th><th></th></tr></thead><tbody id="pkRows"></tbody></table></div>
   </div>
-  <p class="muted" style="font-size:.84rem;margin:0">Tip: cambiá el precio directo en la tabla y apretá Enter. Se guarda solo y la web se actualiza al instante.</p>`);
-  $('#pk-est').value = pkEst;
+  <p class="muted" style="font-size:.9rem;margin:0">Tip: cambiá el precio directo en la tabla y apretá Enter. Para todo lo demás (fotos, itinerario, qué incluye, precios por habitación) usá Editar.</p>`);
+  $('#pk-est').value = pkEst; $('#pk-reg').value = pkReg;
   $('#pk-q').oninput = e => { pkQ = e.target.value; rows(); };
   $('#pk-est').onchange = e => { pkEst = e.target.value; rows(); };
-  $('#selAll').onchange = e => { const vis = filtered(); vis.forEach(p => e.target.checked ? sel.add(p.id) : sel.delete(p.id)); rows(); };
+  $('#pk-reg').onchange = e => { pkReg = e.target.value; rows(); };
+  $('#selAll').onchange = e => { filtered().forEach(p => e.target.checked ? sel.add(p.id) : sel.delete(p.id)); rows(); };
   rows();
 };
-const filtered = () => DB.paquetes.filter(p => (pkEst === 'todos' || p.estado === pkEst) && (!pkQ || (p.nombre + ' ' + p.destino).toLowerCase().includes(pkQ.toLowerCase())));
+const filtered = () => DB.paquetes.filter(p => (pkEst === 'todos' || p.estado === pkEst) && (pkReg === 'todas' || p.region === pkReg) && (!pkQ || (p.nombre + ' ' + p.destino).toLowerCase().includes(pkQ.toLowerCase())));
+const cover = p => (p.fotos && p.fotos[0]) || p.foto || '';
 function rows() {
   const list = filtered();
   $('#pkRows').innerHTML = list.map(p => `<tr data-id="${esc(p.id)}">
     <td><input type="checkbox" class="sel" ${sel.has(p.id) ? 'checked' : ''} aria-label="Seleccionar ${esc(p.nombre)}"></td>
-    <td><div class="pk-name"><span class="thumb" style="background:${thumb(p.escena)}">${(p.fotos && p.fotos[0]) || p.foto ? `<img src="${esc(src((p.fotos && p.fotos[0]) || p.foto))}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span><div><b>${esc(p.nombre)}</b><small>${esc(p.pais)} · ${p.salidas.length} salida${p.salidas.length === 1 ? '' : 's'}</small></div></div></td>
-    <td>${REG[p.region] || ''}</td>
-    <td class="mono">${p.noches}</td>
-    <td><label class="price-in"><span>USD</span><input type="text" inputmode="numeric" value="${nf.format(p.precio)}" aria-label="Precio de ${esc(p.nombre)} en dólares" data-price></label><div class="ars">≈ ARS ${nf.format(p.precio * DB.cotizacion)}</div></td>
+    <td><div class="pk-name"><span class="thumb">${cover(p) ? `<img src="${esc(src(cover(p)))}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span><div><b>${esc(p.nombre)}${p.etiqueta ? `<span class="lbl" style="background:${COLORES[p.etiquetaColor] || COLORES.rojo}">${esc(p.etiqueta)}</span>` : ''}</b><small>${esc(REG[p.region] || p.region)} · ${p.transporte} desde ${esc(p.salidaDesde)} · ${p.salidas.length} salida${p.salidas.length === 1 ? '' : 's'}</small></div></div></td>
+    <td>${esc(p.tipo)}</td>
+    <td class="num">${p.noches}</td>
+    <td><label class="price-in"><span>${p.moneda}</span><input type="text" inputmode="numeric" value="${nf.format(p.precio)}" aria-label="Precio de ${esc(p.nombre)}" data-price></label><div class="ars">${p.moneda === 'USD' ? `≈ ARS ${nf.format(p.precio * DB.cotizacion)}` : 'en pesos'}</div></td>
     <td><span class="pill ${EST[p.estado][0]}">${EST[p.estado][1]}</span></td>
     <td><button class="star" data-star aria-pressed="${p.destacado}" aria-label="Destacar en portada">★</button></td>
-    <td><div class="row" style="flex-wrap:nowrap"><button class="btn sm" data-edit>Editar</button><button class="btn sm" data-dup aria-label="Duplicar">Duplicar</button></div></td>
+    <td><div class="row" style="flex-wrap:nowrap"><button class="btn sm" data-edit>Editar</button><button class="btn sm" data-dup>Duplicar</button></div></td>
   </tr>`).join('') || `<tr><td colspan="8" class="empty">No hay paquetes que coincidan con la búsqueda.</td></tr>`;
 }
-const parseNum = v => Number(String(v).replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, ''));
 $('#view').addEventListener('change', e => {
   const t = e.target;
   if (t.matches('[data-price]')) {
     const id = t.closest('tr').dataset.id, p = DB.paquetes.find(x => x.id === id), v = parseNum(t.value);
-    if (!v || v < 50 || v > 100000) { toast('El precio tiene que estar entre USD 50 y USD 100.000.'); t.value = nf.format(p.precio); return; }
-    if (v !== p.precio) { log(`cambió el precio de ${p.nombre} de USD ${nf.format(p.precio)} a USD ${nf.format(v)}`); p.precio = v; save(`Precio guardado. ${p.nombre}: USD ${nf.format(v)}.`); }
-    t.value = nf.format(v); const box = t.closest('.price-in'); box.classList.add('saved'); box.nextElementSibling.textContent = `≈ ARS ${nf.format(v * DB.cotizacion)}`; setTimeout(() => box.classList.remove('saved'), 1400);
+    if (!v || v < 1) { toast('Escribí un precio mayor a 0.'); t.value = nf.format(p.precio); return; }
+    if (v !== p.precio) { log(`cambió el precio de ${p.nombre} de ${money(p.precio, p.moneda)} a ${money(v, p.moneda)}`); p.precio = v; save(`Precio guardado. ${p.nombre}: ${money(v, p.moneda)}.`); }
+    t.value = nf.format(v); const box = t.closest('.price-in'); box.classList.add('saved'); if (p.moneda === 'USD') box.nextElementSibling.textContent = `≈ ARS ${nf.format(v * DB.cotizacion)}`; setTimeout(() => box.classList.remove('saved'), 1400);
   }
   if (t.matches('.sel')) { const id = t.closest('tr').dataset.id; t.checked ? sel.add(id) : sel.delete(id); }
 });
 $('#view').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-price]')) e.target.blur(); });
 $('#view').addEventListener('click', e => {
   const t = e.target, tr = t.closest('tr[data-id]'), p = tr && DB.paquetes.find(x => x.id === tr.dataset.id);
-  if (t.closest('[data-go]')) go(t.closest('[data-go]').dataset.go);
-  const act = t.closest('[data-act]'); if (act) { if (act.dataset.act === 'new-pk') editPk(null); if (act.dataset.act === 'bulk') bulk(); }
+  const g = t.closest('[data-go]'); if (g) go(g.dataset.go);
+  const act = t.closest('[data-act]'); if (act) { const a = act.dataset.act; if (a === 'new-pk') editPk(null); if (a === 'bulk') bulk(); if (a === 'new-of') editOffer(null); }
   if (p && t.closest('[data-star]')) { p.destacado = !p.destacado; log(`${p.destacado ? 'destacó' : 'quitó de la portada'} ${p.nombre}`); save(p.destacado ? 'Ahora aparece destacado en la portada.' : 'Ya no aparece destacado.'); rows(); }
   if (p && t.closest('[data-edit]')) editPk(p);
   if (p && t.closest('[data-dup]')) { const c = { ...structuredClone(p), id: p.id + '-' + Date.now().toString(36), nombre: p.nombre + ' (copia)', estado: 'borrador' }; DB.paquetes.push(c); log(`duplicó ${p.nombre}`); save('Paquete duplicado como borrador.'); rows(); }
 });
 
-/* ---------- editor de paquete ---------- */
+/* ---------- editor lateral ---------- */
 const dr = $('#drawer'), scrim = $('#scrim');
-function openDrawer(html) { dr.innerHTML = html; dr.classList.add('on'); scrim.classList.add('on'); dr.setAttribute('aria-hidden', 'false'); setTimeout(() => dr.querySelector('input,select,textarea')?.focus(), 350); }
+function openDrawer(html) { dr.innerHTML = html; dr.classList.add('on'); scrim.classList.add('on'); dr.setAttribute('aria-hidden', 'false'); setTimeout(() => dr.querySelector('input,select,textarea')?.focus(), 350); dr.querySelectorAll('[data-close]').forEach(b => b.onclick = closeDrawer); const tabs = dr.querySelector('.tabs'); if (tabs) tabs.onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; $$('[data-tab]', dr).forEach(x => x.setAttribute('aria-selected', x === b)); $$('[data-pane]', dr).forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab); }; }
 function closeDrawer() { dr.classList.remove('on'); scrim.classList.remove('on'); dr.setAttribute('aria-hidden', 'true'); }
 scrim.onclick = closeDrawer;
+const tabTo = id => $(`[data-tab="${id}"]`, dr).click();
+const slug = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+function chipList(el, arr, cls = '') { el.className = 'chips ' + cls; el.innerHTML = arr.map((x, i) => `<span>${esc(x)}<button type="button" data-rm="${i}" aria-label="Quitar ${esc(x)}">✕</button></span>`).join('') || '<small class="muted">Vacío.</small>'; }
+
 function editPk(p) {
-  const isNew = !p; const d = p ? structuredClone(p) : { id: '', nombre: '', destino: '', pais: '', region: 'caribe', noches: 7, precio: 1500, regimen: 'All inclusive', salidas: [], estado: 'borrador', destacado: false, etiqueta: '', escena: 'puntacana', coord: '', cupos: 10, resumen: '', fotos: [] };
-  d.fotos = d.fotos || []; d.seoT = d.seoT || ''; d.seoD = d.seoD || '';
+  const isNew = !p;
+  const d = norm({ paquetes: [p ? structuredClone(p) : { id: '', nombre: '', destino: '', pais: '', region: 'caribe', noches: 7, precio: 1500, regimen: 'All inclusive', salidas: [], estado: 'borrador', destacado: false, etiqueta: '', resumen: '', cupos: 10 }], ofertas: [] }).paquetes[0];
+  d.seoT ||= ''; d.seoD ||= ''; d.descripcion ||= ''; d.hotel ||= ''; d.estrellas ||= 0;
+  const opt = (arr, v) => arr.map(x => `<option ${x === v ? 'selected' : ''}>${x}</option>`).join('');
   openDrawer(`
   <div class="drawer-h"><h2 id="dr-t">${isNew ? 'Nuevo paquete' : 'Editar paquete'}</h2><button class="btn icon-btn" data-close aria-label="Cerrar">✕</button></div>
-  <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-tab="t1">General</button><button role="tab" aria-selected="false" data-tab="t2">Precio y salidas</button><button role="tab" aria-selected="false" data-tab="t3">Fotos</button><button role="tab" aria-selected="false" data-tab="t4">Google (SEO)</button></div>
+  <div class="tabs" role="tablist">${[['t1', 'General'], ['t2', 'Precios'], ['t3', 'Salidas y hotel'], ['t4', 'Itinerario'], ['t5', 'Qué incluye'], ['t6', 'Fotos'], ['t7', 'Google']].map(([k, v], i) => `<button role="tab" aria-selected="${!i}" data-tab="${k}">${v}</button>`).join('')}</div>
   <form class="drawer-b" id="pkForm" novalidate>
-    <div data-pane="t1" style="display:grid;gap:14px">
-      <label class="f" for="e-nombre">Nombre del paquete<input class="in" id="e-nombre" value="${esc(d.nombre)}" maxlength="70" placeholder="Ej.: Punta Cana all inclusive" required></label>
-      <div class="g2"><label class="f" for="e-destino">Destino<input class="in" id="e-destino" value="${esc(d.destino)}" maxlength="40"></label><label class="f" for="e-pais">País o zona<input class="in" id="e-pais" value="${esc(d.pais)}" maxlength="40"></label></div>
+    <div class="pane" data-pane="t1">
+      <label class="f" for="e-nombre">Nombre del paquete<input class="in" id="e-nombre" value="${esc(d.nombre)}" maxlength="80" placeholder="Ej.: Punta Cana all inclusive"></label>
+      <div class="g3"><label class="f" for="e-destino">Destino<input class="in" id="e-destino" value="${esc(d.destino)}" maxlength="50"></label><label class="f" for="e-pais">País o zona<input class="in" id="e-pais" value="${esc(d.pais)}" maxlength="50"></label><label class="f" for="e-iata">Código del aeropuerto <small class="muted">(para la estampilla)</small><input class="in" id="e-iata" value="${esc(iata(d))}" maxlength="3" style="text-transform:uppercase"></label></div>
       <div class="g2"><label class="f" for="e-region">Región (filtro de la web)<select class="in" id="e-region">${Object.entries(REG).map(([k, v]) => `<option value="${k}" ${d.region === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
-      <label class="f" for="e-etq">Etiqueta <span class="muted">(opcional)</span><input class="in" id="e-etq" value="${esc(d.etiqueta)}" maxlength="18" list="etqs" placeholder="Oferta, Luna de miel…"><datalist id="etqs"><option>Oferta</option><option>Más vendido</option><option>Luna de miel</option><option>Últimos lugares</option><option>Ideal familias</option></datalist></label></div>
-      <label class="f" for="e-resumen">Resumen para la tarjeta<textarea class="in" id="e-resumen" maxlength="140">${esc(d.resumen)}</textarea><span class="count-hint" data-count="e-resumen" data-max="140"></span></label>
-      <fieldset style="border:0;padding:0;margin:0;display:grid;gap:8px"><legend style="font-size:.84rem;font-weight:650;margin-bottom:6px">Estado en la web</legend>
+      <label class="f" for="e-tipo">Tipo de viaje<input class="in" id="e-tipo" value="${esc(d.tipo)}" list="tipos"><datalist id="tipos">${TIPOS.map(t => `<option>${t}</option>`).join('')}</datalist></label></div>
+      <div class="g2"><label class="f" for="e-etq">Etiqueta en la tarjeta <small class="muted">(opcional)</small><input class="in" id="e-etq" value="${esc(d.etiqueta)}" maxlength="20" list="etqs" placeholder="Oferta, Luna de miel…"><datalist id="etqs"><option>Oferta</option><option>Más vendido</option><option>Luna de miel</option><option>Últimos lugares</option><option>Ideal familias</option><option>Nuevo</option></datalist></label>
+      <div class="f" style="display:grid;gap:6px;font-size:.9rem;font-weight:700">Color de la etiqueta<div class="swatches">${Object.entries(COLORES).map(([k, c]) => `<label style="background:${c}" title="${k}"><input type="radio" name="etqc" value="${k}" ${d.etiquetaColor === k ? 'checked' : ''} aria-label="${k}"></label>`).join('')}</div></div></div>
+      <label class="f" for="e-resumen">Resumen para la tarjeta<textarea class="in" id="e-resumen" maxlength="160">${esc(d.resumen)}</textarea><span class="count-hint" data-count="e-resumen" data-max="140"></span></label>
+      <label class="f" for="e-desc">Descripción completa <small class="muted">(página del paquete)</small><textarea class="in" id="e-desc" style="min-height:130px">${esc(d.descripcion)}</textarea></label>
+      <fieldset style="border:0;padding:0;margin:0;display:grid;gap:8px"><legend style="font-size:.9rem;font-weight:700;margin-bottom:6px">Estado en la web</legend>
         <div class="radio-row">${Object.entries(EST).map(([k, [, v]]) => `<label><input type="radio" name="estado" value="${k}" ${d.estado === k ? 'checked' : ''}>${v}</label>`).join('')}</div></fieldset>
       <label class="switch"><input type="checkbox" id="e-dest" ${d.destacado ? 'checked' : ''}><i></i>Destacar en la portada</label>
     </div>
-    <div data-pane="t2" hidden style="display:grid;gap:14px">
-      <div class="g3"><label class="f" for="e-precio">Precio por persona (USD)<input class="in mono" id="e-precio" inputmode="numeric" value="${d.precio}"></label><label class="f" for="e-noches">Noches<input class="in mono" id="e-noches" type="number" min="1" max="60" value="${d.noches}"></label><label class="f" for="e-cupos">Lugares disponibles<input class="in mono" id="e-cupos" type="number" min="0" max="500" value="${d.cupos}"></label></div>
-      <p class="muted" style="margin:0;font-size:.84rem" id="e-ars"></p>
-      <label class="f" for="e-regimen">Régimen<select class="in" id="e-regimen">${['All inclusive', 'Media pensión', 'Desayuno', 'Solo alojamiento'].map(r => `<option ${d.regimen === r ? 'selected' : ''}>${r}</option>`).join('')}</select></label>
-      <div class="f" style="display:grid;gap:6px;font-size:.84rem;font-weight:650">Fechas de salida
-        <div class="row"><label class="sr-only" for="e-fecha">Nueva fecha</label><input class="in" id="e-fecha" type="date" min="2026-09-24" style="width:auto"><button class="btn" type="button" id="addDate">Agregar fecha</button></div>
-        <div class="chips" id="dates"></div></div>
+    <div class="pane" data-pane="t2" hidden>
+      <div class="g3"><label class="f" for="e-moneda">Moneda<select class="in" id="e-moneda">${opt(['USD', 'ARS'], d.moneda)}</select></label><label class="f" for="e-precio">Precio por persona, base doble<input class="in num" id="e-precio" inputmode="numeric" value="${nf.format(d.precio)}"></label><label class="f" for="e-noches">Noches<input class="in num" id="e-noches" type="number" min="1" max="90" value="${d.noches}"></label></div>
+      <p class="help" id="e-ars"></p>
+      <div class="g3"><label class="f" for="e-single">Base single <small class="muted">(opcional)</small><input class="in num" id="e-single" inputmode="numeric" value="${d.precioSingle ? nf.format(d.precioSingle) : ''}"></label><label class="f" for="e-triple">Base triple <small class="muted">(opcional)</small><input class="in num" id="e-triple" inputmode="numeric" value="${d.precioTriple ? nf.format(d.precioTriple) : ''}"></label><label class="f" for="e-menor">Menor <small class="muted">(opcional)</small><input class="in num" id="e-menor" inputmode="numeric" value="${d.precioMenor ? nf.format(d.precioMenor) : ''}"></label></div>
+      <div class="g3"><label class="f" for="e-cuotas">Cuotas sin interés<select class="in" id="e-cuotas">${[0, 3, 6, 9, 12, 18].map(c => `<option value="${c}" ${+d.cuotas === c ? 'selected' : ''}>${c ? c + ' cuotas' : 'Sin cuotas'}</option>`).join('')}</select></label><label class="f" for="e-sena">Seña para reservar (%)<input class="in num" id="e-sena" type="number" min="0" max="100" value="${d.sena || 0}"></label><label class="f" for="e-cupos">Lugares disponibles<input class="in num" id="e-cupos" type="number" min="0" max="999" value="${d.cupos}"></label></div>
+      <label class="f" for="e-regimen">Régimen de comidas<input class="in" id="e-regimen" value="${esc(d.regimen)}" list="regs"><datalist id="regs"><option>All inclusive</option><option>Pensión completa</option><option>Media pensión</option><option>Desayuno</option><option>Solo alojamiento</option></datalist></label>
     </div>
-    <div data-pane="t3" hidden style="display:grid;gap:14px">
+    <div class="pane" data-pane="t3" hidden>
+      <div class="g2"><label class="f" for="e-transp">Transporte<select class="in" id="e-transp">${opt(['Aéreo', 'Bus', 'Crucero', 'Sin transporte'], d.transporte)}</select></label><label class="f" for="e-desde">Sale desde<input class="in" id="e-desde" value="${esc(d.salidaDesde)}" list="ciudades"><datalist id="ciudades"><option>Córdoba</option><option>Buenos Aires</option><option>Rosario</option><option>Mendoza</option></datalist></label></div>
+      <div class="f" style="display:grid;gap:8px;font-size:.9rem;font-weight:700">Fechas de salida
+        <div class="adder"><label class="sr-only" for="e-fecha">Nueva fecha</label><input class="in" id="e-fecha" type="date" min="2026-09-24"><button class="btn" type="button" id="addDate">Agregar fecha</button></div>
+        <div id="dates"></div></div>
+      <div class="g2"><label class="f" for="e-hotel">Hotel <small class="muted">(opcional)</small><input class="in" id="e-hotel" value="${esc(d.hotel)}"></label><label class="f" for="e-estr">Categoría<select class="in" id="e-estr">${[0, 3, 4, 5].map(s => `<option value="${s}" ${+d.estrellas === s ? 'selected' : ''}>${s ? '★'.repeat(s) + ' ' + s + ' estrellas' : 'Sin indicar'}</option>`).join('')}</select></label></div>
+    </div>
+    <div class="pane" data-pane="t4" hidden>
+      <p class="help">Día por día, como lo va a leer el viajero en la página del paquete.</p>
+      <div class="days" id="days"></div>
+      <div><button class="btn" type="button" id="addDay">+ Agregar día</button></div>
+    </div>
+    <div class="pane" data-pane="t5" hidden>
+      <div class="f" style="display:grid;gap:8px;font-size:.9rem;font-weight:700">Incluye
+        <div class="adder"><label class="sr-only" for="e-inc">Agregar a incluye</label><input class="in" id="e-inc" placeholder="Ej.: Excursión a Isla Saona" list="incs"><datalist id="incs">${INCLUYE.map(x => `<option>${x}</option>`).join('')}<option>Excursiones</option><option>Seguro de cancelación</option></datalist><button class="btn" type="button" id="addInc">Agregar</button></div><div id="incList"></div></div>
+      <div class="f" style="display:grid;gap:8px;font-size:.9rem;font-weight:700">No incluye
+        <div class="adder"><label class="sr-only" for="e-noinc">Agregar a no incluye</label><input class="in" id="e-noinc" placeholder="Ej.: Propinas"><button class="btn" type="button" id="addNoInc">Agregar</button></div><div id="noIncList"></div></div>
+    </div>
+    <div class="pane" data-pane="t6" hidden>
       <label class="drop" id="drop" for="e-files"><b>Arrastrá fotos acá</b> o tocá para elegirlas<br><small>JPG, PNG o WebP · hasta 8 MB cada una · la web las optimiza sola</small><input id="e-files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
       <div class="photos" id="photos"></div>
-      <label class="f" for="e-escena">Ilustración del boceto <span class="muted">(en la versión final se reemplaza por las fotos)</span><select class="in" id="e-escena">${Object.keys(SCENE_COLORS).map(s => `<option ${d.escena === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
     </div>
-    <div data-pane="t4" hidden style="display:grid;gap:14px">
-      <p class="muted" style="margin:0;font-size:.86rem">Así se va a ver este paquete en Google. Si dejás los campos vacíos, los armamos automáticamente con el nombre y el resumen.</p>
+    <div class="pane" data-pane="t7" hidden>
+      <p class="help">Así se va a ver este paquete en Google. Si dejás los campos vacíos, los armamos con el nombre y el resumen.</p>
       <label class="f" for="e-seoT">Título para Google<input class="in" id="e-seoT" value="${esc(d.seoT)}" maxlength="70"><span class="count-hint" data-count="e-seoT" data-max="60"></span></label>
       <label class="f" for="e-seoD">Descripción para Google<textarea class="in" id="e-seoD" maxlength="200">${esc(d.seoD)}</textarea><span class="count-hint" data-count="e-seoD" data-max="155"></span></label>
       <div class="serp" aria-label="Vista previa en Google"><div class="u">arrecifeviajes.com.ar › paquetes › <span id="s-slug"></span></div><div class="t" id="s-t"></div><div class="d" id="s-d"></div></div>
@@ -615,47 +827,54 @@ function editPk(p) {
   </form>
   <div class="drawer-f">${isNew ? '' : '<button class="btn danger" id="delPk" style="margin-right:auto">Eliminar</button>'}<button class="btn" data-close>Cancelar</button><button class="btn pri" id="savePk">${isNew ? 'Crear paquete' : 'Guardar cambios'}</button></div>`);
   const f = $('#pkForm');
-  dr.querySelectorAll('[data-close]').forEach(b => b.onclick = closeDrawer);
-  dr.querySelector('.tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; $$('[data-tab]', dr).forEach(x => x.setAttribute('aria-selected', x === b)); $$('[data-pane]', dr).forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab); };
-  const slug = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const sync = () => {
     $$('[data-count]', dr).forEach(h => { const n = $('#' + h.dataset.count).value.length, max = +h.dataset.max; h.textContent = `${n} / ${max}`; h.classList.toggle('bad', n > max); });
-    const pr = parseNum($('#e-precio').value) || 0; $('#e-ars').textContent = `Referencia en pesos: ARS ${nf.format(pr * DB.cotizacion)} (USD 1 = ARS ${nf.format(DB.cotizacion)}, se cambia en Configuración).`;
+    const pr = parseNum($('#e-precio').value) || 0, mon = $('#e-moneda').value;
+    $('#e-ars').textContent = mon === 'USD' ? `Referencia en pesos: ARS ${nf.format(pr * DB.cotizacion)} (USD 1 = ARS ${nf.format(DB.cotizacion)}, se cambia en Configuración).` : 'Los precios se muestran en pesos, sin conversión.';
     const nom = $('#e-nombre').value || 'Nombre del paquete';
     $('#s-slug').textContent = slug(nom) || 'nuevo';
-    $('#s-t').textContent = $('#e-seoT').value || `${nom} · ${$('#e-noches').value} noches desde Córdoba | ${DB.agencia.nombre}`;
-    $('#s-d').textContent = $('#e-seoD').value || `${$('#e-resumen').value || 'Resumen del paquete.'} Desde USD ${nf.format(pr)} por persona. Cuotas y atención en Villa Carlos Paz.`;
+    $('#s-t').textContent = $('#e-seoT').value || `${nom} · ${$('#e-noches').value} noches desde ${$('#e-desde').value || 'Córdoba'} | ${DB.agencia.nombre}`;
+    $('#s-d').textContent = $('#e-seoD').value || `${$('#e-resumen').value || 'Resumen del paquete.'} Desde ${mon} ${nf.format(pr)} por persona. Atención en ${DB.agencia.ciudad}.`;
   };
   f.addEventListener('input', sync); sync();
-  const drawDates = () => { $('#dates').innerHTML = d.salidas.sort().map((x, i) => `<span>${fdate(x)}<button type="button" data-rm="${i}" aria-label="Quitar ${fdate(x)}">✕</button></span>`).join('') || '<small class="muted">Todavía no hay fechas.</small>'; };
+  const drawDates = () => { d.salidas.sort(); chipList($('#dates'), d.salidas.map(fdate), 'neutral'); };
   drawDates();
   $('#addDate').onclick = () => { const v = $('#e-fecha').value; if (!v) { toast('Elegí una fecha en el calendario.'); return; } if (!d.salidas.includes(v)) d.salidas.push(v); drawDates(); $('#e-fecha').value = ''; };
   $('#dates').onclick = e => { const b = e.target.closest('[data-rm]'); if (b) { d.salidas.splice(+b.dataset.rm, 1); drawDates(); } };
-  const drawPhotos = () => { $('#photos').innerHTML = d.fotos.map((src, i) => `<figure><img src="${src}" alt="Foto ${i + 1}">${i === 0 ? '<figcaption>Portada</figcaption>' : ''}<button type="button" data-rmf="${i}" aria-label="Quitar foto">✕</button></figure>`).join(''); };
+  const drawDays = () => { $('#days').innerHTML = d.itinerario.map((x, i) => `<div class="day"><span class="n">${i + 1}</span><div class="fields"><label class="sr-only" for="dt-${i}">Título del día ${i + 1}</label><input class="in" id="dt-${i}" data-dt="${i}" value="${esc(x.t)}" placeholder="Título del día"><label class="sr-only" for="dd-${i}">Detalle del día ${i + 1}</label><textarea class="in" id="dd-${i}" data-dd="${i}" style="min-height:60px" placeholder="Qué se hace ese día">${esc(x.d)}</textarea></div><button type="button" class="btn icon-btn sm" data-rmday="${i}" aria-label="Quitar día ${i + 1}">✕</button></div>`).join('') || '<p class="help">Todavía no hay días cargados.</p>'; };
+  drawDays();
+  $('#days').addEventListener('input', e => { const t = e.target; if (t.dataset.dt) d.itinerario[+t.dataset.dt].t = t.value; if (t.dataset.dd) d.itinerario[+t.dataset.dd].d = t.value; });
+  $('#days').onclick = e => { const b = e.target.closest('[data-rmday]'); if (b) { d.itinerario.splice(+b.dataset.rmday, 1); drawDays(); } };
+  $('#addDay').onclick = () => { d.itinerario.push({ t: '', d: '' }); drawDays(); $(`#dt-${d.itinerario.length - 1}`).focus(); };
+  const list = (btn, input, key, el, cls) => { const draw = () => chipList($(el), d[key], cls); draw(); $(btn).onclick = () => { const v = $(input).value.trim(); if (!v) return; d[key].push(v); $(input).value = ''; draw(); }; $(input).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $(btn).click(); } }); $(el).onclick = e => { const b = e.target.closest('[data-rm]'); if (b) { d[key].splice(+b.dataset.rm, 1); draw(); } }; };
+  list('#addInc', '#e-inc', 'incluye', '#incList', '');
+  list('#addNoInc', '#e-noinc', 'noIncluye', '#noIncList', 'neutral');
+  const allPhotos = () => d.fotos.length ? d.fotos : (d.foto ? [d.foto] : []);
+  const drawPhotos = () => { $('#photos').innerHTML = allPhotos().map((s, i) => `<figure><img src="${esc(src(s))}" alt="Foto ${i + 1}">${i === 0 ? '<figcaption>Portada</figcaption>' : `<button type="button" class="cover" data-cov="${i}">Usar de portada</button>`}<button type="button" class="x" data-rmf="${i}" aria-label="Quitar foto">✕</button></figure>`).join(''); };
   drawPhotos();
-  const addFiles = files => { [...files].forEach(file => { if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { toast(`"${file.name}" no es JPG, PNG ni WebP.`); return; } if (file.size > 8 * 1024 * 1024) { toast(`"${file.name}" pesa más de 8 MB.`); return; } const r = new FileReader(); r.onload = () => { d.fotos.push(r.result); drawPhotos(); }; r.readAsDataURL(file); }); };
+  const addFiles = files => { [...files].forEach(file => { if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { toast(`"${file.name}" no es JPG, PNG ni WebP.`); return; } if (file.size > 8 * 1024 * 1024) { toast(`"${file.name}" pesa más de 8 MB.`); return; } const r = new FileReader(); r.onload = () => { if (!d.fotos.length && d.foto) d.fotos.push(d.foto); d.fotos.push(r.result); drawPhotos(); }; r.readAsDataURL(file); }); };
   $('#e-files').onchange = e => addFiles(e.target.files);
   const drop = $('#drop'); ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); })); ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
   drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
-  $('#photos').onclick = e => { const b = e.target.closest('[data-rmf]'); if (b) { d.fotos.splice(+b.dataset.rmf, 1); drawPhotos(); } };
+  $('#photos').onclick = e => { const all = allPhotos().slice(); const rm = e.target.closest('[data-rmf]'), cv = e.target.closest('[data-cov]'); if (rm) { all.splice(+rm.dataset.rmf, 1); d.fotos = all; if (!all.length) d.foto = ''; drawPhotos(); } if (cv) { const [x] = all.splice(+cv.dataset.cov, 1); all.unshift(x); d.fotos = all; drawPhotos(); } };
   $('#savePk').onclick = () => {
     const nom = $('#e-nombre').value.trim(), pr = parseNum($('#e-precio').value);
-    if (nom.length < 4) { toast('El nombre necesita al menos 4 letras.'); $('[data-tab="t1"]', dr).click(); $('#e-nombre').focus(); return; }
-    if (!pr || pr < 50) { toast('Revisá el precio: tiene que ser mayor a USD 50.'); $('[data-tab="t2"]', dr).click(); $('#e-precio').focus(); return; }
+    if (nom.length < 4) { toast('El nombre necesita al menos 4 letras.'); tabTo('t1'); $('#e-nombre').focus(); return; }
+    if (!pr) { toast('Revisá el precio base: tiene que ser mayor a 0.'); tabTo('t2'); $('#e-precio').focus(); return; }
     const est = f.querySelector('input[name=estado]:checked').value;
-    if (est === 'publicado' && !d.salidas.length) { toast('Para publicar, agregá al menos una fecha de salida.'); $('[data-tab="t2"]', dr).click(); return; }
-    Object.assign(d, { nombre: nom, destino: $('#e-destino').value.trim() || nom, pais: $('#e-pais').value.trim(), region: $('#e-region').value, etiqueta: $('#e-etq').value.trim(), resumen: $('#e-resumen').value.trim(), estado: est, destacado: $('#e-dest').checked, precio: pr, noches: +$('#e-noches').value || 1, cupos: +$('#e-cupos').value || 0, regimen: $('#e-regimen').value, escena: $('#e-escena').value, seoT: $('#e-seoT').value.trim(), seoD: $('#e-seoD').value.trim() });
-    if (isNew) { d.id = slug(nom) + '-' + Date.now().toString(36).slice(-4); DB.paquetes.push(d); log(`creó el paquete ${nom}`); }
-    else { const i = DB.paquetes.findIndex(x => x.id === d.id); if (DB.paquetes[i].precio !== d.precio) log(`cambió el precio de ${nom} de USD ${nf.format(DB.paquetes[i].precio)} a USD ${nf.format(d.precio)}`); else log(`editó ${nom}`); DB.paquetes[i] = d; }
-    try { localStorage.setItem(KEY, JSON.stringify(DB)); toast(est === 'publicado' ? 'Guardado. Ya está visible en la web.' : 'Guardado como ' + EST[est][1].toLowerCase() + '. No se ve en la web.'); }
-    catch (e) { d.fotos = []; save(); toast('Guardado. Las fotos del boceto no se guardan en este navegador (en la versión final se suben al servidor).'); }
-    closeDrawer(); if ($('#pkRows')) rows(); else go('paquetes');
+    if (est === 'publicado' && !d.salidas.length) { toast('Para publicar, agregá al menos una fecha de salida.'); tabTo('t3'); return; }
+    const opt2 = id => parseNum($(id).value) || 0;
+    Object.assign(d, { nombre: nom, destino: $('#e-destino').value.trim() || nom, pais: $('#e-pais').value.trim(), iata: $('#e-iata').value.trim().toUpperCase(), region: $('#e-region').value, tipo: $('#e-tipo').value.trim() || 'Playa', etiqueta: $('#e-etq').value.trim(), etiquetaColor: f.querySelector('input[name=etqc]:checked')?.value || 'rojo', resumen: $('#e-resumen').value.trim(), descripcion: $('#e-desc').value.trim(), estado: est, destacado: $('#e-dest').checked, moneda: $('#e-moneda').value, precio: pr, precioSingle: opt2('#e-single'), precioTriple: opt2('#e-triple'), precioMenor: opt2('#e-menor'), cuotas: +$('#e-cuotas').value, sena: +$('#e-sena').value || 0, noches: +$('#e-noches').value || 1, cupos: +$('#e-cupos').value || 0, regimen: $('#e-regimen').value.trim(), transporte: $('#e-transp').value, salidaDesde: $('#e-desde').value.trim() || 'Córdoba', hotel: $('#e-hotel').value.trim(), estrellas: +$('#e-estr').value, seoT: $('#e-seoT').value.trim(), seoD: $('#e-seoD').value.trim() });
+    d.itinerario = d.itinerario.filter(x => x.t.trim() || x.d.trim());
+    if (isNew) { d.id = slug(nom) + '-' + Date.now().toString(36).slice(-4); d.escena ||= 'puntacana'; DB.paquetes.push(d); log(`creó el paquete ${nom}`); }
+    else { const i = DB.paquetes.findIndex(x => x.id === d.id), old = DB.paquetes[i]; log(old.precio !== d.precio ? `cambió el precio de ${nom} de ${money(old.precio, old.moneda)} a ${money(d.precio, d.moneda)}` : `editó ${nom}`); DB.paquetes[i] = d; }
+    if (save(est === 'publicado' ? 'Guardado. Ya está visible en la web.' : `Guardado como ${EST[est][1].toLowerCase()}. No se ve en la web.`)) { closeDrawer(); if (current === 'paquetes') rows(); else go('paquetes'); }
   };
-  $('#delPk')?.addEventListener('click', () => ask(`¿Eliminar "${d.nombre}"?`, 'Se quita de la web. Esta acción no se puede deshacer.', 'Eliminar', () => { DB.paquetes = DB.paquetes.filter(x => x.id !== d.id); DB.ofertas = DB.ofertas.filter(o => o.paquete !== d.id); log(`eliminó el paquete ${d.nombre}`); save('Paquete eliminado.'); closeDrawer(); rows(); }));
+  $('#delPk')?.addEventListener('click', () => ask(`¿Eliminar "${d.nombre}"?`, 'Se quita de la web junto con sus ofertas. Esta acción no se puede deshacer.', 'Eliminar', () => { DB.paquetes = DB.paquetes.filter(x => x.id !== d.id); DB.ofertas = DB.ofertas.filter(o => o.paquete !== d.id); log(`eliminó el paquete ${d.nombre}`); save('Paquete eliminado.'); closeDrawer(); rows(); }));
 }
 function ask(title, body, okLabel, fn) {
   const dl = $('#confirm');
-  dl.innerHTML = `<div class="dlg-h"><h2 id="cf-t">${esc(title)}</h2></div><div class="dlg-b"><p style="margin:0">${esc(body)}</p><div class="row" style="justify-content:flex-end"><button class="btn" id="cfNo">Cancelar</button><button class="btn pri" id="cfOk" style="background:var(--coral);border-color:var(--coral);color:#fff">${esc(okLabel)}</button></div></div>`;
+  dl.innerHTML = `<div class="dlg-h"><h2 id="cf-t">${esc(title)}</h2></div><div class="dlg-b"><p style="margin:0">${esc(body)}</p><div class="row" style="justify-content:flex-end"><button class="btn" id="cfNo">Cancelar</button><button class="btn pri" id="cfOk">${esc(okLabel)}</button></div></div>`;
   dl.showModal(); $('#cfNo').onclick = () => dl.close(); $('#cfOk').onclick = () => { dl.close(); fn(); };
 }
 
@@ -666,48 +885,89 @@ function bulk() {
   <div class="dlg-b">
     <div class="g2">
       <label class="f" for="bk-scope">Aplicar a<select class="in" id="bk-scope"><option value="all">Todos los paquetes</option>${sel.size ? `<option value="sel" selected>Los ${sel.size} seleccionados</option>` : ''}${Object.entries(REG).map(([k, v]) => `<option value="${k}">Solo ${v}</option>`).join('')}</select></label>
-      <label class="f" for="bk-pct">Cambio (%)<input class="in mono" id="bk-pct" type="number" step="0.5" value="5"></label>
+      <label class="f" for="bk-pct">Cambio (%)<input class="in num" id="bk-pct" type="number" step="0.5" value="5"></label>
     </div>
-    <label class="f" for="bk-round">Redondeo<select class="in" id="bk-round"><option value="1">Sin redondeo</option><option value="10" selected>A la decena (USD 1.990)</option><option value="50">A múltiplos de 50</option></select></label>
-    <div class="tbl-wrap" style="max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:12px"><table class="diff"><thead><tr><th>Paquete</th><th>Antes</th><th>Después</th></tr></thead><tbody id="bkRows"></tbody></table></div>
+    <label class="f" for="bk-round">Redondeo<select class="in" id="bk-round"><option value="1">Sin redondeo</option><option value="10" selected>A la decena (1.990)</option><option value="50">A múltiplos de 50</option></select></label>
+    <div class="tbl-wrap" style="max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:12px"><table class="diff"><thead><tr><th>Paquete</th><th class="r">Antes</th><th class="r">Después</th></tr></thead><tbody id="bkRows"></tbody></table></div>
     <div class="row" style="justify-content:flex-end"><button class="btn" id="bkNo">Cancelar</button><button class="btn pri" id="bkOk">Aplicar cambios</button></div>
   </div>`;
   const calc = () => {
     const sc = $('#bk-scope').value, pct = +$('#bk-pct').value || 0, rd = +$('#bk-round').value;
-    const list = DB.paquetes.filter(p => sc === 'all' || (sc === 'sel' ? sel.has(p.id) : p.region === sc));
-    const out = list.map(p => { let v = p.precio * (1 + pct / 100); v = rd === 10 ? Math.round(v / 10) * 10 : rd === 50 ? Math.round(v / 50) * 50 : Math.round(v); return [p, v]; });
-    $('#bkRows').innerHTML = out.map(([p, v]) => `<tr><td style="font-family:var(--f-body)">${esc(p.nombre)}</td><td>USD ${nf.format(p.precio)}</td><td class="${v > p.precio ? 'up' : ''}">USD ${nf.format(v)}</td></tr>`).join('') || '<tr><td colspan="3" class="empty">No hay paquetes en esta selección.</td></tr>';
+    const out = DB.paquetes.filter(p => sc === 'all' || (sc === 'sel' ? sel.has(p.id) : p.region === sc)).map(p => { let v = p.precio * (1 + pct / 100); v = rd === 10 ? Math.round(v / 10) * 10 : rd === 50 ? Math.round(v / 50) * 50 : Math.round(v); return [p, v]; });
+    $('#bkRows').innerHTML = out.map(([p, v]) => `<tr><td>${esc(p.nombre)}</td><td class="r">${money(p.precio, p.moneda)}</td><td class="r ${v > p.precio ? 'up' : ''}">${money(v, p.moneda)}</td></tr>`).join('') || '<tr><td colspan="3" class="empty">No hay paquetes en esta selección.</td></tr>';
     return out;
   };
   dl.oninput = calc; calc(); dl.showModal();
   $('#bkX').onclick = $('#bkNo').onclick = () => dl.close();
-  $('#bkOk').onclick = () => { const out = calc(); if (!out.length) return; out.forEach(([p, v]) => p.precio = v); log(`actualizó ${out.length} precios un ${$('#bk-pct').value} %`); save(`Listo: ${out.length} precios actualizados en la web.`); dl.close(); if ($('#pkRows')) rows(); };
+  $('#bkOk').onclick = () => { const out = calc(); if (!out.length) return; out.forEach(([p, v]) => p.precio = v); log(`actualizó ${out.length} precios un ${$('#bk-pct').value} %`); save(`Listo: ${out.length} precios actualizados en la web.`); dl.close(); if (current === 'paquetes') rows(); };
 }
 
-/* ---------- ofertas ---------- */
+/* ---------- ofertas (varias activas a la vez) ---------- */
+const offerPrice = (o, p) => o.precioFinal ? o.precioFinal : Math.round(p.precio * (1 - (o.descuento || 0) / 100));
+const offerState = o => { const now = Date.now(); if (!o.activa) return ['off', 'Apagada']; if (new Date(o.vence) <= now) return ['off', 'Vencida']; if (new Date(o.desde) > now) return ['warn', 'Programada']; return ['hot', 'En la web']; };
 VIEWS.ofertas = () => {
-  const now = Date.now();
-  V(`<div class="row" style="justify-content:space-between"><p class="muted" style="margin:0">La primera oferta activa aparece en la portada con cuenta regresiva. Cuando vence, se oculta sola.</p><button class="btn pri" id="newOf">+ Nueva oferta</button></div>
-  <div class="offers">${DB.ofertas.map(o => { const p = DB.paquetes.find(x => x.id === o.paquete); if (!p) return ''; const venc = new Date(o.vence) <= now; const left = Math.max(0, new Date(o.vence) - now); const dd = Math.floor(left / DAY), hh = Math.floor(left % DAY / 36e5);
+  const now = Date.now(), live = DB.ofertas.filter(o => offerState(o)[1] === 'En la web').length;
+  V(`<div class="row" style="justify-content:space-between"><p class="muted" style="margin:0">Podés tener varias ofertas en la web al mismo tiempo. Cada una se muestra como tarjeta de embarque y se oculta sola cuando vence. <b style="color:var(--ink)">${live} en la web ahora.</b></p><button class="btn pri" data-act="new-of">+ Nueva oferta</button></div>
+  <div class="offers">${DB.ofertas.map(o => { const p = DB.paquetes.find(x => x.id === o.paquete); if (!p) return ''; const [cls, lab] = offerState(o); const left = Math.max(0, new Date(o.vence) - now); const dd = Math.floor(left / DAY), hh = Math.floor(left % DAY / 36e5);
     return `<article class="card offer" data-of="${esc(o.id)}">
-      <div class="offer-top"><span>Tarjeta de embarque</span>${venc ? '<span class="pill off">Vencida</span>' : o.activa ? '<span class="pill hot">En la portada</span>' : '<span class="pill off">Apagada</span>'}</div>
-      <div class="offer-route"><div><b>COR</b><small>Córdoba</small></div><span class="line">${PLANE}</span><div><b>${esc(iata(p))}</b><small>${esc(p.destino)}</small></div></div>
+      <div class="offer-top"><span>${esc(o.etiqueta || 'Oferta')}</span><span class="pill ${cls}">${lab}</span></div>
+      <div class="offer-route"><div><b>${esc(iata({ destino: p.salidaDesde, iata: { 'Córdoba': 'COR', 'Buenos Aires': 'EZE', 'Rosario': 'ROS', 'Mendoza': 'MDZ' }[p.salidaDesde] }))}</b><small>${esc(p.salidaDesde)}</small></div><span class="line">${PLANE}</span><div style="text-align:right"><b>${esc(iata(p))}</b><small>${esc(p.destino)}</small></div></div>
       <h3>${esc(o.titulo)}</h3><div class="sub">${esc(p.nombre)}</div>
-      <div class="body"><div class="row" style="align-items:baseline"><span class="big">USD ${nf.format(Math.round(p.precio * (1 - o.descuento / 100)))}</span><s class="muted mono">USD ${nf.format(p.precio)}</s></div>
-      <div class="g2"><label class="f" for="od-${o.id}">Descuento (%)<input class="in mono" id="od-${o.id}" type="number" min="1" max="80" value="${o.descuento}" data-of-desc></label>
-      <label class="f" for="ov-${o.id}">Vence<input class="in" id="ov-${o.id}" type="datetime-local" value="${new Date(new Date(o.vence) - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 16)}" data-of-vence></label></div>
-      </div>
-      <div class="stub"><label class="switch"><input type="checkbox" data-of-on ${o.activa ? 'checked' : ''}><i></i>Mostrar en la web</label>${venc ? '' : `<span class="cd">Termina en ${dd} d ${hh} h</span>`}</div>
+      <div class="prices"><span class="big">${money(offerPrice(o, p), p.moneda)}</span><s class="muted">${money(p.precio, p.moneda)}</s>${o.precioFinal ? '' : `<span class="pill info">−${o.descuento} %</span>`}</div>
+      <div class="meta"><span>Desde ${new Date(o.desde).toLocaleDateString('es-AR')}</span><span>Hasta ${new Date(o.vence).toLocaleDateString('es-AR')}</span><span>${o.contador ? 'Con cuenta regresiva' : 'Sin cuenta regresiva'}</span>${o.cupos ? `<span>${o.cupos} lugares</span>` : ''}</div>
+      <div class="stub"><label class="switch"><input type="checkbox" data-of-on ${o.activa ? 'checked' : ''}><i></i>Mostrar en la web</label><span class="row" style="gap:8px">${left && o.activa ? `<small class="muted">Termina en ${dd} d ${hh} h</small>` : ''}<button class="btn sm" data-of-edit>Editar</button></span></div>
     </article>`; }).join('') || '<div class="card empty">Todavía no hay ofertas.</div>'}</div>`);
-  $('#newOf').onclick = () => { const p = DB.paquetes.find(x => x.estado === 'publicado'); if (!p) { toast('Primero publicá al menos un paquete.'); return; } DB.ofertas.unshift({ id: 'o' + Date.now(), paquete: p.id, titulo: `Oferta ${p.destino}`, descuento: 10, vence: new Date(Date.now() + 5 * DAY).toISOString(), activa: false }); save('Oferta creada apagada. Revisala y encendela.'); VIEWS.ofertas(); };
 };
 $('#view').addEventListener('change', e => {
-  const card = e.target.closest('[data-of]'); if (!card) return; const o = DB.ofertas.find(x => x.id === card.dataset.of); const t = e.target;
-  if (t.matches('[data-of-desc]')) { const v = +t.value; if (v < 1 || v > 80) { toast('El descuento va de 1 % a 80 %.'); t.value = o.descuento; return; } o.descuento = v; log(`cambió el descuento de "${o.titulo}" a ${v} %`); save('Descuento actualizado.'); }
-  if (t.matches('[data-of-vence]')) { const d = new Date(t.value); if (isNaN(d)) return; o.vence = d.toISOString(); save('Fecha de vencimiento actualizada.'); }
-  if (t.matches('[data-of-on]')) { if (t.checked) DB.ofertas.forEach(x => { if (x !== o) x.activa = false; }); o.activa = t.checked; log(`${o.activa ? 'encendió' : 'apagó'} la oferta "${o.titulo}"`); save(o.activa ? 'La oferta ya se ve en la portada.' : 'Oferta oculta de la web.'); }
-  VIEWS.ofertas();
+  const card = e.target.closest('[data-of]'); if (!card || !e.target.matches('[data-of-on]')) return;
+  const o = DB.ofertas.find(x => x.id === card.dataset.of); o.activa = e.target.checked;
+  log(`${o.activa ? 'encendió' : 'apagó'} la oferta "${o.titulo}"`); save(o.activa ? 'La oferta ya se ve en la web.' : 'Oferta oculta de la web.'); VIEWS.ofertas();
 });
+$('#view').addEventListener('click', e => { const b = e.target.closest('[data-of-edit]'); if (b) editOffer(DB.ofertas.find(x => x.id === b.closest('[data-of]').dataset.of)); });
+function editOffer(o) {
+  const isNew = !o, pubs = DB.paquetes.filter(p => p.estado === 'publicado');
+  if (isNew && !pubs.length) { toast('Primero publicá al menos un paquete.'); return; }
+  const d = o ? structuredClone(o) : { id: 'o' + Date.now(), paquete: pubs[0].id, titulo: '', etiqueta: 'Oferta relámpago', descuento: 10, precioFinal: 0, desde: new Date().toISOString(), vence: new Date(Date.now() + 7 * DAY).toISOString(), activa: true, contador: true, cupos: 0, nota: '' };
+  const modo = d.precioFinal ? 'fijo' : 'pct';
+  openDrawer(`
+  <div class="drawer-h"><h2 id="dr-t">${isNew ? 'Nueva oferta' : 'Editar oferta'}</h2><button class="btn icon-btn" data-close aria-label="Cerrar">✕</button></div>
+  <form class="drawer-b" id="ofForm" novalidate>
+    <label class="f" for="o-pk">Paquete en oferta<select class="in" id="o-pk">${DB.paquetes.map(p => `<option value="${esc(p.id)}" ${p.id === d.paquete ? 'selected' : ''}>${esc(p.nombre)} · ${money(p.precio, p.moneda)}${p.estado !== 'publicado' ? ' (no publicado)' : ''}</option>`).join('')}</select></label>
+    <div class="g2"><label class="f" for="o-tit">Título de la oferta<input class="in" id="o-tit" value="${esc(d.titulo)}" maxlength="60" placeholder="Ej.: Caribe de último minuto"></label>
+    <label class="f" for="o-etq">Etiqueta<input class="in" id="o-etq" value="${esc(d.etiqueta)}" maxlength="24" list="oetqs"><datalist id="oetqs"><option>Oferta relámpago</option><option>Preventa</option><option>Black Friday</option><option>Hot Sale</option><option>Especial novios</option><option>Último minuto</option></datalist></label></div>
+    <fieldset style="border:0;padding:0;margin:0;display:grid;gap:8px"><legend style="font-size:.9rem;font-weight:700;margin-bottom:6px">Cómo se calcula el precio</legend>
+      <div class="radio-row"><label><input type="radio" name="modo" value="pct" ${modo === 'pct' ? 'checked' : ''}>Descuento en %</label><label><input type="radio" name="modo" value="fijo" ${modo === 'fijo' ? 'checked' : ''}>Precio final fijo</label></div></fieldset>
+    <div class="g2"><label class="f" for="o-pct" id="o-pct-l">Descuento (%)<input class="in num" id="o-pct" type="number" min="1" max="90" value="${d.descuento || 10}"></label><label class="f" for="o-fijo" id="o-fijo-l">Precio final por persona<input class="in num" id="o-fijo" inputmode="numeric" value="${d.precioFinal ? nf.format(d.precioFinal) : ''}"></label></div>
+    <p class="help" id="o-calc"></p>
+    <div class="g2"><label class="f" for="o-desde">Empieza<input class="in" id="o-desde" type="datetime-local" value="${localDT(d.desde)}"></label><label class="f" for="o-vence">Termina<input class="in" id="o-vence" type="datetime-local" value="${localDT(d.vence)}"></label></div>
+    <div class="g2"><label class="f" for="o-cupos">Lugares para la oferta <small class="muted">(0 = los del paquete)</small><input class="in num" id="o-cupos" type="number" min="0" value="${d.cupos}"></label>
+    <div style="display:grid;gap:10px;align-content:end"><label class="switch"><input type="checkbox" id="o-cd" ${d.contador ? 'checked' : ''}><i></i>Mostrar cuenta regresiva</label><label class="switch"><input type="checkbox" id="o-on" ${d.activa ? 'checked' : ''}><i></i>Mostrar en la web</label></div></div>
+    <label class="f" for="o-nota">Nota corta <small class="muted">(opcional, aparece en la tarjeta)</small><input class="in" id="o-nota" value="${esc(d.nota)}" maxlength="90"></label>
+  </form>
+  <div class="drawer-f">${isNew ? '' : '<button class="btn danger" id="delOf" style="margin-right:auto">Eliminar</button>'}<button class="btn" data-close>Cancelar</button><button class="btn pri" id="saveOf">${isNew ? 'Crear oferta' : 'Guardar cambios'}</button></div>`);
+  const f = $('#ofForm');
+  const sync = () => {
+    const m = f.querySelector('input[name=modo]:checked').value, p = DB.paquetes.find(x => x.id === $('#o-pk').value);
+    $('#o-pct-l').hidden = m !== 'pct'; $('#o-fijo-l').hidden = m !== 'fijo';
+    const np = m === 'pct' ? Math.round(p.precio * (1 - (+$('#o-pct').value || 0) / 100)) : parseNum($('#o-fijo').value);
+    $('#o-calc').textContent = np ? `Precio normal ${money(p.precio, p.moneda)} → en oferta ${money(np, p.moneda)} (${nf1.format((1 - np / p.precio) * 100)} % menos).` : 'Escribí el precio final.';
+    if (!$('#o-tit').value && isNew) $('#o-tit').placeholder = `Ej.: ${p.destino} de último minuto`;
+  };
+  f.addEventListener('input', sync); f.addEventListener('change', sync); sync();
+  $('#saveOf').onclick = () => {
+    const m = f.querySelector('input[name=modo]:checked').value, p = DB.paquetes.find(x => x.id === $('#o-pk').value);
+    const desde = new Date($('#o-desde').value), vence = new Date($('#o-vence').value);
+    if (!$('#o-tit').value.trim()) { toast('Poné un título a la oferta.'); $('#o-tit').focus(); return; }
+    if (isNaN(desde) || isNaN(vence) || vence <= desde) { toast('La fecha de fin tiene que ser posterior a la de inicio.'); $('#o-vence').focus(); return; }
+    const pct = +$('#o-pct').value, fijo = parseNum($('#o-fijo').value);
+    if (m === 'pct' && !(pct >= 1 && pct <= 90)) { toast('El descuento va de 1 % a 90 %.'); return; }
+    if (m === 'fijo' && !(fijo > 0 && fijo < p.precio)) { toast('El precio final tiene que ser menor al precio normal.'); return; }
+    Object.assign(d, { paquete: p.id, titulo: $('#o-tit').value.trim(), etiqueta: $('#o-etq').value.trim(), descuento: m === 'pct' ? pct : 0, precioFinal: m === 'fijo' ? fijo : 0, desde: desde.toISOString(), vence: vence.toISOString(), cupos: +$('#o-cupos').value || 0, contador: $('#o-cd').checked, activa: $('#o-on').checked, nota: $('#o-nota').value.trim() });
+    if (isNew) { DB.ofertas.unshift(d); log(`creó la oferta "${d.titulo}"`); } else { DB.ofertas[DB.ofertas.findIndex(x => x.id === d.id)] = d; log(`editó la oferta "${d.titulo}"`); }
+    save(d.activa ? 'Oferta guardada. Ya se ve en la web.' : 'Oferta guardada, apagada.'); closeDrawer(); go('ofertas');
+  };
+  $('#delOf')?.addEventListener('click', () => ask(`¿Eliminar "${d.titulo}"?`, 'La oferta se quita de la web.', 'Eliminar', () => { DB.ofertas = DB.ofertas.filter(x => x.id !== d.id); log(`eliminó la oferta "${d.titulo}"`); save('Oferta eliminada.'); closeDrawer(); VIEWS.ofertas(); }));
+}
 
 /* ---------- consultas ---------- */
 let cSel = null, cFil = 'todas';
@@ -716,72 +976,67 @@ VIEWS.consultas = () => {
   if (!cSel || !list.find(c => c.id === cSel)) cSel = list[0]?.id;
   const c = DB.consultas.find(x => x.id === cSel);
   const wa = c && c.tel.replace(/\D/g, '');
-  V(`<div class="card"><div class="toolbar"><div class="row" role="group" aria-label="Filtrar consultas">${[['todas', 'Todas'], ['nueva', 'Nuevas'], ['contactada', 'Contactadas'], ['cerrada', 'Cerradas']].map(([k, v]) => `<button class="btn sm ${cFil === k ? 'pri' : ''}" data-cf="${k}">${v}</button>`).join('')}</div><span class="muted" style="margin-left:auto;font-size:.84rem">Llegan desde el formulario de la web</span></div>
-  <div class="inbox"><ul class="list" role="listbox" aria-label="Consultas">${list.map(x => `<li role="option" data-cid="${x.id}" aria-selected="${x.id === cSel}">${x.estado === 'nueva' ? '<span class="dot-new" aria-label="Nueva"></span>' : '<span style="width:9px;flex:none"></span>'}<div class="grow"><div class="t">${esc(x.nombre)}</div><div class="s">${esc(x.destino)} · ${esc(x.mensaje).slice(0, 60)}</div></div><span class="s mono">${rel(x.creada)}</span></li>`).join('') || '<li class="empty">No hay consultas en esta bandeja.</li>'}</ul>
-  <div class="detail">${c ? `<div class="row" style="justify-content:space-between"><h2 style="margin:0;font-size:1.2rem">${esc(c.nombre)}</h2><label class="sr-only" for="c-est">Estado</label><select class="in" id="c-est" style="width:auto">${['nueva', 'contactada', 'cerrada'].map(s => `<option value="${s}" ${c.estado === s ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}</select></div>
-    <div class="g2" style="font-size:.9rem"><div><span class="muted">Teléfono</span><br><span class="mono">${esc(c.tel)}</span></div><div><span class="muted">Email</span><br>${esc(c.email)}</div><div><span class="muted">Destino</span><br>${esc(c.destino)}</div><div><span class="muted">Quiere viajar</span><br>${c.fecha ? esc(c.fecha) : 'Sin fecha'}</div></div>
+  V(`<div class="card"><div class="toolbar"><div class="row" role="group" aria-label="Filtrar consultas">${[['todas', 'Todas'], ['nueva', 'Nuevas'], ['contactada', 'Contactadas'], ['cerrada', 'Cerradas']].map(([k, v]) => `<button class="btn sm ${cFil === k ? 'pri' : ''}" data-cf="${k}">${v}</button>`).join('')}</div><span class="muted" style="margin-left:auto;font-size:.9rem">Llegan desde el formulario de la web</span></div>
+  <div class="inbox"><ul class="list" role="listbox" aria-label="Consultas">${list.map(x => `<li role="option" data-cid="${x.id}" aria-selected="${x.id === cSel}">${x.estado === 'nueva' ? '<span class="dot-new" aria-label="Nueva"></span>' : '<span style="width:9px;flex:none"></span>'}<div class="grow"><div class="t">${esc(x.nombre)}</div><div class="s">${esc(x.destino)} · ${esc(x.mensaje).slice(0, 60)}</div></div><span class="s">${rel(x.creada)}</span></li>`).join('') || '<li class="empty">No hay consultas en esta bandeja.</li>'}</ul>
+  <div class="detail">${c ? `<div class="row" style="justify-content:space-between"><h2 style="margin:0;font-size:1.3rem">${esc(c.nombre)}</h2><label class="sr-only" for="c-est">Estado</label><select class="in" id="c-est" style="width:auto">${['nueva', 'contactada', 'cerrada'].map(s => `<option value="${s}" ${c.estado === s ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}</select></div>
+    <div class="g2" style="font-size:.95rem"><div><span class="muted">Teléfono</span><br>${esc(c.tel)}</div><div><span class="muted">Email</span><br>${esc(c.email)}</div><div><span class="muted">Destino</span><br>${esc(c.destino)}</div><div><span class="muted">Quiere viajar</span><br>${c.fecha ? esc(c.fecha) : 'Sin fecha'}</div></div>
     <p style="margin:0;padding:14px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line)">${esc(c.mensaje) || '<span class="muted">Sin mensaje.</span>'}</p>
-    <div class="row"><a class="btn pri" href="https://wa.me/${wa}?text=${encodeURIComponent('Hola ' + c.nombre.split(' ')[0] + '! Te escribimos de ' + DB.agencia.nombre + ' por tu consulta de ' + c.destino + '.')}" target="_blank" rel="noopener">Responder por WhatsApp</a><span class="muted" style="font-size:.82rem">Recibida ${rel(c.creada)}</span></div>` : '<p class="empty">Elegí una consulta para ver el detalle.</p>'}</div></div></div>`);
-  if (c && c.estado === 'nueva') { /* se marca al cambiar el estado */ }
+    <div class="row"><a class="btn pri" href="https://wa.me/${wa}?text=${encodeURIComponent('Hola ' + c.nombre.split(' ')[0] + '! Te escribimos de ' + DB.agencia.nombre + ' por tu consulta de ' + c.destino + '.')}" target="_blank" rel="noopener">Responder por WhatsApp</a><span class="muted" style="font-size:.88rem">Recibida ${rel(c.creada)}</span></div>` : '<p class="empty">Elegí una consulta para ver el detalle.</p>'}</div></div></div>`);
 };
-$('#view').addEventListener('click', e => { const li = e.target.closest('[data-cid]'); if (li) { cSel = li.dataset.cid; VIEWS.consultas(); } const f = e.target.closest('[data-cf]'); if (f) { cFil = f.dataset.cf; VIEWS.consultas(); } });
-$('#view').addEventListener('change', e => { if (e.target.id === 'c-est') { const c = DB.consultas.find(x => x.id === cSel); c.estado = e.target.value; save(`Consulta marcada como ${c.estado}.`); refreshBadge(); VIEWS.consultas(); } });
-
-/* ---------- textos ---------- */
-VIEWS.textos = () => {
-  const t = DB.textos;
-  V(`<div class="dash"><div class="card"><div class="card-h"><h2>Portada</h2><span class="pill info">Se ve apenas entrás a la web</span></div><form class="card-b" id="txForm" style="display:grid;gap:14px">
-    <label class="f" for="t-1">Título, primera línea<input class="in" id="t-1" value="${esc(t.heroLinea1)}" maxlength="28"><span class="count-hint" data-count="t-1" data-max="24"></span></label>
-    <label class="f" for="t-2">Título, segunda línea (en cursiva)<input class="in" id="t-2" value="${esc(t.heroLinea2)}" maxlength="28"><span class="count-hint" data-count="t-2" data-max="24"></span></label>
-    <label class="f" for="t-3">Bajada<textarea class="in" id="t-3" maxlength="200">${esc(t.heroBajada)}</textarea><span class="count-hint" data-count="t-3" data-max="160"></span></label>
-    <div class="row"><button class="btn pri" type="submit">Publicar cambios</button><button class="btn" type="button" id="txReset">Volver al texto original</button></div></form></div>
-  <div class="card"><div class="card-h"><h2>Vista previa</h2></div><div class="card-b"><div class="preview-hero"><h3><span id="pv1"></span><em id="pv2"></em></h3><p id="pv3"></p></div>
-  <p class="muted" style="font-size:.84rem;margin:12px 0 0">En la versión final también se editan desde acá los textos de cada sección, las preguntas frecuentes, los testimonios y las fotos de portada.</p></div></div></div>`);
-  $('.preview-hero').style.backgroundImage = `url("${src('media/hero-playa.jpg')}")`;
-  const f = $('#txForm'); const sync = () => { $('#pv1').textContent = $('#t-1').value; $('#pv2').textContent = $('#t-2').value; $('#pv3').textContent = $('#t-3').value; $$('[data-count]', f).forEach(h => { const n = $('#' + h.dataset.count).value.length, max = +h.dataset.max; h.textContent = `${n} / ${max}`; h.classList.toggle('bad', n > max); }); };
-  f.oninput = sync; sync();
-  f.onsubmit = e => { e.preventDefault(); if (!$('#t-1').value.trim() || !$('#t-2').value.trim()) { toast('El título no puede quedar vacío.'); return; } Object.assign(DB.textos, { heroLinea1: $('#t-1').value.trim(), heroLinea2: $('#t-2').value.trim(), heroBajada: $('#t-3').value.trim() }); log('actualizó los textos de la portada'); save('Textos publicados en la web.'); };
-  $('#txReset').onclick = () => { DB.textos = structuredClone(SEED.textos); save('Se restauró el texto original.'); VIEWS.textos(); };
-};
+$('#view').addEventListener('click', e => { const li = e.target.closest('[data-cid]'); if (li) { cSel = li.dataset.cid; VIEWS.consultas(); } const fb = e.target.closest('[data-cf]'); if (fb) { cFil = fb.dataset.cf; VIEWS.consultas(); } });
+$('#view').addEventListener('change', e => { if (e.target.id === 'c-est') { const c = DB.consultas.find(x => x.id === cSel); c.estado = e.target.value; save(`Consulta marcada como ${c.estado}.`); renderBrand(); VIEWS.consultas(); } });
 
 /* ---------- configuración ---------- */
 VIEWS.config = () => {
-  const a = DB.agencia;
+  const a = DB.agencia, I = DB.integraciones;
   const fld = (k, l, extra = '') => `<label class="f" for="a-${k}">${l}<input class="in" id="a-${k}" value="${esc(a[k])}" ${extra}></label>`;
-  V(`<form class="card" id="cfgForm"><div class="card-h"><h2>Datos de la agencia</h2><span class="muted" style="font-size:.84rem">Aparecen en la web, en el mapa y en Google</span></div>
+  V(`<div class="card"><div class="card-h"><div><h2>Logo de la agencia</h2><span class="sub">Aparece en la web, en el panel y en la pantalla de acceso</span></div></div>
+    <div class="card-b logo-box"><div class="logo-prev" id="logoPrev">${a.logo ? `<img src="${esc(a.logo)}" alt="Logo actual">` : DEFAULT_MARK}</div>
+    <div style="display:grid;gap:8px"><label class="btn" for="logoFile">Subir logo</label><input id="logoFile" type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" hidden>${a.logo ? '<button class="btn danger" id="logoDel" type="button">Quitar logo</button>' : ''}<small class="muted">PNG o SVG con fondo transparente · hasta 1 MB</small></div></div></div>
+  <div class="card"><div class="card-h"><div><h2>Google</h2><span class="sub">Para ver visitas y búsquedas en el resumen</span></div></div><div class="card-b">
+    <div class="integ"><span class="ic">${GA_LOGO}</span><div><b>Google Analytics 4</b><small>${I.ga.conectado ? `Conectado · ${esc(I.ga.id)}` : 'Sin conectar'}</small></div><button class="btn ${I.ga.conectado ? '' : 'pri'}" data-integ="ga">${I.ga.conectado ? 'Desconectar' : 'Conectar con Google'}</button></div>
+    <div class="integ"><span class="ic">${SC_LOGO}</span><div><b>Google Search Console</b><small>${I.sc.conectado ? `Conectado · ${esc(I.sc.id)}` : 'Sin conectar'}</small></div><button class="btn ${I.sc.conectado ? '' : 'pri'}" data-integ="sc">${I.sc.conectado ? 'Desconectar' : 'Conectar con Google'}</button></div>
+  </div></div>
+  <form class="card" id="cfgForm"><div class="card-h"><div><h2>Datos de la agencia</h2><span class="sub">Aparecen en la web, en el mapa y en Google</span></div></div>
   <div class="card-b" style="display:grid;gap:14px">
     <div class="g2">${fld('nombre', 'Nombre comercial', 'maxlength="40"')}${fld('email', 'Email de contacto', 'type="email"')}</div>
     <div class="g3">${fld('direccion', 'Dirección')}${fld('ciudad', 'Ciudad')}${fld('cp', 'Código postal')}</div>
     <div class="g3">${fld('telefono', 'Teléfono')}${fld('whatsapp', 'WhatsApp (con código de país)', 'inputmode="numeric"')}${fld('horario', 'Horario')}</div>
     <div class="g2">${fld('legajo', 'Legajo EVyT')}${fld('cuit', 'CUIT')}</div>
+    <div class="g2"><label class="f" for="a-fx">Dólar de referencia (ARS por USD)<input class="in num" id="a-fx" inputmode="numeric" value="${nf.format(DB.cotizacion)}"><small class="muted">Se usa para mostrar el precio aproximado en pesos.</small></label></div>
   </div>
-  <div class="card-h" style="border-top:1px solid var(--line)"><h2>Moneda</h2></div>
-  <div class="card-b g2"><label class="f" for="a-fx">Dólar de referencia (ARS por USD)<input class="in mono" id="a-fx" inputmode="numeric" value="${nf.format(DB.cotizacion)}"><span class="muted" style="font-weight:400;font-size:.8rem">Se usa para mostrar el precio aproximado en pesos debajo de cada paquete.</span></label></div>
   <div class="drawer-f" style="border-radius:0 0 16px 16px"><button class="btn pri" type="submit">Guardar configuración</button></div></form>`);
+  $('#logoFile').onchange = e => { const file = e.target.files[0]; if (!file) return; if (file.size > 1024 * 1024) { toast('El logo pesa más de 1 MB. Probá con una versión más liviana.'); return; } const r = new FileReader(); r.onload = () => { DB.agencia.logo = r.result; log('cambió el logo de la agencia'); if (save('Logo actualizado en la web y en el panel.')) { renderBrand(); VIEWS.config(); } }; r.readAsDataURL(file); };
+  $('#logoDel')?.addEventListener('click', () => { DB.agencia.logo = ''; save('Logo quitado.'); renderBrand(); VIEWS.config(); });
+  $$('[data-integ]').forEach(b => b.onclick = () => { const k = b.dataset.integ, it = DB.integraciones[k]; it.conectado = !it.conectado; save(it.conectado ? 'Conectado. En la versión final se abre la ventana de Google para dar permiso de solo lectura.' : 'Desconectado. El resumen deja de mostrar esos datos.'); VIEWS.config(); });
   $('#cfgForm').onsubmit = e => {
     e.preventDefault(); const fx = parseNum($('#a-fx').value);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('#a-email').value)) { toast('Revisá el email de contacto.'); return; }
     if ($('#a-whatsapp').value.replace(/\D/g, '').length < 10) { toast('El WhatsApp necesita código de país y área, por ejemplo 5493541000000.'); return; }
-    if (!fx || fx < 1) { toast('El dólar de referencia tiene que ser un número mayor a 0.'); return; }
+    if (!fx) { toast('El dólar de referencia tiene que ser un número mayor a 0.'); return; }
     Object.keys(DB.agencia).forEach(k => { const i = $('#a-' + k); if (i) DB.agencia[k] = i.value.trim(); });
     if (fx !== DB.cotizacion) log(`cambió el dólar de referencia de ARS ${nf.format(DB.cotizacion)} a ARS ${nf.format(fx)}`);
-    DB.cotizacion = fx; save('Configuración guardada. La web ya muestra los datos nuevos.'); refreshBadge();
+    DB.cotizacion = fx; save('Configuración guardada. La web ya muestra los datos nuevos.'); renderBrand();
   };
 };
 
-/* ---------- usuarios y seguridad ---------- */
+/* ---------- usuarios ---------- */
 VIEWS.usuarios = () => {
-  const U = [['María Gómez', 'maria@arrecifeviajes.com.ar', 'Administradora', true, 'hace 2 min'], ['Julián Pereyra', 'julian@arrecifeviajes.com.ar', 'Editor', true, 'ayer'], ['Sofía Luna', 'sofia@arrecifeviajes.com.ar', 'Ventas (solo consultas)', false, 'hace 5 días']];
-  const S = [['Contraseñas cifradas con Argon2', 'Nunca se guardan en texto plano'], ['Verificación en dos pasos', 'Obligatoria para administradores'], ['Bloqueo por intentos fallidos', '5 intentos, luego 15 minutos de espera'], ['Registro de actividad', 'Quién cambió qué y cuándo'], ['Copias de seguridad diarias', 'Se guardan 30 días'], ['HTTPS y cabeceras de seguridad', 'CSP, HSTS, protección contra clickjacking'], ['Formularios protegidos', 'Anti-spam, límite de envíos y validación en servidor'], ['Permisos por rol', 'Ventas ve consultas pero no cambia precios']];
-  V(`<div class="card"><div class="card-h"><h2>Acceso al panel</h2><span class="pill ok">Privado</span></div><div class="card-b access"><span class="ic">${'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>'}</span><div><p style="margin:0 0 6px">El panel vive en una dirección aparte que no se enlaza desde el sitio: <code>panel.${esc(DB.agencia.nombre.toLowerCase().normalize('NFD').replace(/[^a-z]/g, ''))}.com.ar</code>. Los visitantes nunca ven un botón ni un enlace para entrar.</p><p class="muted" style="margin:0;font-size:.86rem">Además, Google no la indexa, pide contraseña y código de verificación, y se puede limitar a la red de la oficina.</p></div></div></div>
-  <div class="card"><div class="card-h"><h2>Equipo</h2><button class="btn pri" id="invite">+ Invitar persona</button></div><div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Rol</th><th>Verificación en dos pasos</th><th>Último ingreso</th></tr></thead><tbody>${U.map(([n, m, r, tf, l]) => `<tr><td><b>${n}</b><br><small class="muted">${m}</small></td><td>${r}</td><td>${tf ? '<span class="pill ok">Activa</span>' : '<span class="pill warn">Pendiente</span>'}</td><td class="mono" style="font-size:.84rem">${l}</td></tr>`).join('')}</tbody></table></div></div>
-  <div class="card"><div class="card-h"><h2>Protecciones activas</h2><span class="pill ok">8 de 8</span></div><div class="card-b sec-grid">${S.map(([t, d]) => `<div class="sec-item"><span class="ic">✓</span><div><b>${t}</b><small>${d}</small></div></div>`).join('')}</div></div>`);
-  $('#invite').onclick = () => toast('En la versión final, se envía una invitación por email para crear la contraseña y activar la verificación.');
+  V(`<div class="card"><div class="card-h"><div><h2>Equipo</h2><span class="sub">Quién puede entrar al panel y qué puede hacer</span></div><button class="btn pri" id="invite">+ Invitar persona</button></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Rol</th><th>Puede</th><th>Último ingreso</th><th></th></tr></thead><tbody>${DB.equipo.map((u, i) => `<tr><td><b>${esc(u.nombre)}</b><br><small class="muted">${esc(u.email)}</small></td><td><label class="sr-only" for="rol-${i}">Rol de ${esc(u.nombre)}</label><select class="in" id="rol-${i}" data-rol="${i}" style="width:auto" ${i === 0 ? 'disabled' : ''}>${Object.keys(ROLES).map(r => `<option ${u.rol === r ? 'selected' : ''}>${r}</option>`).join('')}</select></td><td class="muted">${ROLES[u.rol]}</td><td>${rel(u.ultimo)}</td><td>${i === 0 ? '<span class="pill info">Vos</span>' : `<button class="btn sm danger" data-rmu="${i}">Quitar</button>`}</td></tr>`).join('')}</tbody></table></div></div>`);
+  $('#invite').onclick = () => {
+    const dl = $('#confirm');
+    dl.innerHTML = `<div class="dlg-h"><h2 id="cf-t">Invitar persona</h2></div><form class="dlg-b" id="invForm" novalidate><label class="f" for="inv-n">Nombre<input class="in" id="inv-n"></label><label class="f" for="inv-e">Email<input class="in" id="inv-e" type="email"></label><label class="f" for="inv-r">Rol<select class="in" id="inv-r">${Object.keys(ROLES).map(r => `<option>${r}</option>`).join('')}</select></label><p class="help">Le llega un email para crear su contraseña (8 caracteres, una mayúscula, un número y un símbolo).</p><div class="row" style="justify-content:flex-end"><button class="btn" type="button" id="invNo">Cancelar</button><button class="btn pri" type="submit">Enviar invitación</button></div></form>`;
+    dl.showModal(); $('#invNo').onclick = () => dl.close();
+    $('#invForm').onsubmit = e => { e.preventDefault(); const n = $('#inv-n').value.trim(), m = $('#inv-e').value.trim(); if (!n || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)) { toast('Completá nombre y un email válido.'); return; } DB.equipo.push({ nombre: n, email: m, rol: $('#inv-r').value, ultimo: new Date().toISOString() }); log(`invitó a ${n} como ${$('#inv-r').value}`); save(`Invitación enviada a ${m}.`); dl.close(); VIEWS.usuarios(); };
+  };
 };
+$('#view').addEventListener('change', e => { if (e.target.dataset.rol) { const u = DB.equipo[+e.target.dataset.rol]; u.rol = e.target.value; log(`cambió el rol de ${u.nombre} a ${u.rol}`); save('Rol actualizado.'); VIEWS.usuarios(); } });
+$('#view').addEventListener('click', e => { const b = e.target.closest('[data-rmu]'); if (!b) return; const u = DB.equipo[+b.dataset.rmu]; ask(`¿Quitar a ${u.nombre}?`, 'No va a poder entrar más al panel.', 'Quitar', () => { DB.equipo.splice(+b.dataset.rmu, 1); log(`quitó el acceso de ${u.nombre}`); save('Acceso quitado.'); VIEWS.usuarios(); }); });
 
 $('#siteLink').href = SITE_URL;
-$('#loginArt').style.backgroundImage = `url("${src('media/hero-playa.jpg')}")`;
-addEventListener('storage', e => { if (e.key === KEY) { load(); refreshBadge(); } });
+addEventListener('storage', e => { if (e.key === KEY) { load(); renderBrand(); } });
+renderBrand();
 if (hasSession) enter();
 })();
 </script>
