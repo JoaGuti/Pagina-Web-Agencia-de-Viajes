@@ -19,6 +19,8 @@ export type ConfigDatos = {
   cotizacion: number;
   google: { medicion: string; propiedad: string; sitioSearchConsole: string };
   resenas: { puntaje: number; cantidad: number; perfil: string };
+  /** QR oficial de Data Fiscal (ARCA): imagen y enlace que entrega el organismo. */
+  dataFiscal: { imagen: string; enlace: string };
 };
 
 export type ItinerarioDia = { t: string; d: string };

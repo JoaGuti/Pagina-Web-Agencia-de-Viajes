@@ -14,6 +14,7 @@ export const CONFIG_INICIAL: ConfigDatos = {
   cotizacion: 1450,
   google: { medicion: '', propiedad: '', sitioSearchConsole: '' },
   resenas: { puntaje: 4.9, cantidad: 212, perfil: '' },
+  dataFiscal: { imagen: '', enlace: '' },
 };
 
 const INCLUYE = ['Aéreo ida y vuelta', 'Traslados aeropuerto - hotel', 'Asistencia al viajero', 'Impuestos y tasas'];

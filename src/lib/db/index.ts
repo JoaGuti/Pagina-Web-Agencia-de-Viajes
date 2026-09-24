@@ -26,7 +26,10 @@ async function conectar(): Promise<Db> {
     const { PGlite } = await import('@electric-sql/pglite');
     const { drizzle } = await import('drizzle-orm/pglite');
     const { migrate } = await import('drizzle-orm/pglite/migrator');
-    const cliente = new PGlite(path.join(process.cwd(), '.data', 'pglite'));
+    const carpeta = path.join(process.cwd(), '.data', 'pglite');
+    const { mkdirSync } = await import('node:fs');
+    mkdirSync(carpeta, { recursive: true });
+    const cliente = new PGlite(carpeta);
     const lite = drizzle(cliente, { schema });
     await migrate(lite, { migrationsFolder: carpetaMigraciones });
     db = lite as unknown as Db;

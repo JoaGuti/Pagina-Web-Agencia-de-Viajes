@@ -314,7 +314,8 @@ const Doodles = (() => {
 
 /* ============ nav y menú ============ */
 const nav = $('#nav'); let lastY = 0;
-function navFrame() { const y = scrollY; nav.classList.toggle('solid', y > innerHeight * .6); nav.classList.toggle('hide', y > lastY + 4 && y > innerHeight * 1.2); if (y < lastY - 4) nav.classList.remove('hide'); lastY = y; }
+const navFija = nav.hasAttribute('data-fija');
+function navFrame() { const y = scrollY; nav.classList.toggle('solid', navFija || y > innerHeight * .6); nav.classList.toggle('hide', y > lastY + 4 && y > innerHeight * 1.2); if (y < lastY - 4) nav.classList.remove('hide'); lastY = y; }
 const menu = $('#menu'), burger = $('#burger');
 const setMenu = o => { menu.classList.toggle('open', o); menu.setAttribute('aria-hidden', !o); burger.setAttribute('aria-expanded', o); };
 burger.onclick = () => setMenu(true); $('#menuClose').onclick = () => setMenu(false);
@@ -322,16 +323,30 @@ $$('#menu a').forEach(a => a.addEventListener('click', () => setMenu(false)));
 $$('.btn').forEach(b => b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(); b.style.setProperty('--mx', e.clientX - r.left + 'px'); b.style.setProperty('--my', e.clientY - r.top + 'px'); }));
 
 /* ============ filtros y buscador ============ */
-function setFilter(f) {
-  const grid = $('#pkGrid'); if (!grid) return;
+function setFilter(f, mes = '') {
+  const grid = $('#pkGrid'); if (!grid || !$('#pkVacio')) return;
   $$('#filters button').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === f));
-  let n = 0; $$('.pcard', grid).forEach(c => { const ok = f === 'todos' || c.dataset.region === f; c.hidden = !ok; if (ok) n++; });
+  let n = 0; $$('.pcard', grid).forEach(c => { const ok = (f === 'todos' || c.dataset.region === f) && (!mes || (c.dataset.meses || '').split(' ').includes(mes)); c.hidden = !ok; if (ok) n++; });
   const vacio = $('#pkVacio'); if (vacio) vacio.hidden = n > 0;
   if (window.gsap && !reduced) gsap.from('#pkGrid .pcard:not([hidden])', { opacity: 0, duration: .5, stagger: .05, clearProps: 'opacity' });
 }
 $('#filters')?.addEventListener('click', e => { const b = e.target.closest('button'); if (b) setFilter(b.dataset.f); });
-$('#finder')?.addEventListener('submit', e => { e.preventDefault(); setFilter($('#f-dest').value); goTo('#paquetes'); });
-document.addEventListener('click', e => { const a = e.target.closest('[data-pick]'); if (a && $('#pkGrid')) setFilter(a.dataset.pick); });
+$('#finder')?.addEventListener('submit', e => {
+  e.preventDefault(); setFilter($('#f-dest').value, $('#f-mes').value); goTo('#paquetes');
+  const pax = $('#f-pax').value, msg = $('#c-msg'); if (msg && !msg.value) msg.placeholder = `Somos ${pax}. ` + msg.placeholder;
+});
+document.addEventListener('click', e => { const a = e.target.closest('[data-pick]'); if (!a) return; if ($('#pkVacio')) setFilter(a.dataset.pick); else try { sessionStorage.setItem('filtro', a.dataset.pick); } catch (err) { } });
+
+/* ============ galería de fotos del paquete ============ */
+$('#galeria')?.addEventListener('click', e => {
+  const b = e.target.closest('.g-th'); if (!b) return;
+  const img = $('#galeria .g-main img'), src = b.dataset.foto, mini = $('img', b);
+  if (!img || !src) return;
+  img.removeAttribute('srcset'); if (mini && mini.srcset) { img.srcset = mini.srcset; img.sizes = '(max-width: 900px) 100vw, 760px'; }
+  img.src = src; $$('#galeria .g-th').forEach(t => t.classList.toggle('on', t === b));
+});
+/* cuenta regresiva en la ficha del paquete */
+$$('.fp-vence[data-vence]').forEach(el => { const t = () => { const s = Math.max(0, (new Date(el.dataset.vence) - Date.now()) / 1000); const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60); el.textContent = s > 0 ? `termina en ${d ? d + ' d ' : ''}${h} h ${String(m).padStart(2, '0')} min` : 'oferta terminada'; }; t(); setInterval(t, 30000); });
 
 /* ============ formularios (se envían al servidor) ============ */
 const toast = msg => { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 4200); };
@@ -467,6 +482,7 @@ setInterval(tickCount, 1000);
 
 splitTitle(); intro(); reveals(); measureDest(); tickCount();
 if (document.fonts) document.fonts.ready.then(() => { measureDest(); buildRoute(); });
+try { const r = sessionStorage.getItem('filtro'); if (r) { sessionStorage.removeItem('filtro'); setFilter(r); } } catch (e) { }
 if (location.hash && location.hash.length > 1 && $(location.hash)) setTimeout(() => goTo(location.hash), 600);
 requestAnimationFrame(loop);
 })();
