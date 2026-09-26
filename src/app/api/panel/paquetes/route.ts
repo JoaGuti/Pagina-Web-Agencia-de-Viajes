@@ -4,8 +4,10 @@ import { paquetes } from '@/lib/db/schema';
 import { ruta, leerCuerpo } from '@/lib/panel/api';
 import { Paquete } from '@/lib/panel/esquemas';
 import { slugLibre } from '@/lib/panel/paquetes';
+import { exigirPaquetesLocales } from '@/lib/kuro';
 
 export const POST = ruta('contenido', async ({ req, u, db }) => {
+  exigirPaquetesLocales();
   const d = await leerCuerpo(req, Paquete);
   const slug = await slugLibre(db, d.slug || d.nombre);
   const [{ max }] = await db.select({ max: sql<number>`coalesce(max(${paquetes.orden}), 0)::int` }).from(paquetes);

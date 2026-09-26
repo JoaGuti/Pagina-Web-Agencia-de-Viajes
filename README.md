@@ -80,6 +80,17 @@ Los formularios ya tienen un campo trampa y límite de envíos por conexión. Pa
 - Mapa ilustrado del contacto: está dibujado para Villa Carlos Paz en `public/assets/sitio.js` (`MapView`).
 - Los textos legales son un modelo para Argentina: **tiene que revisarlos un abogado** con los datos reales de cada agencia.
 
+## Conectar con el panel Kuro (opcional)
+
+Con `KURO_API_URL`, `KURO_ANON_KEY` y `KURO_SITE_HOST` cargadas (ver `.env.example`):
+
+- **Paquetes**: la web muestra lo que la agencia publica en el panel Kuro (título, destinos, itinerario, qué incluye, fotos, salidas y precio «desde» por persona). El precio se recalcula en cada visita: una tarifa vencida o una salida cerrada dejan de mostrarse solas.
+- **Consultas**: el formulario las envía a la bandeja de Kuro (asociadas al paquete si el destino coincide). El aviso por email de esta web sigue funcionando.
+- **Panel propio**: la sección Paquetes pasa a ser de solo lectura y avisa que se cargan desde Kuro. Ofertas, reseñas y los datos de la agencia se siguen editando acá.
+- **Todavía no vienen de Kuro**: país, código de aeropuerto, hotel, estrellas, régimen, cuotas y cupos (Kuro aún no los guarda); la región se deduce del destino. Las ofertas no se muestran mientras Kuro esté conectado porque dependen de los paquetes locales.
+
+Sin esas variables la web funciona exactamente como antes. La conexión está en `src/lib/kuro.ts`.
+
 ## Seguridad
 
 - Contraseñas con scrypt, reglas de 8 caracteres + mayúscula + número + símbolo, bloqueo de 15 minutos tras 5 intentos fallidos, límite de intentos por conexión.

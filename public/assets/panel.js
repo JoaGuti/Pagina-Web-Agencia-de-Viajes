@@ -276,6 +276,12 @@ let rsz; addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(
 /* ---------- paquetes ---------- */
 let pkQ = '', pkEst = 'todos', pkReg = 'todas', sel = new Set();
 VIEWS.paquetes = () => {
+  if (S.entorno.kuro) {
+    // Web conectada al panel Kuro: acá solo se consultan; se cargan y publican desde Kuro.
+    V(`<div class="card"><p style="margin:0 0 12px"><b>Esta web está conectada al panel Kuro.</b> Los paquetes, sus salidas y tarifas se cargan y publican desde Kuro; esta lista muestra lo que está publicado ahora.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Paquete</th><th>Noches</th><th>Precio desde</th><th>Próxima salida</th><th></th></tr></thead><tbody>${S.paquetes.map(p => `<tr><td><b>${esc(p.nombre)}</b><br><small>${esc(S.regiones[p.region] || p.region)} · ${esc(p.transporte)} desde ${esc(p.salidaDesde)}</small></td><td>${p.noches}</td><td>${p.precio ? money(p.precio, p.moneda) : 'A consultar'}</td><td>${esc(p.salidas[0] || '—')}</td><td><a href="/paquetes/${esc(p.slug)}" target="_blank" rel="noopener">ver ↗</a></td></tr>`).join('') || '<tr><td colspan="5" class="empty">Todavía no hay paquetes publicados en Kuro.</td></tr>'}</tbody></table></div></div>`);
+    return;
+  }
   V(`<div class="card">
     <div class="toolbar">
       <label class="sr-only" for="pk-q">Buscar paquete</label><input class="in search" id="pk-q" placeholder="Buscar por nombre o destino…" value="${esc(pkQ)}">

@@ -3,8 +3,10 @@ import { ErrorHttp, registrar } from '@/lib/auth';
 import { paquetes } from '@/lib/db/schema';
 import { exigirUuid, ruta } from '@/lib/panel/api';
 import { slugLibre } from '@/lib/panel/paquetes';
+import { exigirPaquetesLocales } from '@/lib/kuro';
 
 export const POST = ruta<{ id: string }>('contenido', async ({ u, db, params }) => {
+  exigirPaquetesLocales();
   const [p] = await db.select().from(paquetes).where(eq(paquetes.id, exigirUuid(params.id))).limit(1);
   if (!p) throw new ErrorHttp(404, 'Ese paquete ya no existe.');
   const { id: _id, creado: _c, actualizado: _a, ...resto } = p;

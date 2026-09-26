@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { after } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { consultas } from '@/lib/db/schema';
-import { leerConfig } from '@/lib/datos';
+import { datosSitio, leerConfig, urlBase } from '@/lib/datos';
+import { ErrorKuro, enviarConsultaKuro, kuroActivo } from '@/lib/kuro';
 import { destinatariosInternos, enviarEmail, tablaEmail } from '@/lib/avisos';
 import { formularioPublico } from '@/lib/publico';
 import { emailValido } from '@/lib/seguridad';
@@ -16,16 +17,32 @@ const Consulta = z.object({
   mensaje: texto(1500).optional().default(''),
 });
 
-export const POST = formularioPublico('consulta', Consulta, { max: 5, ventana: 600 }, async ({ db, datos }) => {
-  const [c] = await db.insert(consultas).values(datos).returning();
+/** Aviso por email a la agencia (con Resend configurado), con o sin Kuro. */
+function avisar(c: z.infer<typeof Consulta>) {
   after(async () => {
     const cfg = await leerConfig();
     await enviarEmail({
       para: destinatariosInternos(cfg.agencia.email),
       asunto: `Nueva consulta: ${c.nombre}${c.destino && c.destino !== 'Todavía no sé' ? ' · ' + c.destino : ''}`,
       responderA: c.email,
-      html: tablaEmail('Nueva consulta desde la web', [['Nombre', c.nombre], ['Teléfono', c.telefono], ['Email', c.email], ['Destino', c.destino], ['Fecha de viaje', c.fechaViaje], ['Mensaje', c.mensaje]], 'Respondé este email para contestarle directamente. También la ves en el panel, sección Consultas.'),
+      html: tablaEmail('Nueva consulta desde la web', [['Nombre', c.nombre], ['Teléfono', c.telefono], ['Email', c.email], ['Destino', c.destino], ['Fecha de viaje', c.fechaViaje], ['Mensaje', c.mensaje]], `Respondé este email para contestarle directamente. También la ves en ${kuroActivo() ? 'el panel Kuro, sección Mensajes' : 'el panel, sección Consultas'}.`),
     });
   });
+}
+
+export const POST = formularioPublico('consulta', Consulta, { max: 5, ventana: 600 }, async ({ db, datos, req }) => {
+  if (kuroActivo()) {
+    // La consulta va a la bandeja del panel Kuro (con el paquete, si coincide el destino).
+    try {
+      await enviarConsultaKuro(datos, (await datosSitio()).paquetes, urlBase(req) + '/#contacto');
+    } catch (e) {
+      if (e instanceof ErrorKuro && (e.codigo === 'KU422' || e.codigo === 'KU429')) return NextResponse.json({ error: e.message }, { status: e.codigo === 'KU429' ? 429 : 400 });
+      throw e;
+    }
+    avisar(datos);
+    return { ok: true };
+  }
+  const [c] = await db.insert(consultas).values(datos).returning();
+  avisar(c);
   return { ok: true };
 });
