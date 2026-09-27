@@ -27,7 +27,8 @@ async function rpc<T>(nombre: string, args: Record<string, unknown>): Promise<T>
   const key = process.env.KURO_ANON_KEY!;
   const res = await fetch(`${base}/rest/v1/rpc/${nombre}`, {
     method: 'POST',
-    headers: { apikey: key, authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+    // Claves nuevas (sb_publishable_…) van solo en «apikey»; las heredadas (JWT) también como Bearer.
+    headers: { apikey: key, ...(key.startsWith('eyJ') ? { authorization: `Bearer ${key}` } : {}), 'content-type': 'application/json' },
     body: JSON.stringify(args),
     cache: 'no-store',
     signal: AbortSignal.timeout(8000),
