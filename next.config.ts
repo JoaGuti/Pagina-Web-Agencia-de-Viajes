@@ -1,11 +1,20 @@
 import type { NextConfig } from 'next';
 
+// Con el panel Kuro conectado, las fotos vienen de su almacenamiento (Supabase Storage).
+const kuroOrigen = (() => {
+  try {
+    return process.env.KURO_API_URL ? ' ' + new URL(process.env.KURO_API_URL).origin : '';
+  } catch {
+    return '';
+  }
+})();
+
 const csp = [
   "default-src 'self'",
   "script-src 'self' https://www.googletagmanager.com https://challenges.cloudflare.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
-  "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com https://*.google-analytics.com https://www.googletagmanager.com",
+  `img-src 'self' data: blob: https://*.public.blob.vercel-storage.com https://*.google-analytics.com https://www.googletagmanager.com${kuroOrigen}`,
   "media-src 'self' https://*.public.blob.vercel-storage.com",
   "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
   "frame-src https://challenges.cloudflare.com",
