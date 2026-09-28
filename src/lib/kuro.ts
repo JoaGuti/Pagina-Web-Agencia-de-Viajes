@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { ErrorHttp } from './auth';
-import type { ItinerarioDia, Paquete } from './db/schema';
+import type { ItinerarioDia, Oferta, Paquete } from './db/schema';
 
 /**
  * Conexión con el panel Kuro (plataforma multicliente).
@@ -20,6 +20,11 @@ export function kuroActivo() {
 /** Con Kuro conectado, los paquetes se editan allá: el panel propio no los modifica para no confundir. */
 export function exigirPaquetesLocales() {
   if (kuroActivo()) throw new ErrorHttp(409, 'Esta web está conectada al panel Kuro: los paquetes se cargan y publican desde Kuro.');
+}
+
+/** Con Kuro conectado, las ofertas también se cargan allá (Panel Kuro → Ofertas). */
+export function exigirOfertasLocales() {
+  if (kuroActivo()) throw new ErrorHttp(409, 'Esta web está conectada al panel Kuro: las ofertas se cargan y publican desde Kuro (Ofertas).');
 }
 
 async function rpc<T>(nombre: string, args: Record<string, unknown>): Promise<T> {
@@ -165,6 +170,89 @@ export async function paquetesKuro(): Promise<Paquete[]> {
     .filter(f => f.kind === 'package')
     .map(f => aPaqueteWeb(f))
     .sort((a, b) => Number(b.destacado) - Number(a.destacado) || (a.salidas[0] ?? '9999').localeCompare(b.salidas[0] ?? '9999'));
+}
+
+// ---- Ofertas destacadas (Panel Kuro → Ofertas; resolve_site → offers) ----
+
+type OfertaKuro = {
+  id: string; title: string; kind: string; destination: string; summary: string; includes: string[]; travelDates: string;
+  currency: 'ARS' | 'USD'; price: number | null; previousPrice: number | null; priceNote: string; badge: string; photo: string;
+  validFrom: string; validUntil: string; countdown: boolean; seats: number | null; position: number;
+  package: { id: string; code: number; title: string } | null;
+};
+
+/** Datos propios de una oferta de Kuro que la tarjeta necesita además de los de una oferta local. */
+export type ExtraKuro = { enlace: boolean; cuando: string; notaPrecio: string; sinFin: boolean; tipo: string };
+export type OfertaConPaquete = Oferta & { paquete: Paquete; kuro?: ExtraKuro };
+
+const TIPO_OFERTA: Record<string, string> = { paquete: 'Paquete', aereo: 'Aéreo', hotel: 'Hotel', crucero: 'Crucero', escapada: 'Escapada', asistencia: 'Asistencia al viajero', otro: 'Oferta' };
+const MAX_OFERTAS = 12;
+// Las fechas de Kuro son días (AAAA-MM-DD, incluidos) en la hora de Argentina.
+const inicioDia = (d: string) => new Date(`${d}T00:00:00-03:00`);
+const finDia = (d: string) => new Date(`${d}T23:59:59-03:00`);
+
+/**
+ * Una oferta suelta (un aéreo, un crucero) no tiene paquete en el catálogo:
+ * se arma uno con lo que trae la oferta para que la tarjeta de embarque tenga
+ * destino, foto y precio. No tiene ficha propia.
+ */
+function paqueteDeOferta(o: OfertaKuro): Paquete {
+  const fecha = new Date();
+  return {
+    id: `kuro-oferta-${o.id}`, slug: '', nombre: o.title, destino: o.destination || o.title, pais: '', iata: '',
+    region: regionDe([o.destination], o.kind === 'crucero' ? 'crucero' : ''), tipo: TIPO_OFERTA[o.kind] || '', etiqueta: o.badge, etiquetaColor: 'rojo',
+    resumen: o.summary, descripcion: o.summary, estado: 'publicado', destacado: false, orden: 0,
+    moneda: o.currency, precio: Math.round(o.previousPrice ?? o.price ?? 0), precioSingle: 0, precioTriple: 0, precioMenor: 0, cuotas: 0, sena: 0,
+    noches: 0, cupos: o.seats ?? 0, regimen: '', transporte: o.kind === 'crucero' ? 'Crucero' : 'Aéreo', salidaDesde: 'Córdoba', salidas: [],
+    hotel: '', estrellas: 0, itinerario: [], incluye: o.includes, noIncluye: [], fotos: o.photo ? [o.photo] : [], coord: '',
+    seoTitulo: '', seoDescripcion: '', creado: fecha, actualizado: fecha,
+  };
+}
+
+/** Convierte una oferta de Kuro al formato de las ofertas de esta web (tarjeta de embarque con contador). */
+export function aOfertaWeb(o: OfertaKuro, paquetes: Paquete[]): OfertaConPaquete {
+  const delCatalogo = o.package ? paquetes.find(p => p.id === o.package!.id) : undefined;
+  const paquete: Paquete = delCatalogo
+    ? {
+        ...delCatalogo,
+        // La foto de la oferta va primero; el precio anterior de la oferta manda sobre el «desde» del paquete.
+        fotos: o.photo ? [o.photo, ...delCatalogo.fotos.filter(f => f !== o.photo)] : delCatalogo.fotos,
+        precio: o.previousPrice ? Math.round(o.previousPrice) : delCatalogo.precio,
+        moneda: o.previousPrice || o.price ? o.currency : delCatalogo.moneda,
+      }
+    : paqueteDeOferta(o);
+  const precioFinal = o.price ? Math.round(o.price) : 0;
+  return {
+    id: o.id,
+    paqueteId: paquete.id,
+    titulo: o.title,
+    etiqueta: o.badge || TIPO_OFERTA[o.kind] || 'Oferta',
+    descuento: 0,
+    // Sin precio de oferta, la tarjeta muestra el del paquete (o «Consultá el precio»).
+    precioFinal: precioFinal && precioFinal !== paquete.precio ? precioFinal : 0,
+    desde: o.validFrom ? inicioDia(o.validFrom) : new Date(0),
+    hasta: o.validUntil ? finDia(o.validUntil) : new Date('2999-12-31T00:00:00Z'),
+    activa: true,
+    contador: o.countdown && !!o.validUntil,
+    cupos: o.seats ?? 0,
+    nota: o.summary,
+    creado: new Date(),
+    paquete,
+    kuro: { enlace: !!delCatalogo, cuando: o.travelDates, notaPrecio: o.priceNote, sinFin: !o.validUntil, tipo: TIPO_OFERTA[o.kind] || '' },
+  };
+}
+
+/**
+ * Ofertas vigentes de esta agencia en Kuro, en el orden que eligió. Las que
+ * llevan a un paquete lo toman de los paquetes publicados (si se retiró de la
+ * web, la oferta sigue sin enlace).
+ */
+export async function ofertasKuro(paquetes: Paquete[], ahora = new Date()): Promise<OfertaConPaquete[]> {
+  const [sitio] = await rpc<{ offers: OfertaKuro[] | null }[]>('resolve_site', { p_hostname: process.env.KURO_SITE_HOST });
+  return (sitio?.offers ?? [])
+    .map(o => aOfertaWeb(o, paquetes))
+    .filter(o => o.desde <= ahora && ahora < o.hasta)
+    .slice(0, MAX_OFERTAS);
 }
 
 type ConsultaWeb = { nombre: string; telefono: string; email: string; destino: string; fechaViaje: string; mensaje: string };

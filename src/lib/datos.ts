@@ -2,9 +2,10 @@ import { and, asc, desc, eq, gt, lte } from 'drizzle-orm';
 import { getDb } from './db';
 import { configuracion, ofertas, paquetes, resenas, type ConfigDatos, type Oferta, type Paquete, type Resena } from './db/schema';
 import { CONFIG_INICIAL } from './db/semilla';
-import { kuroActivo, paquetesKuro } from './kuro';
+import { kuroActivo, ofertasKuro, paquetesKuro, type OfertaConPaquete } from './kuro';
 
-export type OfertaVigente = Oferta & { paquete: Paquete };
+/** Oferta con su paquete; las de Kuro traen además `kuro` (ver lib/kuro). */
+export type OfertaVigente = OfertaConPaquete;
 export type DatosSitio = { cfg: ConfigDatos; paquetes: Paquete[]; ofertas: OfertaVigente[]; resenas: Resena[] };
 
 /** Mezcla la configuración guardada con los valores por defecto (por si se agregan campos nuevos). */
@@ -28,14 +29,13 @@ export async function leerConfig(): Promise<ConfigDatos> {
 export async function datosSitio(): Promise<DatosSitio> {
   const db = await getDb();
   if (kuroActivo()) {
-    // Paquetes desde el panel Kuro. Configuración y reseñas siguen en esta web;
-    // las ofertas todavía no existen en Kuro, así que no se muestran.
+    // Paquetes y ofertas desde el panel Kuro. Configuración y reseñas siguen en esta web.
     const [cfg, pqs, rs] = await Promise.all([
       leerConfig(),
       paquetesKuro(),
       db.select().from(resenas).where(eq(resenas.activa, true)).orderBy(asc(resenas.orden), desc(resenas.creado)),
     ]);
-    return { cfg, paquetes: pqs, ofertas: [], resenas: rs };
+    return { cfg, paquetes: pqs, ofertas: await ofertasKuro(pqs), resenas: rs };
   }
   const ahora = new Date();
   const [cfg, pqs, ofs, rs] = await Promise.all([

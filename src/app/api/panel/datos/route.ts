@@ -5,7 +5,7 @@ import { leerConfig } from '@/lib/datos';
 import { REGIONES } from '@/lib/formato';
 import { ruta } from '@/lib/panel/api';
 import { cuentaServicio } from '@/lib/google';
-import { kuroActivo, paquetesKuro } from '@/lib/kuro';
+import { kuroActivo, ofertasKuro, paquetesKuro } from '@/lib/kuro';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,8 @@ export const GET = ruta(null, async ({ u, db }) => {
     leerConfig(),
     // Con Kuro conectado se muestran (solo lectura) los paquetes publicados allá.
     contenido || verConsultas ? (kuroActivo() ? paquetesKuro() : db.select().from(paquetes).orderBy(asc(paquetes.orden), desc(paquetes.creado))) : [],
-    contenido ? db.select().from(ofertas).orderBy(desc(ofertas.creado)) : [],
+    // Con Kuro conectado se muestran (solo lectura) las ofertas que están en la web.
+    contenido ? (kuroActivo() ? paquetesKuro().then(p => ofertasKuro(p)) : db.select().from(ofertas).orderBy(desc(ofertas.creado))) : [],
     verConsultas ? db.select().from(consultas).orderBy(desc(consultas.creado)).limit(500) : [],
     verConsultas ? db.select().from(arrepentimientos).orderBy(desc(arrepentimientos.creado)).limit(100) : [],
     verConsultas ? db.$count(suscriptores) : 0,

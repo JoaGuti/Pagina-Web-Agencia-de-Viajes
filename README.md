@@ -86,8 +86,9 @@ Con `KURO_API_URL`, `KURO_ANON_KEY` y `KURO_SITE_HOST` cargadas (ver `.env.examp
 
 - **Paquetes**: la web muestra lo que la agencia publica en el panel Kuro (título, destinos, itinerario, qué incluye, fotos, salidas y precio «desde» por persona). El precio se recalcula en cada visita: una tarifa vencida o una salida cerrada dejan de mostrarse solas.
 - **Consultas**: el formulario las envía a la bandeja de Kuro (asociadas al paquete si el destino coincide). El aviso por email de esta web sigue funcionando.
-- **Panel propio**: la sección Paquetes pasa a ser de solo lectura y avisa que se cargan desde Kuro. Ofertas, reseñas y los datos de la agencia se siguen editando acá.
-- **Todavía no vienen de Kuro**: país, código de aeropuerto, hotel, estrellas, régimen, cuotas y cupos (Kuro aún no los guarda); la región se deduce del destino. Las ofertas no se muestran mientras Kuro esté conectado porque dependen de los paquetes locales.
+- **Ofertas**: la sección de ofertas (tarjetas de embarque) muestra las que la agencia carga en Kuro → Ofertas, en el orden elegido y solo mientras están vigentes. Si la oferta es de un paquete, la tarjeta lleva a su ficha y el paquete muestra el precio de oferta; si es suelta (un aéreo, un crucero), se muestra igual, sin ficha. La cuenta regresiva, los lugares, la etiqueta y la aclaración del precio también vienen de Kuro.
+- **Panel propio**: Paquetes y Ofertas pasan a ser de solo lectura y avisan que se cargan desde Kuro. Reseñas y los datos de la agencia se siguen editando acá.
+- **Todavía no vienen de Kuro**: país, código de aeropuerto, hotel, estrellas, régimen, cuotas y cupos de los paquetes (Kuro aún no los guarda); la región se deduce del destino.
 
 Sin esas variables la web funciona exactamente como antes. La conexión está en `src/lib/kuro.ts`.
 
