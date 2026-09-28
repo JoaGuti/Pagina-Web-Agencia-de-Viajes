@@ -5,6 +5,7 @@ import { dinero } from '@/lib/formato';
 import { exigirUuid, leerCuerpo, ruta } from '@/lib/panel/api';
 import { CambioRapidoPaquete, Paquete } from '@/lib/panel/esquemas';
 import { slugLibre } from '@/lib/panel/paquetes';
+import { exigirPaquetesLocales } from '@/lib/kuro';
 
 type P = { id: string };
 
@@ -15,6 +16,7 @@ async function buscar(db: Parameters<Parameters<typeof ruta>[1]>[0]['db'], id: s
 }
 
 export const PUT = ruta<P>('contenido', async ({ req, u, db, params }) => {
+  exigirPaquetesLocales();
   const antes = await buscar(db, params.id);
   const d = await leerCuerpo(req, Paquete);
   const slug = d.slug && d.slug !== antes.slug ? await slugLibre(db, d.slug, antes.id) : antes.slug;
@@ -27,6 +29,7 @@ export const PUT = ruta<P>('contenido', async ({ req, u, db, params }) => {
 });
 
 export const PATCH = ruta<P>('contenido', async ({ req, u, db, params }) => {
+  exigirPaquetesLocales();
   const antes = await buscar(db, params.id);
   const d = await leerCuerpo(req, CambioRapidoPaquete);
   const [p] = await db.update(paquetes).set({ ...d, actualizado: new Date() }).where(eq(paquetes.id, antes.id)).returning();
@@ -37,6 +40,7 @@ export const PATCH = ruta<P>('contenido', async ({ req, u, db, params }) => {
 });
 
 export const DELETE = ruta<P>('contenido', async ({ u, db, params }) => {
+  exigirPaquetesLocales();
   const p = await buscar(db, params.id);
   await db.delete(paquetes).where(eq(paquetes.id, p.id));
   await registrar(db, u, `eliminó el paquete ${p.nombre}`);

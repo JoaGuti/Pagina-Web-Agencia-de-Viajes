@@ -255,7 +255,7 @@ VIEWS.resumen = () => {
     ${puede('consultas') ? `<div class="card"><div class="card-h"><h2>Consultas recientes ${nuevas ? `<span class="pill info">${nuevas} nueva${nuevas === 1 ? '' : 's'}</span>` : ''}</h2><button class="btn sm" data-go="consultas">Ver todas</button></div>
       <ul class="list">${S.consultas.slice(0, 5).map(c => `<li class="clic" data-abrir-consulta="${esc(c.id)}">${c.estado === 'nueva' ? '<span class="dot-new" aria-label="Nueva"></span>' : '<span style="width:9px;flex:none"></span>'}<div class="grow"><div class="t">${esc(c.nombre)}${destinoDe(c) ? ' · ' + esc(destinoDe(c)) : ''}</div><div class="s">${esc(c.mensaje || c.telefono)}</div></div><span class="s">${rel(c.creado)}</span></li>`).join('') || '<li class="empty">Todavía no llegaron consultas desde la web.</li>'}</ul></div>` : ''}
     <div style="display:grid;gap:22px;align-content:start">
-      ${puede('contenido') ? `<div class="card"><div class="card-h"><h2>Accesos rápidos</h2></div><div class="card-b row">
+      ${puede('contenido') && !S.entorno.kuro ? `<div class="card"><div class="card-h"><h2>Accesos rápidos</h2></div><div class="card-b row">
         <button class="btn pri" data-act="new-pk">+ Nuevo paquete</button><button class="btn" data-act="new-of">+ Nueva oferta</button><button class="btn" data-act="bulk">Actualizar precios</button></div></div>` : ''}
       <div class="card"><div class="card-h"><h2>Actividad del equipo</h2></div><ul class="list log">${S.actividad.slice(0, 8).map(l => `<li><div class="grow"><b>${esc(l.nombre)}</b> ${esc(l.accion)}</div><span class="when">${rel(l.creado)}</span></li>`).join('') || '<li class="empty">Sin actividad todavía.</li>'}</ul></div>
     </div>
@@ -276,6 +276,12 @@ let rsz; addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(
 /* ---------- paquetes ---------- */
 let pkQ = '', pkEst = 'todos', pkReg = 'todas', sel = new Set();
 VIEWS.paquetes = () => {
+  if (S.entorno.kuro) {
+    // Web conectada al panel Kuro: acá solo se consultan; se cargan y publican desde Kuro.
+    V(`<div class="card"><p style="margin:0 0 12px"><b>Esta web está conectada al panel Kuro.</b> Los paquetes, sus salidas y tarifas se cargan y publican desde Kuro; esta lista muestra lo que está publicado ahora.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Paquete</th><th>Noches</th><th>Precio desde</th><th>Próxima salida</th><th></th></tr></thead><tbody>${S.paquetes.map(p => `<tr><td><b>${esc(p.nombre)}</b><br><small>${esc(S.regiones[p.region] || p.region)} · ${esc(p.transporte)} desde ${esc(p.salidaDesde)}</small></td><td>${p.noches}</td><td>${p.precio ? money(p.precio, p.moneda) : 'A consultar'}</td><td>${esc(p.salidas[0] || '—')}</td><td><a href="/paquetes/${esc(p.slug)}" target="_blank" rel="noopener">ver ↗</a></td></tr>`).join('') || '<tr><td colspan="5" class="empty">Todavía no hay paquetes publicados en Kuro.</td></tr>'}</tbody></table></div></div>`);
+    return;
+  }
   V(`<div class="card">
     <div class="toolbar">
       <label class="sr-only" for="pk-q">Buscar paquete</label><input class="in search" id="pk-q" placeholder="Buscar por nombre o destino…" value="${esc(pkQ)}">
@@ -535,6 +541,12 @@ function bulk() {
 const offerPrice = (o, p) => o.precioFinal ? o.precioFinal : Math.round(p.precio * (1 - (o.descuento || 0) / 100));
 const offerState = o => { const now = Date.now(), p = pk(o.paqueteId); if (!o.activa) return ['off', 'Apagada']; if (new Date(o.hasta) <= now) return ['off', 'Vencida']; if (p && p.estado !== 'publicado') return ['warn', 'Paquete oculto']; if (new Date(o.desde) > now) return ['warn', 'Programada']; return ['hot', 'En la web']; };
 VIEWS.ofertas = () => {
+  if (S.entorno.kuro) {
+    // Web conectada al panel Kuro: las ofertas se cargan allá (Kuro → Ofertas); acá se ven las que están en la web.
+    V(`<div class="card"><p style="margin:0 0 12px"><b>Esta web está conectada al panel Kuro.</b> Las ofertas se cargan, programan y ocultan desde Kuro (sección Ofertas); esta lista muestra las que están en la web ahora.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Oferta</th><th>Precio</th><th>Vence</th><th>Lugares</th></tr></thead><tbody>${S.ofertas.map(o => { const p = o.paquete || {}; const precio = o.precioFinal || p.precio; const fin = new Date(o.hasta); return `<tr><td><b>${esc(o.titulo)}</b><br><small>${esc(o.etiqueta || 'Oferta')} · ${esc(p.destino || '')}</small></td><td>${precio ? money(precio, p.moneda) : 'A consultar'}</td><td>${fin.getFullYear() > 2900 ? 'Sin vencimiento' : esc(fin.toLocaleDateString('es-AR'))}</td><td>${o.cupos || '—'}</td></tr>`; }).join('') || '<tr><td colspan="4" class="empty">Todavía no hay ofertas en la web. Cargalas en Kuro → Ofertas.</td></tr>'}</tbody></table></div></div>`);
+    return;
+  }
   const now = Date.now(), live = S.ofertas.filter(o => offerState(o)[1] === 'En la web').length;
   V(`<div class="row" style="justify-content:space-between"><p class="muted" style="margin:0">Podés tener varias ofertas en la web al mismo tiempo. Cada una se muestra como tarjeta de embarque y se oculta sola cuando vence. <b style="color:var(--ink)">${live} en la web ahora.</b></p><button class="btn pri" data-act="new-of">+ Nueva oferta</button></div>
   <div class="offers">${S.ofertas.map(o => { const p = pk(o.paqueteId); if (!p) return ''; const [cls, lab] = offerState(o); const left = Math.max(0, new Date(o.hasta) - now); const dd = Math.floor(left / DAY), hh = Math.floor(left % DAY / 36e5);

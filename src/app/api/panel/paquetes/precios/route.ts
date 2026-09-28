@@ -3,9 +3,11 @@ import { ErrorHttp, registrar } from '@/lib/auth';
 import { paquetes } from '@/lib/db/schema';
 import { leerCuerpo, ruta } from '@/lib/panel/api';
 import { PreciosEnBloque } from '@/lib/panel/esquemas';
+import { exigirPaquetesLocales } from '@/lib/kuro';
 
 /** Aumento o rebaja porcentual de precios de varios paquetes a la vez. */
 export const POST = ruta('contenido', async ({ req, u, db }) => {
+  exigirPaquetesLocales();
   const d = await leerCuerpo(req, PreciosEnBloque);
   const lista = d.ids?.length ? await db.select().from(paquetes).where(inArray(paquetes.id, d.ids))
     : d.region && d.region !== 'all' ? await db.select().from(paquetes).where(eq(paquetes.region, d.region))

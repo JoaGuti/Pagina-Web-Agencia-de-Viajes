@@ -4,13 +4,13 @@ import { getDb, type Db } from './db';
 import { dentroDelLimite, ipDe, origenValido } from './seguridad';
 import { turnstileValido } from './turnstile';
 
-type Ctx<T> = { db: Db; datos: T; ip: string };
+type Ctx<T> = { db: Db; datos: T; ip: string; req: NextRequest };
 
 /**
  * Envoltorio para formularios públicos: exige mismo origen, limita por IP,
  * descarta bots (campo trampa "web") y valida con zod y Turnstile.
  */
-export function formularioPublico<S extends z.ZodType>(nombre: string, esquema: S, limite: { max: number; ventana: number }, fn: (c: Ctx<z.infer<S>>) => Promise<object>) {
+export function formularioPublico<S extends z.ZodType>(nombre: string, esquema: S, limite: { max: number; ventana: number }, fn: (c: Ctx<z.infer<S>>) => Promise<object | Response>) {
   return async (req: NextRequest) => {
     try {
       if (!origenValido(req)) return NextResponse.json({ error: 'Pedido rechazado. Recargá la página y probá de nuevo.' }, { status: 403 });
@@ -27,7 +27,8 @@ export function formularioPublico<S extends z.ZodType>(nombre: string, esquema: 
       if (!(await turnstileValido(cuerpo.token, ip))) return NextResponse.json({ error: 'No pudimos verificar que no seas un robot. Probá de nuevo.' }, { status: 400 });
       const r = esquema.safeParse(cuerpo);
       if (!r.success) return NextResponse.json({ error: r.error.issues[0]?.message || 'Revisá los datos del formulario.' }, { status: 400 });
-      return NextResponse.json(await fn({ db, datos: r.data, ip }));
+      const salida = await fn({ db, datos: r.data, ip, req });
+      return salida instanceof Response ? salida : NextResponse.json(salida);
     } catch (e) {
       console.error(e);
       return NextResponse.json({ error: 'No pudimos enviar el formulario. Probá de nuevo o escribinos por WhatsApp.' }, { status: 500 });

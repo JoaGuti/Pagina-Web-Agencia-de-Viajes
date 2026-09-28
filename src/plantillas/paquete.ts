@@ -22,7 +22,7 @@ function cajaPrecio(p: Paquete, d: DatosSitio, o?: OfertaVigente) {
   const msg = `Hola! Quiero reservar el paquete "${p.nombre}" (${p.noches} noches).`;
   return html`
 <aside class="ficha-precio" aria-label="Precio y reserva">
-  ${o ? html`<p class="fp-oferta"><span>${o.etiqueta || 'Oferta'}</span>${o.contador ? html`<span class="fp-vence" data-vence="${o.hasta.toISOString()}">vence el ${fechaLarga(o.hasta)}</span>` : html`<span>hasta el ${fechaLarga(o.hasta)}</span>`}</p>` : ''}
+  ${o ? html`<p class="fp-oferta"><span>${o.etiqueta || 'Oferta'}</span>${o.contador ? html`<span class="fp-vence" data-vence="${o.hasta.toISOString()}">vence el ${fechaLarga(o.hasta)}</span>` : o.kuro?.sinFin ? '' : html`<span>hasta el ${fechaLarga(o.hasta)}</span>`}</p>` : ''}
   ${precio > 0 ? html`
   <p class="fp-desde">Por persona desde</p>
   <p class="fp-precio">${o && precio !== p.precio ? html`<s>${dinero(p.precio, p.moneda)}</s>` : ''}<b>${dinero(precio, p.moneda)}</b></p>

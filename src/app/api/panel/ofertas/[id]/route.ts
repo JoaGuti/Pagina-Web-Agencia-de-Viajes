@@ -4,6 +4,7 @@ import { ErrorHttp, registrar } from '@/lib/auth';
 import { ofertas, paquetes } from '@/lib/db/schema';
 import { exigirUuid, leerCuerpo, ruta } from '@/lib/panel/api';
 import { Oferta } from '@/lib/panel/esquemas';
+import { exigirOfertasLocales } from '@/lib/kuro';
 
 type P = { id: string };
 async function buscar(db: Parameters<Parameters<typeof ruta>[1]>[0]['db'], id: string) {
@@ -13,6 +14,7 @@ async function buscar(db: Parameters<Parameters<typeof ruta>[1]>[0]['db'], id: s
 }
 
 export const PUT = ruta<P>('contenido', async ({ req, u, db, params }) => {
+  exigirOfertasLocales();
   const antes = await buscar(db, params.id);
   const d = await leerCuerpo(req, Oferta);
   const [p] = await db.select().from(paquetes).where(eq(paquetes.id, d.paqueteId)).limit(1);
@@ -24,6 +26,7 @@ export const PUT = ruta<P>('contenido', async ({ req, u, db, params }) => {
 });
 
 export const PATCH = ruta<P>('contenido', async ({ req, u, db, params }) => {
+  exigirOfertasLocales();
   const antes = await buscar(db, params.id);
   const { activa } = await leerCuerpo(req, z.object({ activa: z.boolean() }));
   const [o] = await db.update(ofertas).set({ activa }).where(eq(ofertas.id, antes.id)).returning();
@@ -32,6 +35,7 @@ export const PATCH = ruta<P>('contenido', async ({ req, u, db, params }) => {
 });
 
 export const DELETE = ruta<P>('contenido', async ({ u, db, params }) => {
+  exigirOfertasLocales();
   const o = await buscar(db, params.id);
   await db.delete(ofertas).where(eq(ofertas.id, o.id));
   await registrar(db, u, `eliminó la oferta "${o.titulo}"`);

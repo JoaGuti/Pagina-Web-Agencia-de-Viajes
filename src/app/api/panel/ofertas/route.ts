@@ -2,9 +2,11 @@ import { eq } from 'drizzle-orm';
 import { ErrorHttp, registrar } from '@/lib/auth';
 import { ofertas, paquetes } from '@/lib/db/schema';
 import { leerCuerpo, ruta } from '@/lib/panel/api';
+import { exigirOfertasLocales } from '@/lib/kuro';
 import { Oferta } from '@/lib/panel/esquemas';
 
 export const POST = ruta('contenido', async ({ req, u, db }) => {
+  exigirOfertasLocales();
   const d = await leerCuerpo(req, Oferta);
   const [p] = await db.select().from(paquetes).where(eq(paquetes.id, d.paqueteId)).limit(1);
   if (!p) throw new ErrorHttp(400, 'Elegí un paquete que exista.');

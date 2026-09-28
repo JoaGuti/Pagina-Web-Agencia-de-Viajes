@@ -5,6 +5,7 @@ import { leerConfig } from '@/lib/datos';
 import { REGIONES } from '@/lib/formato';
 import { ruta } from '@/lib/panel/api';
 import { cuentaServicio } from '@/lib/google';
+import { kuroActivo, ofertasKuro, paquetesKuro } from '@/lib/kuro';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,8 +14,10 @@ export const GET = ruta(null, async ({ u, db }) => {
   const contenido = puede(u, 'contenido'), verConsultas = puede(u, 'consultas'), admin = puede(u, 'usuarios');
   const [cfg, pqs, ofs, cons, arr, subs, log, rs, equipo] = await Promise.all([
     leerConfig(),
-    contenido || verConsultas ? db.select().from(paquetes).orderBy(asc(paquetes.orden), desc(paquetes.creado)) : [],
-    contenido ? db.select().from(ofertas).orderBy(desc(ofertas.creado)) : [],
+    // Con Kuro conectado se muestran (solo lectura) los paquetes publicados allá.
+    contenido || verConsultas ? (kuroActivo() ? paquetesKuro() : db.select().from(paquetes).orderBy(asc(paquetes.orden), desc(paquetes.creado))) : [],
+    // Con Kuro conectado se muestran (solo lectura) las ofertas que están en la web.
+    contenido ? (kuroActivo() ? paquetesKuro().then(p => ofertasKuro(p)) : db.select().from(ofertas).orderBy(desc(ofertas.creado))) : [],
     verConsultas ? db.select().from(consultas).orderBy(desc(consultas.creado)).limit(500) : [],
     verConsultas ? db.select().from(arrepentimientos).orderBy(desc(arrepentimientos.creado)).limit(100) : [],
     verConsultas ? db.$count(suscriptores) : 0,
@@ -41,6 +44,7 @@ export const GET = ruta(null, async ({ u, db }) => {
       email: !!(process.env.RESEND_API_KEY && process.env.EMAIL_FROM),
       turnstile: !!(process.env.TURNSTILE_SITE_KEY && process.env.TURNSTILE_SECRET_KEY),
       cuentaGoogle: sa?.client_email || '',
+      kuro: kuroActivo(),
     },
   };
 });

@@ -54,7 +54,7 @@ export function tarjetaPaquete(p: Paquete, cfg: ConfigDatos, oferta?: OfertaVige
     ${salidas.length ? html`<div class="dates" aria-label="Fechas de salida">${salidas.slice(0, 4).map(d => html`<span>${fechaCorta(d)}</span>`)}${salidas.length > 4 ? html`<span>+${salidas.length - 4}</span>` : ''}</div>` : ''}
     ${p.cupos > 0 && p.cupos <= 5 ? html`<span class="seats">Quedan ${p.cupos} lugares</span>` : ''}
     <div class="pcard-foot">
-      <div class="price">${precio ? html`<small>por persona desde</small>${oferta ? html`<s class="antes">${dinero(p.precio, p.moneda)}</s>` : ''}<b>${dinero(precio, p.moneda)}</b>${p.moneda === 'USD' && cfg.cotizacion > 0 ? html`<div class="ars">≈ ARS ${numero(precio * cfg.cotizacion)}</div>` : ''}${p.cuotas ? html`<div class="ars">o ${p.cuotas} cuotas sin interés</div>` : ''}` : html`<small>Precio</small><b class="consultar">a consultar</b>`}</div>
+      <div class="price">${precio ? html`<small>por persona desde</small>${oferta && precio !== p.precio ? html`<s class="antes">${dinero(p.precio, p.moneda)}</s>` : ''}<b>${dinero(precio, p.moneda)}</b>${p.moneda === 'USD' && cfg.cotizacion > 0 ? html`<div class="ars">≈ ARS ${numero(precio * cfg.cotizacion)}</div>` : ''}${p.cuotas ? html`<div class="ars">o ${p.cuotas} cuotas sin interés</div>` : ''}` : html`<small>Precio</small><b class="consultar">a consultar</b>`}</div>
       <div class="pcard-btns"><a class="btn outline" href="/paquetes/${p.slug}">Ver detalle</a><a class="btn dark" href="${whatsapp(cfg, msg)}" target="_blank" rel="noopener">Consultar</a></div>
     </div>
   </div>
@@ -63,29 +63,34 @@ export function tarjetaPaquete(p: Paquete, cfg: ConfigDatos, oferta?: OfertaVige
 
 export function tarjetaOferta(o: OfertaVigente, cfg: ConfigDatos) {
   const p = o.paquete;
+  const k = o.kuro;
   const nuevo = precioConOferta(p.precio, o);
   const pct = p.precio > 0 ? Math.round((1 - nuevo / p.precio) * 100) : o.descuento;
   const cupos = o.cupos || p.cupos;
   const salidas = proximasSalidas(p);
+  // Ofertas sueltas de Kuro (un aéreo, un crucero): no tienen ficha propia.
+  const ficha = !k || k.enlace ? `/paquetes/${p.slug}` : '';
+  const foto_ = foto(p, '(max-width: 1000px) 92vw, 420px');
+  const badge = pct > 0 ? html`<span class="offer-badge">−${pct}%</span>` : '';
   return html`
 <article class="pass" aria-label="Tarjeta de embarque: ${o.titulo}" data-vence="${o.hasta.toISOString()}">
-  <a class="pass-photo" href="/paquetes/${p.slug}" tabindex="-1" aria-hidden="true">${foto(p, '(max-width: 1000px) 92vw, 420px')}${pct > 0 ? html`<span class="offer-badge">−${pct}%</span>` : ''}</a>
+  ${ficha ? html`<a class="pass-photo" href="${ficha}" tabindex="-1" aria-hidden="true">${foto_}${badge}</a>` : html`<div class="pass-photo" aria-hidden="true">${foto_}${badge}</div>`}
   <div class="pass-main">
     <div class="pass-head"><span>Tarjeta de embarque</span><span>Clase: ${o.etiqueta || 'Oferta'}</span></div>
     <div class="pass-route"><div><b>${ORIGEN_IATA[p.salidaDesde] || p.salidaDesde.slice(0, 3).toUpperCase() || 'COR'}</b><small>${p.salidaDesde || 'Córdoba'}</small></div><span class="pass-line" aria-hidden="true">${ICONO.avion}</span><div><b>${iata(p)}</b><small>${p.destino}</small></div></div>
-    <h3><a href="/paquetes/${p.slug}">${o.titulo}</a></h3>
+    <h3>${ficha ? html`<a href="${ficha}">${o.titulo}</a>` : o.titulo}</h3>
     <p>${o.nota || p.resumen}</p>
     <dl class="pass-fields">
-      <div><dt>Salida</dt><dd>${salidas.length ? fechaCorta(salidas[0]) : 'A confirmar'}</dd></div>
-      <div><dt>Noches</dt><dd>${p.noches}</dd></div>
+      <div><dt>Salida</dt><dd>${salidas.length ? fechaCorta(salidas[0]) : k?.cuando || 'A confirmar'}</dd></div>
+      ${k && !p.noches ? html`<div><dt>Tipo</dt><dd>${k.tipo || '—'}</dd></div>` : html`<div><dt>Noches</dt><dd>${p.noches}</dd></div>`}
       <div><dt>Régimen</dt><dd>${p.regimen || '—'}</dd></div>
       <div><dt>Lugares</dt><dd>${cupos || 'Consultar'}</dd></div>
     </dl>
   </div>
   <div class="pass-stub">
     ${cupos ? html`<span class="chip"><span class="dot"></span>Quedan ${cupos} lugares</span>` : ''}
-    <div class="offer-price">${nuevo !== p.precio ? html`<s>${dinero(p.precio, p.moneda)}</s>` : ''}<b>${dinero(nuevo, p.moneda)}</b><small>por persona en base doble</small></div>
-    ${o.contador ? raw('<div class="count" aria-label="Tiempo restante de la oferta"><div><b>00</b><span>días</span></div><div><b>00</b><span>horas</span></div><div><b>00</b><span>min</span></div><div><b>00</b><span>seg</span></div></div>') : html`<p class="valida">Válida hasta el ${fechaLarga(o.hasta)}</p>`}
+    <div class="offer-price">${nuevo > 0 ? html`${nuevo !== p.precio ? html`<s>${dinero(p.precio, p.moneda)}</s>` : ''}<b>${dinero(nuevo, p.moneda)}</b><small>${k?.notaPrecio || 'por persona en base doble'}</small>` : html`<b>Consultá el precio</b>`}</div>
+    ${o.contador ? raw('<div class="count" aria-label="Tiempo restante de la oferta"><div><b>00</b><span>días</span></div><div><b>00</b><span>horas</span></div><div><b>00</b><span>min</span></div><div><b>00</b><span>seg</span></div></div>') : k?.sinFin ? '' : html`<p class="valida">Válida hasta el ${fechaLarga(o.hasta)}</p>`}
     <a class="btn" href="${whatsapp(cfg, 'Hola! Quiero la oferta ' + o.titulo)}" target="_blank" rel="noopener" style="justify-content:center">Quiero esta oferta</a>
     <div class="barcode" aria-hidden="true"></div>
   </div>
