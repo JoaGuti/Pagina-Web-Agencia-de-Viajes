@@ -1,6 +1,6 @@
 import type { NextConfig } from 'next';
 
-// Con el panel Kuro conectado, las fotos vienen de su almacenamiento (Supabase Storage).
+// Las fotos (paquetes, ofertas, logo, Data Fiscal) vienen del almacenamiento de Kuro (Supabase Storage).
 const kuroOrigen = (() => {
   try {
     return process.env.KURO_API_URL ? ' ' + new URL(process.env.KURO_API_URL).origin : '';
@@ -36,21 +36,22 @@ const seguridad = [
 
 const config: NextConfig = {
   poweredByHeader: false,
-  serverExternalPackages: ['@electric-sql/pglite', 'sharp'],
-  // Las migraciones SQL se leen en tiempo de ejecución al conectar la base.
-  outputFileTracingIncludes: { '/**': ['./drizzle/**/*'] },
   async headers() {
     return [
       { source: '/:path*', headers: seguridad },
-      { source: '/panel/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }, { key: 'Cache-Control', value: 'no-store' }, { key: 'Referrer-Policy', value: 'no-referrer' }] },
-      { source: '/panel', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }, { key: 'Cache-Control', value: 'no-store' }, { key: 'Referrer-Policy', value: 'no-referrer' }] },
       { source: '/api/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }, { key: 'Cache-Control', value: 'no-store' }] },
       { source: '/media/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
       { source: '/vendor/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
     ];
   },
+  // La web se administra desde el panel Kuro: /panel y /admin llevan ahí.
   async redirects() {
-    return [{ source: '/admin', destination: '/panel', permanent: false }];
+    const panel = process.env.KURO_PANEL_URL || 'https://panel.kuroautomation.com';
+    return [
+      { source: '/panel', destination: panel, permanent: false },
+      { source: '/panel/:path*', destination: panel, permanent: false },
+      { source: '/admin', destination: panel, permanent: false },
+    ];
   },
 };
 

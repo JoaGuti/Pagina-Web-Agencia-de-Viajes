@@ -1,59 +1,19 @@
-import { and, asc, desc, eq, gt, lte } from 'drizzle-orm';
-import { getDb } from './db';
-import { configuracion, ofertas, paquetes, resenas, type ConfigDatos, type Oferta, type Paquete, type Resena } from './db/schema';
-import { CONFIG_INICIAL } from './db/semilla';
-import { kuroActivo, ofertasKuro, paquetesKuro, type OfertaConPaquete } from './kuro';
+import { configDe, ofertasDe, paquetesKuro, sitioKuro, type OfertaConPaquete } from './kuro';
+import type { ConfigDatos, Paquete, Resena } from './tipos';
 
 /** Oferta con su paquete; las de Kuro traen además `kuro` (ver lib/kuro). */
 export type OfertaVigente = OfertaConPaquete;
 export type DatosSitio = { cfg: ConfigDatos; paquetes: Paquete[]; ofertas: OfertaVigente[]; resenas: Resena[] };
 
-/** Mezcla la configuración guardada con los valores por defecto (por si se agregan campos nuevos). */
-export function completarConfig(d: Partial<ConfigDatos> | null | undefined): ConfigDatos {
-  const c = d || {};
-  return {
-    ...CONFIG_INICIAL, ...c,
-    agencia: { ...CONFIG_INICIAL.agencia, ...(c.agencia || {}) },
-    google: { ...CONFIG_INICIAL.google, ...(c.google || {}) },
-    resenas: { ...CONFIG_INICIAL.resenas, ...(c.resenas || {}) },
-    dataFiscal: { ...CONFIG_INICIAL.dataFiscal, ...(c.dataFiscal || {}) },
-  };
-}
-
-export async function leerConfig(): Promise<ConfigDatos> {
-  const db = await getDb();
-  const [fila] = await db.select().from(configuracion).where(eq(configuracion.id, 1)).limit(1);
-  return completarConfig(fila?.datos);
-}
-
+/** Todo lo que muestra la web, tal como la agencia lo publicó en el panel Kuro. */
 export async function datosSitio(): Promise<DatosSitio> {
-  const db = await getDb();
-  if (kuroActivo()) {
-    // Paquetes y ofertas desde el panel Kuro. Configuración y reseñas siguen en esta web.
-    const [cfg, pqs, rs] = await Promise.all([
-      leerConfig(),
-      paquetesKuro(),
-      db.select().from(resenas).where(eq(resenas.activa, true)).orderBy(asc(resenas.orden), desc(resenas.creado)),
-    ]);
-    return { cfg, paquetes: pqs, ofertas: await ofertasKuro(pqs), resenas: rs };
-  }
-  const ahora = new Date();
-  const [cfg, pqs, ofs, rs] = await Promise.all([
-    leerConfig(),
-    db.select().from(paquetes).where(eq(paquetes.estado, 'publicado')).orderBy(asc(paquetes.orden), desc(paquetes.creado)),
-    db.select({ o: ofertas, p: paquetes }).from(ofertas).innerJoin(paquetes, eq(paquetes.id, ofertas.paqueteId))
-      .where(and(eq(ofertas.activa, true), lte(ofertas.desde, ahora), gt(ofertas.hasta, ahora), eq(paquetes.estado, 'publicado')))
-      .orderBy(asc(ofertas.hasta)),
-    db.select().from(resenas).where(eq(resenas.activa, true)).orderBy(asc(resenas.orden), desc(resenas.creado)),
-  ]);
-  return { cfg, paquetes: pqs, ofertas: ofs.map(({ o, p }) => ({ ...o, paquete: p })), resenas: rs };
+  const [sitio, paquetes] = await Promise.all([sitioKuro(), paquetesKuro()]);
+  const { cfg, resenas } = configDe(sitio);
+  return { cfg, paquetes, ofertas: ofertasDe(sitio.offers, paquetes), resenas };
 }
 
 export async function paquetePorSlug(slug: string) {
-  if (kuroActivo()) return (await paquetesKuro()).find(p => p.slug === slug) ?? null;
-  const db = await getDb();
-  const [p] = await db.select().from(paquetes).where(and(eq(paquetes.slug, slug), eq(paquetes.estado, 'publicado'))).limit(1);
-  return p ?? null;
+  return (await paquetesKuro()).find(p => p.slug === slug) ?? null;
 }
 
 /** URL pública del sitio (para canonical, sitemap y datos estructurados). */

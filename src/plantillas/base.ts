@@ -1,5 +1,5 @@
-import type { ConfigDatos, Paquete } from '@/lib/db/schema';
-import { direccionCompleta } from '@/lib/formato';
+import type { ConfigDatos, Paquete } from '@/lib/tipos';
+import { coloresMarca, direccionCompleta } from '@/lib/formato';
 import { html, jsonSeguro, raw, type Crudo } from '@/lib/html';
 import { extras, navegacion, pie } from './partes';
 import { SPRITE } from './sprite';
@@ -45,11 +45,11 @@ export function documento(p: Pagina): string {
 <meta name="description" content="${p.descripcion}">
 <link rel="canonical" href="${url}">
 <meta name="robots" content="${p.noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'}">
-<meta name="theme-color" content="#d62839">
+<meta name="theme-color" content="${cfg.color || '#d62839'}">
 <meta name="geo.region" content="AR-X">
-<meta name="geo.placename" content="${a.ciudad}, ${a.provincia}">
-<meta name="geo.position" content="${a.lat};${a.lng}">
-<meta name="ICBM" content="${a.lat}, ${a.lng}">
+${a.ciudad ? html`<meta name="geo.placename" content="${[a.ciudad, a.provincia].filter(Boolean).join(', ')}">` : ''}
+${a.lat || a.lng ? html`<meta name="geo.position" content="${a.lat};${a.lng}">
+<meta name="ICBM" content="${a.lat}, ${a.lng}">` : ''}
 <meta property="og:type" content="${p.tipoOg || 'website'}">
 <meta property="og:locale" content="es_AR">
 <meta property="og:site_name" content="${a.nombre}">
@@ -64,6 +64,7 @@ export function documento(p: Pagina): string {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Hanken+Grotesk:wght@300..800&display=swap">
 <link rel="stylesheet" href="/assets/sitio.css?v=${VERSION}">
+${cfg.color ? raw(`<style>${coloresMarca(cfg.color)}</style>`) : ''}
 ${p.precargar || ''}
 ${(p.jsonld || []).map(j => html`<script type="application/ld+json">${jsonSeguro(j)}</script>`)}
 </head>

@@ -1,4 +1,3 @@
-import { TEXTOS } from '@/contenido/sitio';
 import { datosSitio, urlBase } from '@/lib/datos';
 import { raw } from '@/lib/html';
 import { agenciaSchema, grafo, listaPaquetesSchema, preguntasSchema, sitioSchema } from '@/lib/seo';
@@ -15,8 +14,8 @@ export async function GET(req: Request) {
     const a = d.cfg.agencia;
     return respuestaHtml(documento({
       cfg: d.cfg, paquetes: d.paquetes, base, ruta: '/', enInicio: true,
-      titulo: `${a.nombre} · ${TEXTOS.tituloSeo}`,
-      descripcion: TEXTOS.descripcionSeo,
+      titulo: `${a.nombre} · ${d.cfg.textos.tituloSeo}`,
+      descripcion: d.cfg.textos.descripcionSeo,
       jsonld: [grafo(agenciaSchema(d.cfg, base), sitioSchema(d.cfg, base), preguntasSchema(d.cfg), listaPaquetesSchema(d.paquetes, base))],
       precargar: raw('<link rel="preload" as="image" href="/media/hero-playa.jpg" fetchpriority="high">'),
       cuerpo: cuerpoInicio(d),

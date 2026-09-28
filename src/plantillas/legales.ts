@@ -1,5 +1,5 @@
 import { FECHA_LEGALES } from '@/contenido/sitio';
-import type { ConfigDatos } from '@/lib/db/schema';
+import type { ConfigDatos } from '@/lib/tipos';
 import { direccionCompleta } from '@/lib/formato';
 import { html, type Crudo } from '@/lib/html';
 
@@ -24,7 +24,7 @@ export const LEGALES: Record<string, Legal> = {
       return marco('Política de privacidad', 'Legales', html`
 <p class="actualizado">Última actualización: ${FECHA_LEGALES}.</p>
 <h2>1. Responsable</h2>
-<p>${a.razonSocial || a.nombre}, CUIT ${a.cuit}, con domicilio en ${direccionCompleta(cfg)}, es responsable de la base de datos de clientes y consultas. Podés escribirnos a <a href="mailto:${a.email}">${a.email}</a>.</p>
+<p>${a.razonSocial || a.nombre}${a.cuit ? `, CUIT ${a.cuit},` : ','} con domicilio en ${direccionCompleta(cfg)}, es responsable de la base de datos de clientes y consultas. Podés escribirnos a <a href="mailto:${a.email}">${a.email}</a>.</p>
 <h2>2. Qué datos recolectamos</h2>
 <ul>
   <li>Datos de contacto que nos das en formularios o por WhatsApp: nombre, teléfono, email, destino y fecha de viaje.</li>
@@ -57,7 +57,7 @@ export const LEGALES: Record<string, Legal> = {
       return marco('Términos y condiciones', 'Legales', html`
 <p class="actualizado">Última actualización: ${FECHA_LEGALES}.</p>
 <h2>Agencia</h2>
-<p>${a.razonSocial || a.nombre} es una agencia de viajes habilitada por el Ministerio de Turismo de la Nación, Legajo EVyT N° ${a.legajo}, CUIT ${a.cuit}, y se rige por la Ley 18.829 y sus normas complementarias.</p>
+<p>${a.razonSocial || a.nombre} es una agencia de viajes habilitada por el Ministerio de Turismo de la Nación${a.legajo ? `, Legajo EVyT N° ${a.legajo}` : ''}${a.cuit ? `, CUIT ${a.cuit}` : ''}, y se rige por la Ley 18.829 y sus normas complementarias.</p>
 <h2>Precios</h2>
 <p>Los precios publicados son por persona en base doble, salvo que se indique otra cosa, y están sujetos a disponibilidad y a variaciones de tarifas aéreas, impuestos y tipo de cambio hasta la confirmación de la reserva. Las referencias en pesos son orientativas.</p>
 <h2>Reservas y pagos</h2>

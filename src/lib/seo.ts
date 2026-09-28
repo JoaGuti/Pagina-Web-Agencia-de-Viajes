@@ -1,5 +1,4 @@
-import { PREGUNTAS, respuesta } from '@/contenido/sitio';
-import type { ConfigDatos, Paquete } from './db/schema';
+import type { ConfigDatos, Paquete } from './tipos';
 import { direccionCompleta, precioConOferta, proximasSalidas } from './formato';
 import type { OfertaVigente } from './datos';
 
@@ -40,12 +39,12 @@ export function agenciaSchema(cfg: ConfigDatos, base: string) {
     priceRange: '$$',
     taxID: a.cuit || undefined,
     address: { '@type': 'PostalAddress', streetAddress: a.direccion, addressLocality: a.ciudad, addressRegion: a.provincia, postalCode: a.cp, addressCountry: 'AR' },
-    geo: { '@type': 'GeoCoordinates', latitude: a.lat, longitude: a.lng },
+    geo: a.lat || a.lng ? { '@type': 'GeoCoordinates', latitude: a.lat, longitude: a.lng } : undefined,
     hasMap: mapa,
-    areaServed: [a.ciudad, a.provincia, 'Argentina'],
+    areaServed: [a.ciudad, a.provincia, 'Argentina'].filter(Boolean),
     openingHoursSpecification: horarios.length ? horarios : undefined,
     sameAs: [a.instagram, a.facebook, cfg.resenas.perfil].filter(u => u && !/^https:\/\/www\.(instagram|facebook)\.com\/?$/.test(u)),
-    aggregateRating: cfg.resenas.cantidad > 0 ? { '@type': 'AggregateRating', ratingValue: cfg.resenas.puntaje, reviewCount: cfg.resenas.cantidad, bestRating: 5 } : undefined,
+    aggregateRating: cfg.resenas.cantidad > 0 && cfg.resenas.puntaje > 0 ? { '@type': 'AggregateRating', ratingValue: cfg.resenas.puntaje, reviewCount: cfg.resenas.cantidad, bestRating: 5 } : undefined,
     contactPoint: { '@type': 'ContactPoint', telephone: a.telefono, contactType: 'reservations', areaServed: 'AR', availableLanguage: ['es'] },
   };
 }
@@ -55,10 +54,9 @@ export function sitioSchema(cfg: ConfigDatos, base: string) {
 }
 
 export function preguntasSchema(cfg: ConfigDatos) {
-  const dir = direccionCompleta(cfg);
   return {
     '@type': 'FAQPage',
-    mainEntity: PREGUNTAS.map(q => ({ '@type': 'Question', name: q.p, acceptedAnswer: { '@type': 'Answer', text: respuesta(q, dir, cfg.agencia.horario) } })),
+    mainEntity: cfg.textos.preguntas.map(q => ({ '@type': 'Question', name: q.p, acceptedAnswer: { '@type': 'Answer', text: q.r } })),
   };
 }
 

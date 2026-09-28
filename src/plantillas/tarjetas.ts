@@ -1,4 +1,4 @@
-import type { ConfigDatos, Paquete, Resena } from '@/lib/db/schema';
+import type { ConfigDatos, Paquete, Resena } from '@/lib/tipos';
 import type { OfertaVigente } from '@/lib/datos';
 import { COLORES_ETIQUETA, dinero, fechaCorta, fechaLarga, iata, numero, ORIGEN_IATA, precioConOferta, proximasSalidas, srcset, whatsapp } from '@/lib/formato';
 import { html, raw } from '@/lib/html';
@@ -14,7 +14,7 @@ export function foto(p: Paquete, sizes: string, opciones: { i?: number; priorida
 
 function matasellos(id: string, fecha: string, cfg: ConfigDatos) {
   const a = cfg.agencia;
-  const texto = `${a.ciudad} · ${a.provincia} · Argentina ·`.toUpperCase();
+  const texto = `${[a.ciudad, a.provincia, 'Argentina'].filter(Boolean).join(' · ')} ·`.toUpperCase();
   const [dia, anio] = fecha ? [fecha.split(' ').slice(0, 2).join(' '), fecha.split(' ')[2] ? '20' + fecha.split(' ')[2] : String(new Date().getFullYear())] : ['', ''];
   return html`<span class="postmark" aria-hidden="true"><svg viewBox="0 0 170 100"><circle cx="50" cy="50" r="44"/><circle cx="50" cy="50" r="30"/><path id="pm-${id}" d="M50 50 m-37 0 a37 37 0 1 1 74 0 a37 37 0 1 1 -74 0" stroke="none"/><text><textPath href="#pm-${id}">${texto}</textPath></text><text x="50" y="47" text-anchor="middle" style="font-size:11px">${dia.toUpperCase()}</text><text x="50" y="60" text-anchor="middle">${anio}</text><path d="M100 34q8-6 16 0t16 0 16 0 16 0M100 50q8-6 16 0t16 0 16 0 16 0M100 66q8-6 16 0t16 0 16 0 16 0"/></svg></span>`;
 }

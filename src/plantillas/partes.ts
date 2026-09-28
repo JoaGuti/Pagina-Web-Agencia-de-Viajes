@@ -1,4 +1,4 @@
-import type { ConfigDatos, Paquete } from '@/lib/db/schema';
+import type { ConfigDatos, Paquete } from '@/lib/tipos';
 import { direccionCompleta, REGIONES, telHref, whatsapp } from '@/lib/formato';
 import { html, raw, type Crudo } from '@/lib/html';
 
@@ -25,7 +25,7 @@ const SECCIONES = [['destinos', 'Destinos'], ['ofertas', 'Ofertas'], ['paquetes'
 
 export function navegacion(cfg: ConfigDatos, enInicio: boolean) {
   const pre = enInicio ? '#' : '/#';
-  const wa = whatsapp(cfg, 'Hola! Quiero hacer una consulta de viaje.');
+  const wa = whatsapp(cfg, cfg.textos.whatsapp);
   return html`
 <header class="nav${enInicio ? '' : ' solid'}" id="nav"${enInicio ? '' : raw(' data-fija')}>
   <div class="wrap">
@@ -51,7 +51,7 @@ export function navegacion(cfg: ConfigDatos, enInicio: boolean) {
 /** Países de los paquetes publicados, para el pie. */
 function paises(pqs: Paquete[]) {
   const m = new Map<string, string>();
-  for (const p of pqs) { const pais = (p.pais || '').split(', ').pop()!.trim(); if (pais && !m.has(pais)) m.set(pais, p.region); }
+  for (const p of pqs) { const pais = (p.pais || p.destino || '').split(', ').pop()!.trim(); if (pais && !m.has(pais)) m.set(pais, p.region); }
   return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0], 'es'));
 }
 
@@ -64,7 +64,7 @@ export function pie(cfg: ConfigDatos, pqs: Paquete[], enInicio: boolean) {
   <div class="wrap club">
     <div>
       <p class="eyebrow">Club ${primeraPalabra}</p>
-      <h2 class="h2" id="club-title">Las ofertas de último minuto,<br><em>antes que nadie.</em></h2>
+      <h2 class="h2" id="club-title">${cfg.textos.clubTitulo[0]}<br><em>${cfg.textos.clubTitulo[1]}</em></h2>
     </div>
     <form id="clubForm" novalidate>
       <label class="sr-only" for="club-email">Tu email</label>
@@ -92,9 +92,9 @@ export function pie(cfg: ConfigDatos, pqs: Paquete[], enInicio: boolean) {
     <div class="reg-card">
       <div class="reg-head"><span class="reg-ic"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M24 4l16 6v12c0 10-7 18-16 22C15 40 8 32 8 22V10z"/><path d="M16 24l6 6 10-12" stroke-linecap="round"/></svg></span><div><b>Agencia registrada</b><small>Registro de Agentes de Viajes</small></div></div>
       <ul>
-        <li>${ICONO.check}<span>Legajo EVyT N° ${a.legajo}</span></li>
-        <li>${ICONO.check}<span>CUIT ${a.cuit}</span></li>
-        <li>${ICONO.check}<span>Razón social: ${a.razonSocial}</span></li>
+        ${a.legajo ? html`<li>${ICONO.check}<span>Legajo EVyT N° ${a.legajo}</span></li>` : ''}
+        ${a.cuit ? html`<li>${ICONO.check}<span>CUIT ${a.cuit}</span></li>` : ''}
+        ${a.razonSocial ? html`<li>${ICONO.check}<span>Razón social: ${a.razonSocial}</span></li>` : ''}
       </ul>
       ${cfg.dataFiscal.imagen || cfg.dataFiscal.enlace ? html`<a class="fiscal" href="${cfg.dataFiscal.enlace || 'https://www.arca.gob.ar/'}" target="_F960AFIPInfo" rel="noopener">${cfg.dataFiscal.imagen ? html`<img class="qr" src="${cfg.dataFiscal.imagen}" alt="Código QR de Data Fiscal" width="60" height="60" loading="lazy">` : ''}<small>Data Fiscal</small></a>` : ''}
     </div>
@@ -110,7 +110,7 @@ export function pie(cfg: ConfigDatos, pqs: Paquete[], enInicio: boolean) {
 
 export function extras(cfg: ConfigDatos) {
   return html`
-<a class="wa-float" href="${whatsapp(cfg, 'Hola! Quiero hacer una consulta de viaje.')}" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">${ICONO.wa}</a>
+<a class="wa-float" href="${whatsapp(cfg, cfg.textos.whatsapp)}" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">${ICONO.wa}</a>
 <div class="cookies" id="cookies" role="region" aria-label="Aviso de cookies" hidden>
   <p><b>Usamos cookies.</b> Las esenciales hacen funcionar el sitio. Con tu permiso sumamos analíticas para saber qué destinos buscan más. <a class="linkish" href="/cookies">Más información</a></p>
   <div class="row"><button class="ok" data-ck="all">Aceptar todas</button><button data-ck="essential">Solo esenciales</button></div>

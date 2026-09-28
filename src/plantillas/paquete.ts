@@ -1,5 +1,5 @@
 import type { DatosSitio, OfertaVigente } from '@/lib/datos';
-import type { Paquete } from '@/lib/db/schema';
+import type { Paquete } from '@/lib/tipos';
 import { dinero, fechaCorta, fechaLarga, numero, precioConOferta, proximasSalidas, REGIONES, whatsapp } from '@/lib/formato';
 import { html } from '@/lib/html';
 import { ICONO, formularioConsulta } from './partes';

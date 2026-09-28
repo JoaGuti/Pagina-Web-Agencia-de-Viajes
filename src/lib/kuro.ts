@@ -1,14 +1,15 @@
 import { createHash } from 'node:crypto';
-import { ErrorHttp } from './auth';
-import type { ItinerarioDia, Oferta, Paquete } from './db/schema';
+import { textosDe, type MiWeb } from '@/contenido/sitio';
+import type { ConfigDatos, ItinerarioDia, Oferta, Paquete, Resena } from './tipos';
 
 /**
- * Conexión con el panel Kuro (plataforma multicliente).
+ * Conexión con el panel Kuro (plataforma multicliente): la agencia administra
+ * esta web entera desde Kuro. Datos de la agencia, textos, reseñas, paquetes y
+ * ofertas salen de lo que publica allá, y todos los formularios (consultas,
+ * arrepentimiento y club de ofertas) llegan a su bandeja de Kuro. Esta web no
+ * tiene base ni panel propios.
  *
- * Si están KURO_API_URL, KURO_ANON_KEY y KURO_SITE_HOST, los paquetes de la
- * web salen de lo que la agencia publica en el panel Kuro, y las consultas
- * llegan a su bandeja de Kuro. Sin esas variables, la web sigue usando su
- * propia base como siempre.
+ * Variables: KURO_API_URL, KURO_ANON_KEY y KURO_SITE_HOST.
  *
  * Solo se usa la clave pública "anon": la base de Kuro deja leer revisiones
  * publicadas y registrar consultas, nada más (RLS y funciones controladas).
@@ -17,17 +18,8 @@ export function kuroActivo() {
   return !!(process.env.KURO_API_URL && process.env.KURO_ANON_KEY && process.env.KURO_SITE_HOST);
 }
 
-/** Con Kuro conectado, los paquetes se editan allá: el panel propio no los modifica para no confundir. */
-export function exigirPaquetesLocales() {
-  if (kuroActivo()) throw new ErrorHttp(409, 'Esta web está conectada al panel Kuro: los paquetes se cargan y publican desde Kuro.');
-}
-
-/** Con Kuro conectado, las ofertas también se cargan allá (Panel Kuro → Ofertas). */
-export function exigirOfertasLocales() {
-  if (kuroActivo()) throw new ErrorHttp(409, 'Esta web está conectada al panel Kuro: las ofertas se cargan y publican desde Kuro (Ofertas).');
-}
-
 async function rpc<T>(nombre: string, args: Record<string, unknown>): Promise<T> {
+  if (!kuroActivo()) throw new Error('Falta conectar la web con el panel Kuro: cargá KURO_API_URL, KURO_ANON_KEY y KURO_SITE_HOST.');
   const base = process.env.KURO_API_URL!.replace(/\/+$/, '');
   const key = process.env.KURO_ANON_KEY!;
   const res = await fetch(`${base}/rest/v1/rpc/${nombre}`, {
@@ -247,12 +239,79 @@ export function aOfertaWeb(o: OfertaKuro, paquetes: Paquete[]): OfertaConPaquete
  * llevan a un paquete lo toman de los paquetes publicados (si se retiró de la
  * web, la oferta sigue sin enlace).
  */
-export async function ofertasKuro(paquetes: Paquete[], ahora = new Date()): Promise<OfertaConPaquete[]> {
-  const [sitio] = await rpc<{ offers: OfertaKuro[] | null }[]>('resolve_site', { p_hostname: process.env.KURO_SITE_HOST });
-  return (sitio?.offers ?? [])
+export function ofertasDe(offers: OfertaKuro[] | null | undefined, paquetes: Paquete[], ahora = new Date()): OfertaConPaquete[] {
+  return (offers ?? [])
     .map(o => aOfertaWeb(o, paquetes))
     .filter(o => o.desde <= ahora && ahora < o.hasta)
     .slice(0, MAX_OFERTAS);
+}
+
+// ---- La agencia: Organización y Mi web de Kuro (resolve_site) ----
+
+type SitioKuro = {
+  name: string;
+  accent?: string | null;
+  contact: { email?: string; phone?: string; whatsapp?: string; address?: string; hours?: string; instagram?: string; facebook?: string } | null;
+  web: (MiWeb & {
+    logo?: string;
+    legal?: { businessName?: string; taxId?: string; license?: string };
+    business?: {
+      city?: string; province?: string; postalCode?: string; lat?: number | null; lng?: number | null; exchangeRate?: number | null; analyticsId?: string;
+      rating?: { score?: number | null; count?: number | null; profile?: string };
+      reviews?: { author?: string; text?: string; stars?: number; when?: string }[];
+      dataFiscal?: { image?: string; link?: string };
+    };
+  }) | null;
+  offers: OfertaKuro[] | null;
+};
+
+const s = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
+const n = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+
+/** Configuración de la web armada con lo que la agencia cargó en Kuro (Organización y Mi web). */
+export function configDe(sitio: SitioKuro): { cfg: ConfigDatos; resenas: Resena[] } {
+  const c = sitio.contact ?? {};
+  const w = sitio.web ?? {};
+  const b = w.business ?? {};
+  const agencia: ConfigDatos['agencia'] = {
+    nombre: s(sitio.name) || 'Agencia de viajes',
+    razonSocial: s(w.legal?.businessName),
+    direccion: s(c.address),
+    ciudad: s(b.city),
+    provincia: s(b.province),
+    cp: s(b.postalCode),
+    telefono: s(c.phone),
+    whatsapp: s(c.whatsapp),
+    email: s(c.email),
+    horario: s(c.hours),
+    legajo: s(w.legal?.license),
+    cuit: s(w.legal?.taxId),
+    instagram: s(c.instagram),
+    facebook: s(c.facebook),
+    lat: n(b.lat),
+    lng: n(b.lng),
+  };
+  const cfg: ConfigDatos = {
+    agencia,
+    logo: s(w.logo),
+    color: /^#[0-9a-f]{6}$/i.test(s(sitio.accent)) ? s(sitio.accent).toLowerCase() : '',
+    cotizacion: n(b.exchangeRate),
+    google: { medicion: /^G-[A-Z0-9]{4,16}$/.test(s(b.analyticsId)) ? s(b.analyticsId) : '' },
+    resenas: { puntaje: n(b.rating?.score), cantidad: n(b.rating?.count), perfil: s(b.rating?.profile) },
+    dataFiscal: { imagen: s(b.dataFiscal?.image), enlace: s(b.dataFiscal?.link) },
+    textos: textosDe(w, agencia),
+  };
+  const resenas = (b.reviews ?? [])
+    .filter(r => s(r.author) && s(r.text))
+    .map((r, i): Resena => ({ id: `kuro-resena-${i}`, autor: s(r.author), texto: s(r.text), estrellas: Math.max(1, Math.min(5, Math.round(n(r.stars) || 5))), cuando: s(r.when) }));
+  return { cfg, resenas };
+}
+
+/** Sitio de la agencia en Kuro: configuración, reseñas y ofertas en una sola consulta. */
+export async function sitioKuro() {
+  const [sitio] = await rpc<SitioKuro[]>('resolve_site', { p_hostname: process.env.KURO_SITE_HOST });
+  if (!sitio) throw new Error(`Kuro no tiene un sitio activo para ${process.env.KURO_SITE_HOST}.`);
+  return sitio;
 }
 
 type ConsultaWeb = { nombre: string; telefono: string; email: string; destino: string; fechaViaje: string; mensaje: string };
@@ -282,4 +341,24 @@ export async function enviarConsultaKuro(c: ConsultaWeb, paquetes: Paquete[], ur
       travel: null,
     },
   });
+}
+
+/**
+ * Otros formularios de la web (arrepentimiento, club de ofertas): llegan a la
+ * bandeja de Kuro como consulta, con el pedido escrito en el mensaje. La clave
+ * se deriva del contenido: un reenvío no crea dos.
+ */
+export async function enviarAvisoKuro(d: { nombre: string; email: string; telefono?: string; mensaje: string }, urlOrigen: string) {
+  const clave = 'web-' + createHash('sha256').update(JSON.stringify([d, Math.floor(Date.now() / 600_000)])).digest('hex').slice(0, 40);
+  return rpc<{ ok: boolean; duplicate: boolean }>('submit_inquiry', {
+    p_hostname: process.env.KURO_SITE_HOST,
+    p_key: clave,
+    p_input: { name: d.nombre, email: d.email, phone: d.telefono ?? '', need: 'otro', message: d.mensaje, itemId: null, sourceUrl: urlOrigen, travel: null },
+  });
+}
+
+/** Respuesta de un formulario cuando Kuro rechaza los datos o hay demasiados envíos. */
+export function errorDeKuro(e: unknown) {
+  if (e instanceof ErrorKuro && (e.codigo === 'KU422' || e.codigo === 'KU429')) return { error: e.message, status: e.codigo === 'KU429' ? 429 : 400 };
+  return null;
 }

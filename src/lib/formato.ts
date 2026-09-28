@@ -1,4 +1,4 @@
-import type { ConfigDatos, Paquete } from './db/schema';
+import type { ConfigDatos, Paquete } from './tipos';
 
 const nf = new Intl.NumberFormat('es-AR');
 export const numero = (v: number) => nf.format(Math.round(v));
@@ -49,7 +49,31 @@ export function srcset(url: string) {
 
 export const soloDigitos = (v: string) => v.replace(/\D/g, '');
 export const whatsapp = (cfg: ConfigDatos, texto: string) => `https://wa.me/${soloDigitos(cfg.agencia.whatsapp)}?text=${encodeURIComponent(texto)}`;
-export const direccionCompleta = (cfg: ConfigDatos) => `${cfg.agencia.direccion}, ${cfg.agencia.ciudad}, ${cfg.agencia.provincia}`;
+const sinAcentos = (v: string) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+/** Dirección con ciudad y provincia, sin repetirlas si ya vienen escritas en la dirección. */
+export const direccionCompleta = (cfg: ConfigDatos) => {
+  const { direccion, ciudad, provincia } = cfg.agencia;
+  return [direccion, ...[ciudad, provincia].filter(x => x && !sinAcentos(direccion).includes(sinAcentos(x)))].filter(Boolean).join(', ');
+};
+
+function luminancia(hex: string) {
+  const [r, g, b] = [1, 3, 5].map(i => { const c = parseInt(hex.slice(i, i + 2), 16) / 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+const escalar = (hex: string, k: number) => '#' + [1, 3, 5].map(i => Math.round(Math.min(255, parseInt(hex.slice(i, i + 2), 16) * k)).toString(16).padStart(2, '0')).join('');
+const mezclarBlanco = (hex: string, k: number) => '#' + [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * k + 255 * (1 - k)).toString(16).padStart(2, '0')).join('');
+
+/**
+ * Variables de color de la plantilla para el color de marca elegido en Kuro.
+ * Si es muy claro, se oscurece hasta que el texto blanco encima se lea bien.
+ */
+export function coloresMarca(color: string): string {
+  if (!/^#[0-9a-f]{6}$/i.test(color)) return '';
+  let base = color.toLowerCase();
+  for (let i = 0; i < 12 && luminancia(base) > 0.26; i++) base = escalar(base, 0.88);
+  const oscuro = escalar(base, 0.77);
+  return `:root{--red:${base};--coral:${base};--red-d:${oscuro};--coral-d:${oscuro};--reef:${oscuro};--red-soft:${mezclarBlanco(base, 0.07)}}`;
+}
 export const telHref = (t: string) => 'tel:' + t.replace(/[^\d+]/g, '');
 
 export const slugificar = (v: string) => v.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);

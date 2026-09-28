@@ -1,5 +1,8 @@
 (() => {
 'use strict';
+/* Color de marca (el que la agencia eligió en Kuro, o el rojo de la plantilla) para dibujar en canvas. */
+const marcaRGB = (() => { const v = getComputedStyle(document.documentElement).getPropertyValue('--red').trim(); const m = /^#([0-9a-f]{6})$/i.exec(v); const h = m ? m[1] : 'd62839'; return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)).join(','); })();
+const marcaA = a => `rgba(${marcaRGB},${a})`;
 /* ============ utilidades ============ */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -255,7 +258,7 @@ const MapView = (() => {
     c.fillStyle = '#fbfaf8'; c.fillRect(0, 0, W, H);
     // curvas de nivel de las sierras
     c.lineWidth = 1;
-    for (let k = 0; k < 14; k++) { c.strokeStyle = `rgba(214,40,57,${.06 + k * .006})`; c.beginPath(); for (let a = 0; a <= TAU + .01; a += .08) { const R = (40 + k * 26) * (1 + .18 * Math.sin(a * 3 + k * .4) + .08 * Math.sin(a * 7)); const x = W * .12 + Math.cos(a) * R * 1.3, y = H * .2 + Math.sin(a) * R; a ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+    for (let k = 0; k < 14; k++) { c.strokeStyle = marcaA(.06 + k * .006); c.beginPath(); for (let a = 0; a <= TAU + .01; a += .08) { const R = (40 + k * 26) * (1 + .18 * Math.sin(a * 3 + k * .4) + .08 * Math.sin(a * 7)); const x = W * .12 + Math.cos(a) * R * 1.3, y = H * .2 + Math.sin(a) * R; a ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
     // lago San Roque
     const lx = W * .72, ly = H * .22;
     c.fillStyle = '#e4edf4'; c.strokeStyle = '#9fb6c9'; c.lineWidth = 1.5; c.beginPath();
@@ -266,15 +269,15 @@ const MapView = (() => {
     c.strokeStyle = 'rgba(28,34,48,.07)';
     for (let i = -8; i < 20; i++) { c.beginPath(); c.moveTo(i * 38, H * .38); c.lineTo(i * 38 + H * .3, H); c.stroke(); c.beginPath(); c.moveTo(0, H * .38 + i * 30); c.lineTo(W, H * .3 + i * 30); c.stroke(); }
     // avenidas
-    c.strokeStyle = 'rgba(214,40,57,.55)'; c.lineWidth = 3; c.setLineDash([]); c.beginPath(); c.moveTo(-10, H * .7); c.bezierCurveTo(W * .3, H * .62, W * .5, H * .5, W * .62, H * .36); c.stroke();
+    c.strokeStyle = marcaA(.55); c.lineWidth = 3; c.setLineDash([]); c.beginPath(); c.moveTo(-10, H * .7); c.bezierCurveTo(W * .3, H * .62, W * .5, H * .5, W * .62, H * .36); c.stroke();
     c.setLineDash([8, 7]); c.beginPath(); c.moveTo(W * .5, H * .52); c.bezierCurveTo(W * .7, H * .56, W * .85, H * .5, W + 10, H * .46); c.stroke(); c.setLineDash([]);
-    c.fillStyle = '#d62839'; c.font = '500 10px "DM Mono", monospace'; c.fillText('→ CÓRDOBA 36 KM', W - 118, H * .44);
+    c.fillStyle = marcaA(1); c.font = '500 10px "DM Mono", monospace'; c.fillText('→ CÓRDOBA 36 KM', W - 118, H * .44);
     // pin
     const px = W * .46, py = H * .5, pulse = (t * .7) % 1;
     c.lineWidth = 2;
-    c.strokeStyle = `rgba(214,40,57,${1 - pulse})`; c.beginPath(); c.arc(px, py, 10 + pulse * 40, 0, TAU); c.stroke();
-    c.strokeStyle = `rgba(214,40,57,${1 - (pulse + .5) % 1})`; c.beginPath(); c.arc(px, py, 10 + ((pulse + .5) % 1) * 40, 0, TAU); c.stroke();
-    c.fillStyle = '#d62839'; c.beginPath(); c.moveTo(px, py); c.bezierCurveTo(px - 16, py - 20, px - 14, py - 40, px, py - 40); c.bezierCurveTo(px + 14, py - 40, px + 16, py - 20, px, py); c.fill();
+    c.strokeStyle = marcaA(1 - pulse); c.beginPath(); c.arc(px, py, 10 + pulse * 40, 0, TAU); c.stroke();
+    c.strokeStyle = marcaA(1 - (pulse + .5) % 1); c.beginPath(); c.arc(px, py, 10 + ((pulse + .5) % 1) * 40, 0, TAU); c.stroke();
+    c.fillStyle = marcaA(1); c.beginPath(); c.moveTo(px, py); c.bezierCurveTo(px - 16, py - 20, px - 14, py - 40, px, py - 40); c.bezierCurveTo(px + 14, py - 40, px + 16, py - 20, px, py); c.fill();
     c.fillStyle = '#fff'; c.beginPath(); c.arc(px, py - 27, 5.5, 0, TAU); c.fill();
   }
   new IntersectionObserver(es => es.forEach(e => on = e.isIntersecting)).observe(box);

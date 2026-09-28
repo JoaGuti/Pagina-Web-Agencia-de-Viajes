@@ -1,4 +1,3 @@
-import { CIFRAS, PASOS, POR_QUE, PREGUNTAS, respuesta, TEXTOS } from '@/contenido/sitio';
 import type { DatosSitio } from '@/lib/datos';
 import { direccionCompleta, enPalabras, mesAnio, numero, proximasSalidas, REGIONES } from '@/lib/formato';
 import { html, raw } from '@/lib/html';
@@ -9,6 +8,7 @@ import { postal, tarjetaOferta, tarjetaPaquete, tarjetaResena } from './tarjetas
 export function cuerpoInicio(d: DatosSitio) {
   const { cfg, paquetes: pqs, ofertas, resenas } = d;
   const a = cfg.agencia;
+  const tx = cfg.textos;
   const regiones = [...new Set(pqs.map(p => p.region))].filter(r => REGIONES[r]);
   const meses = [...new Set(pqs.flatMap(p => proximasSalidas(p).map(s => s.slice(0, 7))))].sort().slice(0, 8);
   const ofertaDe = new Map(ofertas.map(o => [o.paqueteId, o]));
@@ -30,9 +30,9 @@ export function cuerpoInicio(d: DatosSitio) {
       <div class="hero-scrim" aria-hidden="true"></div>
       <div class="hero-copy">
         <div class="wrap">
-          <p class="eyebrow">${TEXTOS.eyebrowPortada}</p>
-          <h1 class="hero-title" id="heroTitle"><span class="l1">${TEXTOS.heroLinea1}</span> <span class="l2">${TEXTOS.heroLinea2}</span></h1>
-          <p class="hero-sub">${TEXTOS.heroBajada}</p>
+          <p class="eyebrow">${tx.eyebrow}</p>
+          <h1 class="hero-title" id="heroTitle"><span class="l1">${tx.heroLinea1}</span> <span class="l2">${tx.heroLinea2}</span></h1>
+          <p class="hero-sub">${tx.heroBajada}</p>
           <div class="hero-cta">
             <a class="btn" href="#paquetes">Ver paquetes ${ICONO.flecha}</a>
             <a class="btn ghost" href="#ofertas">Ofertas de la semana</a>
@@ -113,8 +113,8 @@ export function cuerpoInicio(d: DatosSitio) {
     <div class="wrap why-grid">
       <div>
         <span class="why-pill"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#d-plane"/></svg>Por qué elegirnos</span>
-        <h2 class="h2" id="why-title">Estamos con vos,<br><em>así de simple.</em></h2>
-        <ul class="feats">${POR_QUE.map(f => html`<li><span class="f-ic"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#d-${f.icono}"/></svg></span><div><b>${f.titulo}</b><span>${f.texto}</span></div></li>`)}</ul>
+        <h2 class="h2" id="why-title">${tx.porQueTitulo[0]}<br><em>${tx.porQueTitulo[1]}</em></h2>
+        <ul class="feats">${tx.porQue.map(f => html`<li><span class="f-ic"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#d-${f.icono}"/></svg></span><div><b>${f.titulo}</b><span>${f.texto}</span></div></li>`)}</ul>
       </div>
       <div class="circles" aria-hidden="true">
         <span class="blob"></span>
@@ -129,21 +129,21 @@ export function cuerpoInicio(d: DatosSitio) {
       <div class="sec-head">
         <div>
           <p class="eyebrow">Cómo trabajamos</p>
-          <h2 class="h2" id="ct-title">De la primera charla<br><em>al check-in.</em></h2>
+          <h2 class="h2" id="ct-title">${tx.pasosTitulo[0]}<br><em>${tx.pasosTitulo[1]}</em></h2>
         </div>
-        <p class="lede">Una sola persona te acompaña en todo el viaje. Si algo cambia, te avisamos antes que la aerolínea.</p>
+        <p class="lede">${tx.pasosBajada}</p>
       </div>
       <div class="route" id="route">
         <svg class="path" viewBox="0 0 1200 120" aria-hidden="true">
-          <path id="routePath" d="M26 40 C180 110 300 -20 420 40 S660 110 820 40 S1060 -20 1180 40" fill="none" stroke="#d62839" stroke-width="2" stroke-dasharray="6 8" opacity=".3"/>
-          <path id="routeDraw" d="M26 40 C180 110 300 -20 420 40 S660 110 820 40 S1060 -20 1180 40" fill="none" stroke="#d62839" stroke-width="2.5" stroke-linecap="round"/>
-          <g id="plane"><circle r="17" fill="#d62839"/><use href="#d-plane" x="-12" y="-12" width="24" height="24" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></g>
+          <path id="routePath" d="M26 40 C180 110 300 -20 420 40 S660 110 820 40 S1060 -20 1180 40" fill="none" style="stroke:var(--red)" stroke-width="2" stroke-dasharray="6 8" opacity=".3"/>
+          <path id="routeDraw" d="M26 40 C180 110 300 -20 420 40 S660 110 820 40 S1060 -20 1180 40" fill="none" style="stroke:var(--red)" stroke-width="2.5" stroke-linecap="round"/>
+          <g id="plane"><circle r="17" style="fill:var(--red)"/><use href="#d-plane" x="-12" y="-12" width="24" height="24" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></g>
         </svg>
-        <ol class="steps">${PASOS.map((s, i) => html`<li class="step"><span class="step-n">${i + 1}</span><h3>${s.titulo}</h3><p>${s.texto(a.direccion)}</p></li>`)}</ol>
+        <ol class="steps">${tx.pasos.map((s, i) => html`<li class="step"><span class="step-n">${i + 1}</span><h3>${s.titulo}</h3><p>${s.texto}</p></li>`)}</ol>
       </div>
       <div class="stats" id="stats">
-        ${CIFRAS.map(c => html`<div class="stat"><b data-count="${c.valor}">${numero(c.valor)}</b><span>${c.texto}</span></div>`)}
-        <div class="stat"><b data-count="${cfg.resenas.puntaje}" data-dec="1">${puntaje}</b><span>de puntaje en Google</span></div>
+        ${tx.cifras.map(c => html`<div class="stat"><b data-count="${c.valor}">${numero(c.valor)}</b><span>${c.texto}</span></div>`)}
+        ${cfg.resenas.puntaje ? html`<div class="stat"><b data-count="${cfg.resenas.puntaje}" data-dec="1">${puntaje}</b><span>de puntaje en Google</span></div>` : ''}
       </div>
     </div>
   </section>
@@ -158,8 +158,8 @@ export function cuerpoInicio(d: DatosSitio) {
       <div class="rv-summary">
         ${ICONO.google}
         <div>
-          <div class="rv-score"><b>${puntaje}</b><span class="rv-stars" aria-label="${puntaje} de 5 estrellas">★★★★★</span></div>
-          <small>${numero(cfg.resenas.cantidad)} reseñas en Google</small>
+          ${cfg.resenas.puntaje ? html`<div class="rv-score"><b>${puntaje}</b><span class="rv-stars" aria-label="${puntaje} de 5 estrellas">★★★★★</span></div>` : ''}
+          ${cfg.resenas.cantidad ? html`<small>${numero(cfg.resenas.cantidad)} reseñas en Google</small>` : ''}
         </div>
         <a class="btn outline" href="${perfil}" target="_blank" rel="noopener">Dejanos tu reseña</a>
       </div>
@@ -174,7 +174,7 @@ export function cuerpoInicio(d: DatosSitio) {
         <h2 class="h2" id="faq-title">Lo que todos<br><em>nos preguntan.</em></h2>
         <p class="lede" style="color:var(--ink-2);opacity:1">¿Tu duda no está? Escribinos y te respondemos en el día.</p>
       </div>
-      <div>${PREGUNTAS.map((q, i) => html`<details${i === 0 ? raw(' open') : ''}><summary>${q.p}<i aria-hidden="true"></i></summary><p>${respuesta(q, dir, a.horario)}</p></details>`)}</div>
+      <div>${tx.preguntas.map((q, i) => html`<details${i === 0 ? raw(' open') : ''}><summary>${q.p}<i aria-hidden="true"></i></summary><p>${q.r}</p></details>`)}</div>
     </div>
   </section>
 
@@ -183,19 +183,19 @@ export function cuerpoInicio(d: DatosSitio) {
       <div class="sec-head">
         <div>
           <p class="eyebrow">Contacto</p>
-          <h2 class="h2" id="co-title">${TEXTOS.contactoTitulo[0]}<br><em>${TEXTOS.contactoTitulo[1]}</em></h2>
+          <h2 class="h2" id="co-title">${tx.contactoTitulo[0]}<br><em>${tx.contactoTitulo[1]}</em></h2>
         </div>
-        <p class="lede">${TEXTOS.contactoBajada}</p>
+        <p class="lede">${tx.contactoBajada}</p>
       </div>
       <div class="contact">
         ${formularioConsulta(destinos, '', !!process.env.TURNSTILE_SITE_KEY)}
         <div class="mapbox" id="mapbox">
           <canvas id="mapCanvas" aria-hidden="true"></canvas>
-          <span class="map-coord">${coordenadas(a.lat, a.lng)}${TEXTOS.mapaAltura ? ' · ' + TEXTOS.mapaAltura : ''}</span>
+          ${a.lat || a.lng ? html`<span class="map-coord">${coordenadas(a.lat, a.lng)}</span>` : ''}
           <div class="map-card">
             <h3>${a.nombre}</h3>
-            <address>${a.direccion}, ${a.ciudad}, ${a.provincia}${a.cp ? ` (${a.cp})` : ''}</address>
-            <div class="map-meta"><span>${a.horario}</span>${TEXTOS.mapaNota ? html`<span>${TEXTOS.mapaNota}</span>` : ''}</div>
+            <address>${dir}${a.cp ? ` (${a.cp})` : ''}</address>
+            ${a.horario ? html`<div class="map-meta"><span>${a.horario}</span></div>` : ''}
             <div class="row">
               <a class="btn" id="mapGo" href="${mapa}" target="_blank" rel="noopener">Cómo llegar</a>
               <button class="btn outline" type="button" id="copyAddr">Copiar dirección</button>

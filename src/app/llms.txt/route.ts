@@ -1,4 +1,3 @@
-import { PREGUNTAS, respuesta, TEXTOS } from '@/contenido/sitio';
 import { datosSitio, urlBase } from '@/lib/datos';
 import { dinero, direccionCompleta, fechaLarga, precioConOferta, proximasSalidas } from '@/lib/formato';
 
@@ -12,16 +11,15 @@ export async function GET(req: Request) {
   const dir = direccionCompleta(d.cfg);
   const txt = `# ${a.nombre}
 
-> ${TEXTOS.descripcionSeo}
+> ${d.cfg.textos.descripcionSeo}
 
 - Dirección: ${dir}${a.cp ? ` (${a.cp})` : ''}, Argentina
 - Teléfono: ${a.telefono}
 - WhatsApp: https://wa.me/${a.whatsapp.replace(/\D/g, '')}
 - Email: ${a.email}
 - Horario: ${a.horario}
-- Legajo EVyT N° ${a.legajo} · CUIT ${a.cuit} · ${a.razonSocial}
-- Puntaje en Google: ${d.cfg.resenas.puntaje} de 5 (${d.cfg.resenas.cantidad} reseñas)
-
+${[a.legajo && `Legajo EVyT N° ${a.legajo}`, a.cuit && `CUIT ${a.cuit}`, a.razonSocial].filter(Boolean).map(x => `- ${x}`).join('\n')}
+${d.cfg.resenas.puntaje ? `- Puntaje en Google: ${d.cfg.resenas.puntaje} de 5 (${d.cfg.resenas.cantidad} reseñas)\n` : ''}
 ## Paquetes publicados
 
 ${d.paquetes.map(p => `- [${p.nombre}](${base}/paquetes/${p.slug}): ${p.noches} noches${p.regimen ? `, ${p.regimen}` : ''}, salida desde ${p.salidaDesde}${p.precio ? `, desde ${dinero(p.precio, p.moneda)} por persona` : ''}. ${p.resumen}${proximasSalidas(p).length ? ` Salidas: ${proximasSalidas(p).slice(0, 4).join(', ')}.` : ''}`).join('\n')}
@@ -32,7 +30,7 @@ ${d.ofertas.length ? d.ofertas.map(o => `- ${o.titulo} (${o.paquete.nombre}): ${
 
 ## Preguntas frecuentes
 
-${PREGUNTAS.map(q => `### ${q.p}\n${respuesta(q, dir, a.horario)}`).join('\n\n')}
+${d.cfg.textos.preguntas.map(q => `### ${q.p}\n${q.r}`).join('\n\n')}
 
 ## Páginas
 
