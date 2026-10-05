@@ -560,3 +560,39 @@ main.pagina-error{padding:120px 0}
 .fp-nota{margin:14px 0 0;font-size:.76rem;color:var(--ink-2);line-height:1.45}
 .contact.solo{grid-template-columns:minmax(0,760px);justify-content:center}
 @media (max-width:900px){.ficha-grid{display:flex;flex-direction:column;gap:0}.ficha-main{display:contents}.galeria{order:0}.ficha-precio{position:static;order:1;margin-top:18px}.ficha-bloque{order:2}.incluye{grid-template-columns:1fr}}
+
+/* ===== Contenido administrado por Kuro: anuncio, salidas y tarifas, alojamiento, datos del viaje ===== */
+.anuncio{position:fixed;top:0;left:0;right:0;z-index:92;display:flex;align-items:center;justify-content:center;min-height:38px;padding:6px var(--gutter);background:var(--red-d);color:#fff;font-size:.88rem;font-weight:600;text-align:center;line-height:1.3}
+.anuncio a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+body.con-anuncio .nav{top:calc(env(safe-area-inset-top,0px) + 52px)}
+body.con-anuncio.interna main{padding-top:clamp(130px,13vw,168px)}
+.club-cta{display:flex;gap:12px;flex-wrap:wrap}
+.ficha-sub{margin:.2em 0 1em;font-size:1.15rem;color:var(--ink-2);max-width:60ch}
+.sub{font-size:1.05rem;margin:1.2em 0 .5em}
+.salidas{display:grid;gap:14px}
+.salida{border:1px solid var(--line);border-radius:16px;padding:16px 18px;background:#fff}
+.salida.cerrada{opacity:.72}
+.salida header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+.salida small{display:block;color:var(--ink-2);font-size:.8rem}
+.estado{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.estado.ok{background:var(--red-soft);color:var(--red-d)}
+.estado.no{background:#eef0f3;color:var(--ink-2)}
+.tarifas{width:100%;border-collapse:collapse;margin-top:10px;font-size:.9rem}
+.tarifas th{text-align:left;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);padding:6px 8px;border-bottom:1px solid var(--line)}
+.tarifas td{padding:9px 8px;border-bottom:1px dashed var(--line);vertical-align:top}
+.tarifas td b{font-family:var(--f-mono);font-weight:500}
+.sin-tarifa{margin:8px 0 0;color:var(--ink-2)}
+.hoteles{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.hoteles li{display:flex;flex-direction:column;gap:2px;padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.hoteles .estrellas{color:#f5a623;letter-spacing:1px}
+.hoteles span{color:var(--ink-2);font-size:.9rem}
+.datos-viaje{display:grid;gap:0;margin:0}
+.datos-viaje div{display:grid;grid-template-columns:minmax(120px,30%) 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.datos-viaje dt{color:var(--ink-2);font-size:.9rem}
+.datos-viaje dd{margin:0;white-space:pre-line}
+.opcionales,.enlaces{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.opcionales li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.opcionales b{font-family:var(--f-mono);font-weight:500}
+.faq-pq{border-bottom:1px solid var(--line);padding:10px 0}
+.faq-pq summary{cursor:pointer;font-weight:600}
+@media (max-width:640px){.datos-viaje div{grid-template-columns:1fr;gap:2px}.tarifas thead{display:none}.tarifas td{display:block;padding:4px 8px;border:0}.tarifas tr{display:block;padding:8px 0;border-bottom:1px dashed var(--line)}}

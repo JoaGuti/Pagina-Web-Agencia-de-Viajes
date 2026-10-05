@@ -1,65 +1,113 @@
-import type { DatosSitio, OfertaVigente } from '@/lib/datos';
-import type { Paquete } from '@/lib/db/schema';
-import { dinero, fechaCorta, fechaLarga, numero, precioConOferta, proximasSalidas, REGIONES, whatsapp } from '@/lib/formato';
+import { dinero, duracion, fechaCorta, fechaLarga, REGIONES, whatsapp } from '@/lib/formato';
+import { ETIQUETA_UNIDAD } from '@/lib/kuro';
 import { html } from '@/lib/html';
+import type { DatosSitio, OfertaVista, SalidaVista, Viaje } from '@/lib/sitio/modelo';
 import { ICONO, formularioConsulta } from './partes';
 import { etiqueta, foto, tarjetaPaquete } from './tarjetas';
 
 const parrafos = (t: string) => t.split(/\n{2,}|\r\n\r\n/).map(s => s.trim()).filter(Boolean).map(s => html`<p>${s}</p>`);
+/** Estado visible de una salida: lo que Kuro informa, o «Consulta cerrada» si ya no se puede consultar. */
+function estado(s: SalidaVista) {
+  if (s.disponibilidad === 'agotado') return 'Agotada';
+  if (s.disponibilidad === 'cerrado') return 'Cerrada';
+  if (!s.consultable) return 'Consulta cerrada';
+  return s.disponibilidad === 'disponible_informado' ? 'Disponible' : 'Disponibilidad a confirmar';
+}
 
-function galeria(p: Paquete) {
-  if (p.fotos.length <= 1) return html`<div class="galeria una"><figure class="g-main">${foto(p, '(max-width: 900px) 100vw, 760px', { prioridad: true })}${etiqueta(p)}</figure></div>`;
+function galeria(v: Viaje) {
+  const fotos = v.fotos;
+  if (fotos.length <= 1) return html`<div class="galeria una"><figure class="g-main">${foto(v, '(max-width: 900px) 100vw, 760px', { prioridad: true })}${etiqueta(v)}</figure></div>`;
   return html`<div class="galeria" id="galeria">
-    <figure class="g-main">${foto(p, '(max-width: 900px) 100vw, 760px', { prioridad: true })}${etiqueta(p)}</figure>
-    <div class="g-thumbs" role="list">${p.fotos.slice(0, 8).map((f, i) => html`<button type="button" role="listitem" class="g-th${i === 0 ? ' on' : ''}" data-foto="${f}" aria-label="Ver foto ${i + 1} de ${p.fotos.length}">${foto(p, '160px', { i })}</button>`)}</div>
+    <figure class="g-main">${foto(v, '(max-width: 900px) 100vw, 760px', { prioridad: true })}${etiqueta(v)}</figure>
+    <div class="g-thumbs" role="list">${fotos.slice(0, 8).map((f, i) => html`<button type="button" role="listitem" class="g-th${i === 0 ? ' on' : ''}" data-foto="${f.url}" aria-label="Ver foto ${i + 1} de ${fotos.length}">${foto(v, '160px', { i })}</button>`)}</div>
   </div>`;
 }
 
-function cajaPrecio(p: Paquete, d: DatosSitio, o?: OfertaVigente) {
-  const { cfg } = d;
-  const precio = o ? precioConOferta(p.precio, o) : p.precio;
-  const filas: [string, number][] = ([['Base doble', precio], ['Base single', p.precioSingle], ['Base triple', p.precioTriple], ['Menor', p.precioMenor]] as [string, number][]).filter(([, v]) => v > 0);
-  const msg = `Hola! Quiero reservar el paquete "${p.nombre}" (${p.noches} noches).`;
+function cajaPrecio(v: Viaje, d: DatosSitio, o?: OfertaVista) {
+  const { sitio } = d;
+  const msg = v.contenido?.ctaWhatsapp || `Hola! Quiero reservar el paquete "${v.nombre}".`;
+  const wa = whatsapp(sitio, msg);
   return html`
 <aside class="ficha-precio" aria-label="Precio y reserva">
-  ${o ? html`<p class="fp-oferta"><span>${o.etiqueta || 'Oferta'}</span>${o.contador ? html`<span class="fp-vence" data-vence="${o.hasta.toISOString()}">vence el ${fechaLarga(o.hasta)}</span>` : o.kuro?.sinFin ? '' : html`<span>hasta el ${fechaLarga(o.hasta)}</span>`}</p>` : ''}
-  ${precio > 0 ? html`
-  <p class="fp-desde">Por persona desde</p>
-  <p class="fp-precio">${o && precio !== p.precio ? html`<s>${dinero(p.precio, p.moneda)}</s>` : ''}<b>${dinero(precio, p.moneda)}</b></p>
-  ${p.moneda === 'USD' && cfg.cotizacion > 0 ? html`<p class="fp-ars">≈ ARS ${numero(precio * cfg.cotizacion)} al cambio de hoy</p>` : ''}
-  ${filas.length > 1 ? html`<dl class="fp-tabla">${filas.map(([k, v]) => html`<div><dt>${k}</dt><dd>${dinero(v, p.moneda)}</dd></div>`)}</dl>` : ''}
+  ${o ? html`<p class="fp-oferta"><span>${o.etiqueta}</span>${o.vence ? (o.contador ? html`<span class="fp-vence" data-vence="${o.vence.toISOString()}">vence el ${fechaLarga(o.vence, sitio.zonaHoraria)}</span>` : html`<span>hasta el ${fechaLarga(o.vence, sitio.zonaHoraria)}</span>`) : ''}</p>${o.precio ? html`<p class="fp-desde">Precio de la oferta</p><p class="fp-precio">${o.precioAnterior ? html`<s>${dinero(o.precioAnterior)}</s>` : ''}<b>${dinero(o.precio)}</b></p>${o.nota ? html`<p class="fp-ars">${o.nota}</p>` : ''}` : ''}` : ''}
+  ${v.precioDesde ? html`
+  <p class="fp-desde">Tarifa desde</p>
+  <p class="fp-precio"><b>${dinero(v.precioDesde)}</b></p>
+  <p class="fp-ars">${ETIQUETA_UNIDAD[v.precioDesde.unit]}</p>` : html`<p class="fp-precio"><b>Precio a consultar</b></p>`}
   <ul class="fp-cond">
-    ${p.cuotas ? html`<li>${ICONO.check}Hasta ${p.cuotas} cuotas sin interés</li>` : ''}
-    ${p.sena ? html`<li>${ICONO.check}Reservás con el ${p.sena}% de seña</li>` : ''}
-    ${p.cupos > 0 ? html`<li>${ICONO.check}${p.cupos <= 5 ? `Quedan solo ${p.cupos} lugares` : `${p.cupos} lugares disponibles`}</li>` : ''}
-  </ul>` : html`<p class="fp-precio"><b>Precio a consultar</b></p>`}
+    ${v.cuotas ? html`<li>${ICONO.check}En ${v.cuotas} cuotas</li>` : ''}
+    ${v.deposito != null ? html`<li>${ICONO.check}Reservás con el ${v.deposito}% de depósito</li>` : ''}
+    ${v.grupo ? html`<li>${ICONO.check}Grupo: ${v.grupo}</li>` : ''}
+  </ul>
   <div class="fp-btns">
-    <a class="btn wa" href="${whatsapp(cfg, msg)}" target="_blank" rel="noopener">${ICONO.wa}Reservar por WhatsApp</a>
-    <a class="btn outline" href="#contactForm" data-quote>Pedir presupuesto por email</a>
+    ${wa ? html`<a class="btn wa" href="${wa}" target="_blank" rel="noopener">${ICONO.wa}Reservar por WhatsApp</a>` : ''}
+    <a class="btn outline" href="#contactForm" data-quote>${v.contenido?.ctaTexto || 'Pedir presupuesto por email'}</a>
   </div>
-  <p class="fp-nota">Precios por persona, sujetos a disponibilidad y a cambios de tarifas hasta la confirmación de la reserva.</p>
+  <p class="fp-nota">El precio depende de la salida, del tipo de habitación y de la disponibilidad. Consultá las condiciones antes de reservar.</p>
 </aside>`;
 }
 
-export function cuerpoPaquete(p: Paquete, d: DatosSitio) {
-  const o = d.ofertas.find(x => x.paqueteId === p.id);
-  const salidas = proximasSalidas(p);
-  const otros = [...d.paquetes.filter(x => x.id !== p.id && x.region === p.region), ...d.paquetes.filter(x => x.id !== p.id && x.region !== p.region)].slice(0, 3);
-  const ofertaDe = new Map(d.ofertas.map(x => [x.paqueteId, x]));
-  const destinos = [...new Set(d.paquetes.map(x => x.destino || x.nombre))];
-  const estrellas = p.estrellas > 0 ? '★'.repeat(Math.min(5, p.estrellas)) : '';
+function salidas(v: Viaje) {
+  if (!v.salidas.length) return '';
+  return html`<div class="ficha-bloque">
+    <h2>Salidas y tarifas</h2>
+    <div class="salidas">${v.salidas.map(s => html`
+      <article class="salida${s.consultable ? '' : ' cerrada'}">
+        <header><b>${fechaLarga(s.inicio)}${s.fin !== s.inicio ? html` <span aria-hidden="true">→</span> ${fechaLarga(s.fin)}` : ''}</b><span class="estado ${s.consultable ? 'ok' : 'no'}">${estado(s)}</span></header>
+        ${s.limiteConsulta ? html`<small>Consultas hasta el ${fechaLarga(s.limiteConsulta)}</small>` : ''}
+        ${s.tarifas.length ? html`<table class="tarifas"><thead><tr><th scope="col">Tarifa</th><th scope="col">Precio</th><th scope="col">Vigencia</th></tr></thead><tbody>${s.tarifas.map(t => html`<tr><td>${t.etiqueta}<small>${ETIQUETA_UNIDAD[t.unidad]}</small></td><td><b>${dinero(t.precio)}</b><small>${t.impuestosIncluidos ? 'Impuestos incluidos' : 'No incluye impuestos'}${t.notaImpuestos ? ': ' + t.notaImpuestos : ''}</small></td><td>${fechaCorta(t.desde)} – ${fechaCorta(t.hasta)}</td></tr>`)}</tbody></table>` : html`<p class="sin-tarifa">Tarifa a consultar.</p>`}
+      </article>`)}</div>
+  </div>`;
+}
+
+function hoteles(v: Viaje) {
+  if (!v.hoteles.length) return '';
+  return html`<div class="ficha-bloque">
+    <h2>Alojamiento</h2>
+    <ul class="hoteles">${v.hoteles.map(h => html`<li><b>${h.nombre}${h.estrellas ? html` <span class="estrellas" aria-label="${h.estrellas} estrellas">${'★'.repeat(Math.min(7, Math.round(h.estrellas)))}</span>` : ''}</b><span>${[h.ciudad, h.noches ? `${h.noches} noches` : null, h.regimen].filter(Boolean).join(' · ')}</span></li>`)}</ul>
+  </div>`;
+}
+
+function datosViaje(v: Viaje) {
+  const filas: [string, string][] = ([
+    ['Forma de pago', v.pago], ['Requisitos', v.requisitos], ['Punto de encuentro', v.puntoEncuentro], ['Tamaño del grupo', v.grupo], ['Consejos', v.consejos],
+  ] as [string, string | null][]).filter((f): f is [string, string] => !!f[1]);
+  if (!filas.length && !v.condiciones && !v.opcionales.length) return '';
+  return html`<div class="ficha-bloque">
+    ${v.condiciones ? html`<h2>Condiciones</h2>${parrafos(v.condiciones)}` : ''}
+    ${filas.length ? html`<dl class="datos-viaje">${filas.map(([k, t]) => html`<div><dt>${k}</dt><dd>${t}</dd></div>`)}</dl>` : ''}
+    ${v.opcionales.length ? html`<h3 class="sub">Opcionales</h3><ul class="opcionales">${v.opcionales.map(o => html`<li><span>${o.nombre}</span><b>${o.precio ? dinero(o.precio) : 'Consultar'}</b></li>`)}</ul>` : ''}
+  </div>`;
+}
+
+function contenidoExtra(v: Viaje) {
+  const c = v.contenido;
+  if (!c) return '';
+  return html`
+  ${c.fichas.length ? html`<div class="ficha-bloque"><h2>Ficha técnica</h2>${c.fichas.map(g => html`<h3 class="sub">${g.titulo}</h3><dl class="datos-viaje">${g.filas.map(f => html`<div><dt>${f.etiqueta}</dt><dd>${f.valor}</dd></div>`)}</dl>`)}</div>` : ''}
+  ${c.documentos.length || c.video || c.recorrido ? html`<div class="ficha-bloque"><h2>Material</h2><ul class="enlaces">${c.video ? html`<li><a href="${c.video}" target="_blank" rel="noopener">Ver video</a></li>` : ''}${c.recorrido ? html`<li><a href="${c.recorrido}" target="_blank" rel="noopener">Recorrido virtual</a></li>` : ''}${c.documentos.map(d => html`<li><a href="${d.url}" target="_blank" rel="noopener">${d.etiqueta}</a></li>`)}</ul></div>` : ''}
+  ${c.faqs.length ? html`<div class="ficha-bloque"><h2>Preguntas sobre este viaje</h2>${c.faqs.map(f => html`<details class="faq-pq"><summary>${f.pregunta}</summary><p>${f.respuesta}</p></details>`)}</div>` : ''}`;
+}
+
+export function cuerpoPaquete(v: Viaje, d: DatosSitio) {
+  const o = d.ofertas.find(x => x.viaje?.id === v.id);
+  const otros = [...d.viajes.filter(x => x.id !== v.id && x.region === v.region), ...d.viajes.filter(x => x.id !== v.id && x.region !== v.region)].slice(0, 3);
+  const ofertaDe = new Map(d.ofertas.flatMap(x => (x.viaje ? [[x.viaje.id, x] as const] : [])));
+  const dur = duracion(v);
+  const c = v.contenido;
 
   return html`
 <section class="paper ficha-top" data-doodles="6">
   <div class="wrap">
-    <nav class="migas" aria-label="Ruta de navegación"><a href="/">Inicio</a><span aria-hidden="true">/</span><a href="/#paquetes">Paquetes</a><span aria-hidden="true">/</span><span aria-current="page">${p.nombre}</span></nav>
-    <p class="eyebrow">${[p.pais, REGIONES[p.region], p.tipo].filter(Boolean).join(' · ')}</p>
-    <h1 class="h2 ficha-titulo">${p.nombre}</h1>
+    <nav class="migas" aria-label="Ruta de navegación"><a href="/">Inicio</a><span aria-hidden="true">/</span><a href="/#paquetes">Paquetes</a><span aria-hidden="true">/</span><span aria-current="page">${v.nombre}</span></nav>
+    <p class="eyebrow">${[v.destinos.join(', '), REGIONES[v.region]].filter(Boolean).join(' · ')}</p>
+    <h1 class="h2 ficha-titulo">${v.nombre}</h1>
+    ${c?.subtitulo ? html`<p class="ficha-sub">${c.subtitulo}</p>` : ''}
     <ul class="ficha-chips">
-      <li>${p.noches} noches</li>
-      ${p.regimen ? html`<li>${p.regimen}</li>` : ''}
-      <li>${p.transporte || 'Aéreo'} desde ${p.salidaDesde || 'Córdoba'}</li>
-      ${p.hotel ? html`<li>${p.hotel}${estrellas ? html` <span class="estrellas" aria-label="${p.estrellas} estrellas">${estrellas}</span>` : ''}</li>` : ''}
+      ${dur ? html`<li>${dur}</li>` : ''}
+      ${v.regimen ? html`<li>${v.regimen}</li>` : ''}
+      <li>${v.modalidad}${v.origen ? ' desde ' + v.origen : ''}</li>
+      ${c?.insignias.map(b => html`<li>${b}</li>`) ?? ''}
     </ul>
   </div>
 </section>
@@ -67,25 +115,27 @@ export function cuerpoPaquete(p: Paquete, d: DatosSitio) {
 <section class="paper ficha" aria-label="Detalle del paquete">
   <div class="wrap ficha-grid">
     <div class="ficha-main">
-      ${galeria(p)}
+      ${galeria(v)}
       <div class="ficha-bloque">
         <h2>El viaje</h2>
-        ${p.descripcion ? parrafos(p.descripcion) : html`<p>${p.resumen}</p>`}
+        ${v.descripcion ? parrafos(v.descripcion) : v.resumen ? html`<p>${v.resumen}</p>` : ''}
+        ${c?.destacados.length ? html`<ul class="lista-si">${c.destacados.map(t => html`<li>${t}</li>`)}</ul>` : ''}
       </div>
-      ${p.itinerario.length ? html`<div class="ficha-bloque">
+      ${v.itinerario.length ? html`<div class="ficha-bloque">
         <h2>Itinerario</h2>
-        <ol class="itin">${p.itinerario.map((dia, i) => html`<li><span class="itin-n">${i + 1}</span><div><h3>${dia.t}</h3>${dia.d ? html`<p>${dia.d}</p>` : ''}</div></li>`)}</ol>
+        <ol class="itin">${v.itinerario.map((dia, i) => html`<li><span class="itin-n">${i + 1}</span><div><h3>${dia.titulo}</h3>${dia.descripcion ? html`<p>${dia.descripcion}</p>` : ''}</div></li>`)}</ol>
       </div>` : ''}
-      ${p.incluye.length || p.noIncluye.length ? html`<div class="ficha-bloque incluye">
-        ${p.incluye.length ? html`<div><h2>Incluye</h2><ul class="lista-si">${p.incluye.map(t => html`<li>${t}</li>`)}</ul></div>` : ''}
-        ${p.noIncluye.length ? html`<div><h2>No incluye</h2><ul class="lista-no">${p.noIncluye.map(t => html`<li>${t}</li>`)}</ul></div>` : ''}
+      ${hoteles(v)}
+      ${v.incluye.length || v.noIncluye.length ? html`<div class="ficha-bloque incluye">
+        ${v.incluye.length ? html`<div><h2>Incluye</h2><ul class="lista-si">${v.incluye.map(t => html`<li>${t}</li>`)}</ul></div>` : ''}
+        ${v.noIncluye.length ? html`<div><h2>No incluye</h2><ul class="lista-no">${v.noIncluye.map(t => html`<li>${t}</li>`)}</ul></div>` : ''}
       </div>` : ''}
-      ${salidas.length ? html`<div class="ficha-bloque">
-        <h2>Próximas salidas</h2>
-        <div class="dates grandes">${salidas.map(s => html`<span title="${fechaLarga(s)}">${fechaCorta(s)}</span>`)}</div>
-      </div>` : ''}
+      ${salidas(v)}
+      ${v.salidas.length ? '' : html`<div class="ficha-bloque"><h2>Salidas</h2><p>Por ahora no hay salidas publicadas. Pedinos un presupuesto y te contamos las próximas fechas.</p></div>`}
+      ${datosViaje(v)}
+      ${contenidoExtra(v)}
     </div>
-    ${cajaPrecio(p, d, o)}
+    ${cajaPrecio(v, d, o)}
   </div>
 </section>
 
@@ -98,14 +148,14 @@ export function cuerpoPaquete(p: Paquete, d: DatosSitio) {
       </div>
       <p class="lede">Contanos cuántos viajan y en qué fecha. Te respondemos con el precio final en el día.</p>
     </div>
-    <div class="contact solo">${formularioConsulta(destinos, p.destino || p.nombre, !!process.env.TURNSTILE_SITE_KEY)}</div>
+    <div class="contact solo">${formularioConsulta(d.viajes, v.id, !!process.env.TURNSTILE_SITE_KEY)}</div>
   </div>
 </section>
 
 ${otros.length ? html`<section class="paper sec" aria-labelledby="otros-title" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head"><div><p class="eyebrow">Seguí explorando</p><h2 class="h2" id="otros-title">Otros viajes<br><em>que te pueden gustar.</em></h2></div></div>
-    <div class="grid" id="pkGrid">${otros.map(x => tarjetaPaquete(x, d.cfg, ofertaDe.get(x.id)))}</div>
+    <div class="grid" id="pkGrid">${otros.map(x => tarjetaPaquete(x, d.sitio, ofertaDe.get(x.id)))}</div>
   </div>
 </section>` : ''}`;
 }

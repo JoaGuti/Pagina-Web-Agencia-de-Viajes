@@ -1,6 +1,7 @@
-import { datosSitio, paquetePorSlug, urlBase } from '@/lib/datos';
+import { urlBase } from '@/lib/base';
+import { dinero, duracion, urlViaje } from '@/lib/formato';
 import { agenciaSchema, grafo, migasSchema, paqueteSchema } from '@/lib/seo';
-import { dinero } from '@/lib/formato';
+import { cargarSitio, resolverViaje } from '@/lib/sitio/cargar';
 import { documento, respuestaHtml } from '@/plantillas/base';
 import { pagina404, paginaError } from '@/plantillas/error';
 import { cuerpoPaquete } from '@/plantillas/paquete';
@@ -10,19 +11,26 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
-    const [d, p] = await Promise.all([datosSitio(), /^[a-z0-9-]{1,90}$/.test(slug) ? paquetePorSlug(slug) : null]);
+    const d = await cargarSitio();
     const base = urlBase(req);
-    if (!p) return pagina404(d, base, '/paquetes/' + slug);
-    const o = d.ofertas.find(x => x.paqueteId === p.id);
-    const a = d.cfg.agencia;
-    const desc = p.seoDescripcion || `${p.nombre}: ${p.noches} noches${p.regimen ? ', ' + p.regimen.toLowerCase() : ''}, salida desde ${p.salidaDesde}${p.precio ? `, desde ${dinero(p.precio, p.moneda)} por persona` : ''}. ${p.resumen}`.slice(0, 300);
+    // Un paquete retirado (o inexistente) no tiene ficha: 404.
+    const r = slug.length <= 200 ? await resolverViaje(d, slug) : ({ tipo: 'noEncontrado' } as const);
+    if (r.tipo === 'noEncontrado') return pagina404(d, base, '/paquetes/' + slug);
+    // El slug no es identidad: si cambió, se redirige a la URL vigente del mismo publicId.
+    if (r.tipo === 'redirigir') return Response.redirect(`${base}/paquetes/${encodeURIComponent(r.segmento)}`, 308);
+    const v = r.viaje;
+    const o = d.ofertas.find(x => x.viaje?.id === v.id);
+    const nombre = d.sitio.agencia.nombre;
+    const dur = duracion(v);
+    const auto = [`${v.nombre}${dur ? ': ' + dur : ''}`, v.origen ? `salida desde ${v.origen}` : '', v.precioDesde ? `desde ${dinero(v.precioDesde)}` : '', v.resumen].filter(Boolean).join(', ');
+    const c = v.contenido;
     return respuestaHtml(documento({
-      cfg: d.cfg, paquetes: d.paquetes, base, ruta: '/paquetes/' + p.slug, tipoOg: 'product',
-      titulo: p.seoTitulo || `${p.nombre} · Paquete desde ${p.salidaDesde} · ${a.nombre}`,
-      descripcion: desc,
-      imagen: p.fotos[0],
-      jsonld: [grafo(agenciaSchema(d.cfg, base), paqueteSchema(p, d.cfg, base, o), migasSchema([['Inicio', '/'], ['Paquetes', '/#paquetes'], [p.nombre, '/paquetes/' + p.slug]], base))],
-      cuerpo: cuerpoPaquete(p, d),
+      sitio: d.sitio, viajes: d.viajes, base, ruta: urlViaje(v), tipoOg: 'product',
+      titulo: c?.seo.titulo || `${v.nombre} · ${nombre}`,
+      descripcion: (c?.seo.descripcion || auto).slice(0, 300),
+      imagen: v.fotos[0]?.url,
+      jsonld: [grafo(agenciaSchema(d.sitio, base), paqueteSchema(v, base, o), migasSchema([['Inicio', '/'], ['Paquetes', '/#paquetes'], [v.nombre, urlViaje(v)]], base))],
+      cuerpo: cuerpoPaquete(v, d),
     }));
   } catch (e) { return paginaError(e); }
 }

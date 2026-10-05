@@ -1,12 +1,17 @@
-import type { DatosSitio } from '@/lib/datos';
+import { KuroApiError, resumenParaLog } from '@/lib/kuro';
 import { html } from '@/lib/html';
+import type { DatosSitio } from '@/lib/sitio/modelo';
 import { documento, respuestaHtml } from './base';
 
-/** Error del servidor: página mínima que no depende de la base de datos. */
+/**
+ * Kuro no está disponible o respondió algo inválido: página amigable (503) y log del servidor sin
+ * secretos. No hay otra fuente de contenido a la que recurrir: se informa y se pide reintentar.
+ */
 export function paginaError(e: unknown) {
-  console.error(e);
-  const cuerpo = `<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Volvemos en un momento</title><link rel="stylesheet" href="/assets/sitio.css"></head><body class="interna"><main class="pagina-error"><div class="wrap"><p class="eyebrow">Error 500</p><h1 class="h2">Estamos acomodando<br><em>las valijas.</em></h1><p class="lede">El sitio tuvo un problema al cargar. Probá de nuevo en unos segundos.</p><p><a class="btn" href="/">Reintentar</a></p></div></main></body></html>`;
-  return new Response(cuerpo, { status: 500, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'Retry-After': '30' } });
+  console.error('[kuro]', resumenParaLog(e));
+  const noEncontrado = e instanceof KuroApiError && e.noEncontrado;
+  const cuerpo = `<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Volvemos en un momento</title><link rel="stylesheet" href="/assets/sitio.css"></head><body class="interna"><main class="pagina-error"><div class="wrap"><p class="eyebrow">Error 503</p><h1 class="h2">Estamos acomodando<br><em>las valijas.</em></h1><p class="lede">${noEncontrado ? 'Este sitio todavía no está disponible.' : 'No pudimos cargar la información en este momento.'} Probá de nuevo en unos segundos.</p><p><a class="btn" href="/">Reintentar</a></p></div></main></body></html>`;
+  return new Response(cuerpo, { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'Retry-After': '30' } });
 }
 
 export function pagina404(d: DatosSitio, base: string, ruta: string) {
@@ -20,8 +25,8 @@ export function pagina404(d: DatosSitio, base: string, ruta: string) {
   </div>
 </section>`;
   return respuestaHtml(documento({
-    cfg: d.cfg, paquetes: d.paquetes, base, ruta, noindex: true,
-    titulo: `Página no encontrada · ${d.cfg.agencia.nombre}`,
+    sitio: d.sitio, viajes: d.viajes, base, ruta, noindex: true,
+    titulo: `Página no encontrada · ${d.sitio.agencia.nombre}`,
     descripcion: 'La página que buscás no existe.',
     cuerpo,
   }), 404);

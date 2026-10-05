@@ -1,5 +1,8 @@
 import { esc } from './html';
 
+/** ¿Está configurado el envío de emails (Resend)? */
+export const emailActivo = () => !!(process.env.RESEND_API_KEY && process.env.EMAIL_FROM);
+
 /** Envía un email con Resend (https://resend.com) si RESEND_API_KEY está configurada. Nunca rompe el flujo si falla. */
 export async function enviarEmail(o: { para: string | string[]; asunto: string; html: string; responderA?: string }) {
   const clave = process.env.RESEND_API_KEY;

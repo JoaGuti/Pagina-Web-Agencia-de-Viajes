@@ -1,7 +1,7 @@
-import { PREGUNTAS, respuesta } from '@/contenido/sitio';
-import type { ConfigDatos, Paquete } from './db/schema';
-import { direccionCompleta, precioConOferta, proximasSalidas } from './formato';
-import type { OfertaVigente } from './datos';
+import { REDES, UBICACION } from '@/contenido/agencia';
+import { RESENAS } from '@/contenido/resenas';
+import { proximasSalidas, urlViaje } from './formato';
+import type { OfertaVista, Sitio, Viaje } from './sitio/modelo';
 
 const DIAS: Record<string, string> = { lun: 'Monday', mar: 'Tuesday', mie: 'Wednesday', mié: 'Wednesday', jue: 'Thursday', vie: 'Friday', sab: 'Saturday', sáb: 'Saturday', dom: 'Sunday' };
 const ORDEN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -23,79 +23,82 @@ export function horariosSchema(texto: string) {
   return res;
 }
 
-export function agenciaSchema(cfg: ConfigDatos, base: string) {
-  const a = cfg.agencia;
-  const mapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccionCompleta(cfg))}`;
-  const horarios = horariosSchema(a.horario);
+export function agenciaSchema(sitio: Sitio, base: string) {
+  const a = sitio.agencia;
+  const direccionCompleta = [a.direccion, UBICACION.ciudad, UBICACION.provincia].filter(Boolean).join(', ');
+  const mapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccionCompleta)}`;
+  const horarios = horariosSchema(UBICACION.horario);
   return {
     '@type': 'TravelAgency',
     '@id': base + '/#agencia',
     name: a.nombre,
     legalName: a.razonSocial || undefined,
     url: base + '/',
-    logo: cfg.logo ? (cfg.logo.startsWith('http') ? cfg.logo : base + cfg.logo) : undefined,
+    logo: sitio.logo || undefined,
     image: base + '/media/hero-playa.jpg',
-    telephone: a.telefono,
-    email: a.email,
-    priceRange: '$$',
+    telephone: a.telefono || undefined,
+    email: a.email || undefined,
     taxID: a.cuit || undefined,
-    address: { '@type': 'PostalAddress', streetAddress: a.direccion, addressLocality: a.ciudad, addressRegion: a.provincia, postalCode: a.cp, addressCountry: 'AR' },
-    geo: { '@type': 'GeoCoordinates', latitude: a.lat, longitude: a.lng },
+    address: { '@type': 'PostalAddress', streetAddress: a.direccion || undefined, addressLocality: UBICACION.ciudad, addressRegion: UBICACION.provincia, postalCode: UBICACION.cp, addressCountry: UBICACION.pais },
+    geo: { '@type': 'GeoCoordinates', latitude: UBICACION.lat, longitude: UBICACION.lng },
     hasMap: mapa,
-    areaServed: [a.ciudad, a.provincia, 'Argentina'],
+    areaServed: [UBICACION.ciudad, UBICACION.provincia, 'Argentina'],
     openingHoursSpecification: horarios.length ? horarios : undefined,
-    sameAs: [a.instagram, a.facebook, cfg.resenas.perfil].filter(u => u && !/^https:\/\/www\.(instagram|facebook)\.com\/?$/.test(u)),
-    aggregateRating: cfg.resenas.cantidad > 0 ? { '@type': 'AggregateRating', ratingValue: cfg.resenas.puntaje, reviewCount: cfg.resenas.cantidad, bestRating: 5 } : undefined,
-    contactPoint: { '@type': 'ContactPoint', telephone: a.telefono, contactType: 'reservations', areaServed: 'AR', availableLanguage: ['es'] },
+    sameAs: [REDES.instagram, REDES.facebook, RESENAS.perfil].filter(u => u && !/^https:\/\/www\.(instagram|facebook)\.com\/?$/.test(u)),
+    // Solo con reseñas reales: los testimonios de ejemplo nunca generan una calificación agregada.
+    aggregateRating: !RESENAS.ejemplo && RESENAS.cantidad > 0 ? { '@type': 'AggregateRating', ratingValue: RESENAS.puntaje, reviewCount: RESENAS.cantidad, bestRating: 5 } : undefined,
+    contactPoint: a.telefono ? { '@type': 'ContactPoint', telephone: a.telefono, contactType: 'reservations', areaServed: 'AR', availableLanguage: ['es'] } : undefined,
   };
 }
 
-export function sitioSchema(cfg: ConfigDatos, base: string) {
-  return { '@type': 'WebSite', '@id': base + '/#sitio', url: base + '/', name: cfg.agencia.nombre, inLanguage: 'es-AR', publisher: { '@id': base + '/#agencia' } };
+export function sitioSchema(sitio: Sitio, base: string) {
+  return { '@type': 'WebSite', '@id': base + '/#sitio', url: base + '/', name: sitio.agencia.nombre, inLanguage: 'es-AR', publisher: { '@id': base + '/#agencia' } };
 }
 
-export function preguntasSchema(cfg: ConfigDatos) {
-  const dir = direccionCompleta(cfg);
+/** Preguntas frecuentes que publica la agencia en Kuro; sin FAQs no hay esquema. */
+export function preguntasSchema(sitio: Sitio) {
+  if (!sitio.faqs.length) return null;
   return {
     '@type': 'FAQPage',
-    mainEntity: PREGUNTAS.map(q => ({ '@type': 'Question', name: q.p, acceptedAnswer: { '@type': 'Answer', text: respuesta(q, dir, cfg.agencia.horario) } })),
+    mainEntity: sitio.faqs.map(q => ({ '@type': 'Question', name: q.pregunta, acceptedAnswer: { '@type': 'Answer', text: q.respuesta } })),
   };
 }
 
 const urlAbs = (u: string, base: string) => (u.startsWith('http') ? u : base + u);
 
-export function paqueteSchema(p: Paquete, cfg: ConfigDatos, base: string, oferta?: OfertaVigente) {
-  const url = `${base}/paquetes/${p.slug}`;
-  const salidas = proximasSalidas(p);
-  const precio = oferta ? precioConOferta(p.precio, oferta) : p.precio;
+export function paqueteSchema(v: Viaje, base: string, oferta?: OfertaVista) {
+  const url = base + urlViaje(v);
+  const salidas = proximasSalidas(v);
+  const precio = v.precioDesde;
   return {
     '@type': 'TouristTrip',
     '@id': url + '#viaje',
-    name: p.nombre,
-    description: p.descripcion || p.resumen,
+    name: v.nombre,
+    description: v.descripcion || v.resumen || undefined,
     url,
-    image: p.fotos.map(f => urlAbs(f, base)),
-    touristType: p.tipo || undefined,
+    image: v.fotos.map(f => urlAbs(f.url, base)),
     provider: { '@id': base + '/#agencia' },
-    itinerary: p.itinerario.length ? { '@type': 'ItemList', itemListElement: p.itinerario.map((d, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'TouristAttraction', name: d.t, description: d.d } })) } : { '@type': 'Place', name: `${p.destino}, ${p.pais}` },
-    offers: precio > 0 ? {
-      '@type': 'Offer', price: precio, priceCurrency: p.moneda, url, availability: p.cupos > 0 || !p.cupos ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
-      validThrough: oferta ? oferta.hasta.toISOString() : undefined,
+    itinerary: v.itinerario.length
+      ? { '@type': 'ItemList', itemListElement: v.itinerario.map((d, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'TouristAttraction', name: d.titulo, description: d.descripcion } })) }
+      : { '@type': 'Place', name: v.destinos.join(', ') || v.destino },
+    offers: precio ? {
+      '@type': 'Offer', price: precio.amount, priceCurrency: precio.currency, url, availability: 'https://schema.org/InStock',
+      validThrough: oferta?.vence ? oferta.vence.toISOString() : undefined,
       availabilityStarts: salidas[0] || undefined,
       seller: { '@id': base + '/#agencia' },
     } : undefined,
   };
 }
 
-export function listaPaquetesSchema(pqs: Paquete[], base: string) {
-  return { '@type': 'ItemList', name: 'Paquetes de viaje', itemListElement: pqs.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${base}/paquetes/${p.slug}`, name: p.nombre })) };
+export function listaPaquetesSchema(viajes: Viaje[], base: string) {
+  return { '@type': 'ItemList', name: 'Paquetes de viaje', itemListElement: viajes.map((v, i) => ({ '@type': 'ListItem', position: i + 1, url: base + urlViaje(v), name: v.nombre })) };
 }
 
 export function migasSchema(items: [string, string][], base: string) {
   return { '@type': 'BreadcrumbList', itemListElement: items.map(([n, u], i) => ({ '@type': 'ListItem', position: i + 1, name: n, item: base + u })) };
 }
 
-export const grafo = (...nodos: object[]) => ({ '@context': 'https://schema.org', '@graph': nodos });
+export const grafo = (...nodos: (object | null)[]) => ({ '@context': 'https://schema.org', '@graph': nodos.filter(Boolean) });
 
 /** Coordenadas legibles: -31.4241 → 31°25′S */
 export function coordenadas(lat: number, lng: number) {

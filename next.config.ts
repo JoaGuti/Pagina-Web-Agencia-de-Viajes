@@ -1,21 +1,22 @@
 import type { NextConfig } from 'next';
 
-// Con el panel Kuro conectado, las fotos vienen de su almacenamiento (Supabase Storage).
-const kuroOrigen = (() => {
+// Las fotos vienen de la Content API de Kuro (`photos[].url`): su origen es el único externo permitido para imágenes.
+const contentApi = (() => {
   try {
-    return process.env.KURO_API_URL ? ' ' + new URL(process.env.KURO_API_URL).origin : '';
+    return process.env.KURO_CONTENT_API_URL ? ' ' + new URL(process.env.KURO_CONTENT_API_URL).origin : '';
   } catch {
     return '';
   }
 })();
 
+// Los pedidos a Kuro se hacen desde el servidor: por eso no hay `connect-src` hacia la Content API.
 const csp = [
   "default-src 'self'",
   "script-src 'self' https://www.googletagmanager.com https://challenges.cloudflare.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
-  `img-src 'self' data: blob: https://*.public.blob.vercel-storage.com https://*.google-analytics.com https://www.googletagmanager.com${kuroOrigen}`,
-  "media-src 'self' https://*.public.blob.vercel-storage.com",
+  `img-src 'self' data: blob: https://*.google-analytics.com https://www.googletagmanager.com${contentApi}`,
+  "media-src 'self'",
   "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
   "frame-src https://challenges.cloudflare.com",
   "object-src 'none'",
@@ -36,21 +37,13 @@ const seguridad = [
 
 const config: NextConfig = {
   poweredByHeader: false,
-  serverExternalPackages: ['@electric-sql/pglite', 'sharp'],
-  // Las migraciones SQL se leen en tiempo de ejecución al conectar la base.
-  outputFileTracingIncludes: { '/**': ['./drizzle/**/*'] },
   async headers() {
     return [
       { source: '/:path*', headers: seguridad },
-      { source: '/panel/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }, { key: 'Cache-Control', value: 'no-store' }, { key: 'Referrer-Policy', value: 'no-referrer' }] },
-      { source: '/panel', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }, { key: 'Cache-Control', value: 'no-store' }, { key: 'Referrer-Policy', value: 'no-referrer' }] },
       { source: '/api/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }, { key: 'Cache-Control', value: 'no-store' }] },
       { source: '/media/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
       { source: '/vendor/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
     ];
-  },
-  async redirects() {
-    return [{ source: '/admin', destination: '/panel', permanent: false }];
   },
 };
 

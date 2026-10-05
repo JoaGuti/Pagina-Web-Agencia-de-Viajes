@@ -1,23 +1,25 @@
 import { TEXTOS } from '@/contenido/sitio';
-import { datosSitio, urlBase } from '@/lib/datos';
+import { urlBase } from '@/lib/base';
 import { raw } from '@/lib/html';
 import { agenciaSchema, grafo, listaPaquetesSchema, preguntasSchema, sitioSchema } from '@/lib/seo';
+import { cargarSitio } from '@/lib/sitio/cargar';
 import { documento, respuestaHtml } from '@/plantillas/base';
-import { cuerpoInicio } from '@/plantillas/inicio';
 import { paginaError } from '@/plantillas/error';
+import { cuerpoInicio } from '@/plantillas/inicio';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {
-    const d = await datosSitio();
+    const d = await cargarSitio();
     const base = urlBase(req);
-    const a = d.cfg.agencia;
+    const nombre = d.sitio.agencia.nombre;
     return respuestaHtml(documento({
-      cfg: d.cfg, paquetes: d.paquetes, base, ruta: '/', enInicio: true,
-      titulo: `${a.nombre} · ${TEXTOS.tituloSeo}`,
-      descripcion: TEXTOS.descripcionSeo,
-      jsonld: [grafo(agenciaSchema(d.cfg, base), sitioSchema(d.cfg, base), preguntasSchema(d.cfg), listaPaquetesSchema(d.paquetes, base))],
+      sitio: d.sitio, viajes: d.viajes, base, ruta: '/', enInicio: true,
+      // Título y descripción de la agencia: los de Kuro (Mi web → SEO) y, si faltan, los de presentación.
+      titulo: d.sitio.seo.titulo || `${nombre} · ${TEXTOS.tituloSeo}`,
+      descripcion: d.sitio.seo.descripcion || TEXTOS.descripcionSeo,
+      jsonld: [grafo(agenciaSchema(d.sitio, base), sitioSchema(d.sitio, base), preguntasSchema(d.sitio), listaPaquetesSchema(d.viajes, base))],
       precargar: raw('<link rel="preload" as="image" href="/media/hero-playa.jpg" fetchpriority="high">'),
       cuerpo: cuerpoInicio(d),
     }));

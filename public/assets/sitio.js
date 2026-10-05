@@ -369,6 +369,9 @@ if (DATA.turnstile) {
 const tokenDe = k => (DATA.turnstile && window.turnstile && turnstile[k] !== undefined) ? window.turnstile.getResponse(turnstile[k]) : '';
 const reiniciar = k => { if (DATA.turnstile && window.turnstile && turnstile[k] !== undefined) window.turnstile.reset(turnstile[k]); };
 
+/* Clave de idempotencia: un reintento del mismo envío no duplica la consulta en Kuro */
+const nuevaClave = () => { const c = $('#contactForm [name=clave]'); if (c && crypto.randomUUID) c.value = crypto.randomUUID(); };
+nuevaClave();
 $('#contactForm')?.addEventListener('submit', async e => {
   e.preventDefault(); const f = e.target; let ok = true;
   const set = (id, m) => { $(`.err[data-for="${id}"]`).textContent = m; if (m) ok = false; };
@@ -378,16 +381,10 @@ $('#contactForm')?.addEventListener('submit', async e => {
   if (!$('#c-ok').checked) { toast('Para enviar la consulta, aceptá la política de privacidad.'); ok = false; }
   if (!ok) return;
   try {
-    await enviar('/api/consultas', { nombre: f.nombre.value, telefono: f.tel.value, email: f.email.value, destino: f.destino.value, fechaViaje: f.fecha.value, mensaje: f.mensaje.value, web: f.web.value, token: tokenDe('contacto') }, f.querySelector('[type=submit]'));
-    f.reset(); toast('¡Listo! Recibimos tu consulta. Te respondemos hoy mismo.');
+    await enviar('/api/consultas', { nombre: f.nombre.value, telefono: f.tel.value, email: f.email.value, paquete: f.paquete.value, clave: f.clave.value, fechaViaje: f.fecha.value, mensaje: f.mensaje.value, web: f.web.value, token: tokenDe('contacto') }, f.querySelector('[type=submit]'));
+    f.reset(); nuevaClave(); toast('¡Listo! Recibimos tu consulta. Te respondemos hoy mismo.');
   } catch (err) { toast(err.message); }
   reiniciar('contacto');
-});
-$('#clubForm')?.addEventListener('submit', async e => {
-  e.preventDefault(); const v = $('#club-email').value.trim();
-  if (!emailOk(v)) { toast('Revisá el email, parece incompleto.'); return; }
-  try { await enviar('/api/suscripcion', { email: v, web: e.target.web?.value || '' }, e.target.querySelector('[type=submit]')); e.target.reset(); toast('¡Listo! Te sumaste. Vas a recibir las ofertas antes que nadie.'); }
-  catch (err) { toast(err.message); }
 });
 $('#regretForm')?.addEventListener('submit', async e => {
   e.preventDefault(); const f = e.target;

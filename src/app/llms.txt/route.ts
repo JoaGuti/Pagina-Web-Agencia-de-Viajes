@@ -1,39 +1,41 @@
-import { PREGUNTAS, respuesta, TEXTOS } from '@/contenido/sitio';
-import { datosSitio, urlBase } from '@/lib/datos';
-import { dinero, direccionCompleta, fechaLarga, precioConOferta, proximasSalidas } from '@/lib/formato';
+import { TEXTOS } from '@/contenido/sitio';
+import { UBICACION } from '@/contenido/agencia';
+import { urlBase } from '@/lib/base';
+import { dinero, duracion, fechaLarga, proximasSalidas, urlViaje } from '@/lib/formato';
+import { cargarSitio } from '@/lib/sitio/cargar';
 
 export const dynamic = 'force-dynamic';
 
-/** Resumen en texto plano para buscadores con IA (GEO). */
+/** Resumen en texto plano para buscadores con IA (GEO), solo con lo publicado en Kuro. */
 export async function GET(req: Request) {
-  const d = await datosSitio();
   const base = urlBase(req);
-  const a = d.cfg.agencia;
-  const dir = direccionCompleta(d.cfg);
+  let d;
+  try { d = await cargarSitio(); } catch {
+    return new Response('Servicio no disponible', { status: 503, headers: { 'Retry-After': '30', 'Cache-Control': 'no-store' } });
+  }
+  const a = d.sitio.agencia;
+  const lineas = [
+    a.direccion && `- Dirección: ${[a.direccion, UBICACION.ciudad, UBICACION.provincia].join(', ')}, Argentina`,
+    a.telefono && `- Teléfono: ${a.telefono}`,
+    a.whatsapp && `- WhatsApp: https://wa.me/${a.whatsapp}`,
+    a.email && `- Email: ${a.email}`,
+    `- Horario: ${UBICACION.horario}`,
+    a.habilitacion && `- ${a.habilitacionEtiqueta || 'Habilitación'} ${a.habilitacion}${a.cuit ? ` · CUIT ${a.cuit}` : ''}${a.razonSocial ? ` · ${a.razonSocial}` : ''}`,
+  ].filter(Boolean);
   const txt = `# ${a.nombre}
 
-> ${TEXTOS.descripcionSeo}
+> ${d.sitio.seo.descripcion || TEXTOS.descripcionSeo}
 
-- Dirección: ${dir}${a.cp ? ` (${a.cp})` : ''}, Argentina
-- Teléfono: ${a.telefono}
-- WhatsApp: https://wa.me/${a.whatsapp.replace(/\D/g, '')}
-- Email: ${a.email}
-- Horario: ${a.horario}
-- Legajo EVyT N° ${a.legajo} · CUIT ${a.cuit} · ${a.razonSocial}
-- Puntaje en Google: ${d.cfg.resenas.puntaje} de 5 (${d.cfg.resenas.cantidad} reseñas)
+${lineas.join('\n')}
 
 ## Paquetes publicados
 
-${d.paquetes.map(p => `- [${p.nombre}](${base}/paquetes/${p.slug}): ${p.noches} noches${p.regimen ? `, ${p.regimen}` : ''}, salida desde ${p.salidaDesde}${p.precio ? `, desde ${dinero(p.precio, p.moneda)} por persona` : ''}. ${p.resumen}${proximasSalidas(p).length ? ` Salidas: ${proximasSalidas(p).slice(0, 4).join(', ')}.` : ''}`).join('\n')}
+${d.viajes.length ? d.viajes.map(v => `- [${v.nombre}](${base}${urlViaje(v)}): ${[duracion(v), v.regimen, v.origen && `salida desde ${v.origen}`, v.precioDesde && `desde ${dinero(v.precioDesde)}`].filter(Boolean).join(', ')}. ${v.resumen ? v.resumen.replace(/\.?$/, '.') : ''}${proximasSalidas(v).length ? ` Salidas: ${proximasSalidas(v).slice(0, 4).join(', ')}.` : ''}`).join('\n') : '- No hay paquetes publicados en este momento.'}
 
 ## Ofertas vigentes
 
-${d.ofertas.length ? d.ofertas.map(o => `- ${o.titulo} (${o.paquete.nombre}): ${dinero(precioConOferta(o.paquete.precio, o), o.paquete.moneda)} por persona, válida hasta el ${fechaLarga(o.hasta)}.`).join('\n') : '- No hay ofertas vigentes en este momento.'}
-
-## Preguntas frecuentes
-
-${PREGUNTAS.map(q => `### ${q.p}\n${respuesta(q, dir, a.horario)}`).join('\n\n')}
-
+${d.ofertas.length ? d.ofertas.map(o => `- ${o.titulo}${o.precio ? `: ${dinero(o.precio)}` : ''}${o.vence ? `, válida hasta el ${fechaLarga(o.vence, d.sitio.zonaHoraria)}` : ''}.`).join('\n') : '- No hay ofertas vigentes en este momento.'}
+${d.sitio.faqs.length ? `\n## Preguntas frecuentes\n\n${d.sitio.faqs.map(q => `### ${q.pregunta}\n${q.respuesta}`).join('\n\n')}\n` : ''}
 ## Páginas
 
 - [Inicio](${base}/)
@@ -41,5 +43,5 @@ ${PREGUNTAS.map(q => `### ${q.p}\n${respuesta(q, dir, a.horario)}`).join('\n\n')
 - [Términos y condiciones](${base}/terminos)
 - [Botón de arrepentimiento](${base}/arrepentimiento)
 `;
-  return new Response(txt, { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=0, s-maxage=600' } });
+  return new Response(txt, { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } });
 }

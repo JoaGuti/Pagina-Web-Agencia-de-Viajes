@@ -1,26 +1,28 @@
-import { CIFRAS, PASOS, POR_QUE, PREGUNTAS, respuesta, TEXTOS } from '@/contenido/sitio';
-import type { DatosSitio } from '@/lib/datos';
-import { direccionCompleta, enPalabras, mesAnio, numero, proximasSalidas, REGIONES } from '@/lib/formato';
+import { UBICACION } from '@/contenido/agencia';
+import { RESENAS } from '@/contenido/resenas';
+import { CIFRAS, PASOS, POR_QUE, TEXTOS } from '@/contenido/sitio';
+import { enPalabras, mesAnio, numero, proximasSalidas, REGIONES } from '@/lib/formato';
 import { html, raw } from '@/lib/html';
 import { coordenadas } from '@/lib/seo';
+import type { DatosSitio } from '@/lib/sitio/modelo';
 import { ICONO, formularioConsulta } from './partes';
 import { postal, tarjetaOferta, tarjetaPaquete, tarjetaResena } from './tarjetas';
 
 export function cuerpoInicio(d: DatosSitio) {
-  const { cfg, paquetes: pqs, ofertas, resenas } = d;
-  const a = cfg.agencia;
+  const { sitio, viajes: pqs, ofertas } = d;
+  const a = sitio.agencia;
   const regiones = [...new Set(pqs.map(p => p.region))].filter(r => REGIONES[r]);
   const meses = [...new Set(pqs.flatMap(p => proximasSalidas(p).map(s => s.slice(0, 7))))].sort().slice(0, 8);
-  const ofertaDe = new Map(ofertas.map(o => [o.paqueteId, o]));
-  const destinos = [...new Set(pqs.map(p => p.destino || p.nombre))];
-  const dir = direccionCompleta(cfg);
+  const ofertaDe = new Map(ofertas.flatMap(o => (o.viaje ? [[o.viaje.id, o] as const] : [])));
+  const dir = [a.direccion, UBICACION.ciudad, UBICACION.provincia].filter(Boolean).join(', ');
   const mapa = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dir)}`;
-  const perfil = cfg.resenas.perfil || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.nombre + ' ' + a.ciudad)}`;
-  const puntaje = cfg.resenas.puntaje.toFixed(1).replace('.', ',');
+  const puntaje = RESENAS.puntaje.toFixed(1).replace('.', ',');
+  const mostrarPuntaje = !RESENAS.ejemplo && RESENAS.cantidad > 0;
+  const perfil = RESENAS.perfil || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.nombre + ' ' + UBICACION.ciudad)}`;
   const bajadaOfertas = ofertas.length > 1
     ? `${ofertas.length} ofertas vigentes. Cupos liberados por hoteles y aerolíneas: cuando vence cada una, vuelve el precio normal.`
     : ofertas.length ? 'Cupos liberados por hoteles y aerolíneas. Cuando se termina el contador, vuelve el precio normal.'
-      : `Esta semana no hay ofertas. Sumate al Club ${a.nombre.split(' ')[0]} y te avisamos primero.`;
+      : 'Esta semana no hay ofertas publicadas. Escribinos y te avisamos primero cuando salga una.';
 
   return html`
   <section class="hero" id="inicio" aria-label="Portada">
@@ -71,7 +73,7 @@ export function cuerpoInicio(d: DatosSitio) {
         </div>
         <p class="lede">Elegimos cada destino porque ya lo recorrimos. Te decimos qué playa conviene según el mes, cuál hotel vale lo que cuesta y dónde comer sin turistas.</p>
       </div>
-      <div class="dest-track" id="destTrack">${pqs.map(p => postal(p, cfg))}</div>
+      <div class="dest-track" id="destTrack">${pqs.map(p => postal(p))}</div>
       <div class="dest-progress" aria-hidden="true"><span id="destBar"></span></div>
     </div>
   </section>` : ''}
@@ -85,7 +87,7 @@ export function cuerpoInicio(d: DatosSitio) {
         </div>
         <p class="lede">${bajadaOfertas}</p>
       </div>
-      ${ofertas.length ? html`<div id="offer" class="offer-list">${ofertas.map(o => tarjetaOferta(o, cfg))}</div>` : ''}
+      ${ofertas.length ? html`<div id="offer" class="offer-list">${ofertas.map(o => tarjetaOferta(o, sitio))}</div>` : ''}
     </div>
   </section>
 
@@ -101,8 +103,8 @@ export function cuerpoInicio(d: DatosSitio) {
           ${regiones.map(r => html`<button type="button" aria-pressed="false" data-f="${r}">${REGIONES[r]}</button>`)}
         </div>` : ''}
       </div>
-      <div class="grid" id="pkGrid">${pqs.map(p => tarjetaPaquete(p, cfg, ofertaDe.get(p.id)))}</div>
-      <p class="pk-vacio" id="pkVacio"${pqs.length ? raw(' hidden') : ''}>No hay paquetes con esa búsqueda por ahora. <a href="#contactForm" data-quote>Pedinos un presupuesto a medida</a> y lo armamos.</p>
+      <div class="grid" id="pkGrid">${pqs.map(p => tarjetaPaquete(p, sitio, ofertaDe.get(p.id)))}</div>
+      <p class="pk-vacio" id="pkVacio"${pqs.length ? raw(' hidden') : ''}>${pqs.length ? 'No hay paquetes con esa búsqueda por ahora.' : 'Todavía no hay paquetes publicados.'} <a href="#contactForm" data-quote>Pedinos un presupuesto a medida</a> y lo armamos.</p>
     </div>
   </section>
 
@@ -139,44 +141,44 @@ export function cuerpoInicio(d: DatosSitio) {
           <path id="routeDraw" d="M26 40 C180 110 300 -20 420 40 S660 110 820 40 S1060 -20 1180 40" fill="none" stroke="#d62839" stroke-width="2.5" stroke-linecap="round"/>
           <g id="plane"><circle r="17" fill="#d62839"/><use href="#d-plane" x="-12" y="-12" width="24" height="24" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></g>
         </svg>
-        <ol class="steps">${PASOS.map((s, i) => html`<li class="step"><span class="step-n">${i + 1}</span><h3>${s.titulo}</h3><p>${s.texto(a.direccion)}</p></li>`)}</ol>
+        <ol class="steps">${PASOS.map((s, i) => html`<li class="step"><span class="step-n">${i + 1}</span><h3>${s.titulo}</h3><p>${s.texto(a.direccion || 'nuestra oficina')}</p></li>`)}</ol>
       </div>
       <div class="stats" id="stats">
         ${CIFRAS.map(c => html`<div class="stat"><b data-count="${c.valor}">${numero(c.valor)}</b><span>${c.texto}</span></div>`)}
-        <div class="stat"><b data-count="${cfg.resenas.puntaje}" data-dec="1">${puntaje}</b><span>de puntaje en Google</span></div>
+        ${mostrarPuntaje ? html`<div class="stat"><b data-count="${RESENAS.puntaje}" data-dec="1">${puntaje}</b><span>de puntaje en Google</span></div>` : ''}
       </div>
     </div>
   </section>
 
-  ${resenas.length ? html`
+  ${RESENAS.items.length ? html`
   <section class="reviews paper" aria-labelledby="rv-title" data-doodles="4">
     <div class="wrap sec-head">
       <div>
         <p class="eyebrow">Viajeros</p>
         <h2 class="h2" id="rv-title">Volvieron bronceados<br><em>y lo contaron.</em></h2>
       </div>
-      <div class="rv-summary">
+      ${mostrarPuntaje ? html`<div class="rv-summary">
         ${ICONO.google}
         <div>
           <div class="rv-score"><b>${puntaje}</b><span class="rv-stars" aria-label="${puntaje} de 5 estrellas">★★★★★</span></div>
-          <small>${numero(cfg.resenas.cantidad)} reseñas en Google</small>
+          <small>${numero(RESENAS.cantidad)} reseñas en Google</small>
         </div>
         <a class="btn outline" href="${perfil}" target="_blank" rel="noopener">Dejanos tu reseña</a>
-      </div>
+      </div>` : ''}
     </div>
-    <div class="mq-wrap"><div class="marquee" id="mq1">${resenas.map(tarjetaResena)}${raw('<div class="mq-copia" aria-hidden="true" style="display:contents">')}${resenas.map(tarjetaResena)}${raw('</div>')}</div></div>
+    <div class="mq-wrap"><div class="marquee" id="mq1">${RESENAS.items.map(r => tarjetaResena(r, RESENAS.ejemplo))}${raw('<div class="mq-copia" aria-hidden="true" style="display:contents">')}${RESENAS.items.map(r => tarjetaResena(r, RESENAS.ejemplo))}${raw('</div>')}</div></div>
   </section>` : ''}
 
-  <section class="paper sec" id="preguntas" aria-labelledby="faq-title" data-doodles="7">
+  ${sitio.faqs.length ? html`<section class="paper sec" id="preguntas" aria-labelledby="faq-title" data-doodles="7">
     <div class="wrap faq">
       <div>
         <p class="eyebrow">Preguntas frecuentes</p>
         <h2 class="h2" id="faq-title">Lo que todos<br><em>nos preguntan.</em></h2>
         <p class="lede" style="color:var(--ink-2);opacity:1">¿Tu duda no está? Escribinos y te respondemos en el día.</p>
       </div>
-      <div>${PREGUNTAS.map((q, i) => html`<details${i === 0 ? raw(' open') : ''}><summary>${q.p}<i aria-hidden="true"></i></summary><p>${respuesta(q, dir, a.horario)}</p></details>`)}</div>
+      <div>${sitio.faqs.map((q, i) => html`<details${i === 0 ? raw(' open') : ''}><summary>${q.pregunta}<i aria-hidden="true"></i></summary><p>${q.respuesta}</p></details>`)}</div>
     </div>
-  </section>
+  </section>` : ''}
 
   <section class="paper sec" id="contacto" aria-labelledby="co-title" data-doodles="8" style="padding-top:0">
     <div class="wrap">
@@ -188,14 +190,14 @@ export function cuerpoInicio(d: DatosSitio) {
         <p class="lede">${TEXTOS.contactoBajada}</p>
       </div>
       <div class="contact">
-        ${formularioConsulta(destinos, '', !!process.env.TURNSTILE_SITE_KEY)}
+        ${formularioConsulta(pqs, '', !!process.env.TURNSTILE_SITE_KEY)}
         <div class="mapbox" id="mapbox">
           <canvas id="mapCanvas" aria-hidden="true"></canvas>
-          <span class="map-coord">${coordenadas(a.lat, a.lng)}${TEXTOS.mapaAltura ? ' · ' + TEXTOS.mapaAltura : ''}</span>
+          <span class="map-coord">${coordenadas(UBICACION.lat, UBICACION.lng)}${TEXTOS.mapaAltura ? ' · ' + TEXTOS.mapaAltura : ''}</span>
           <div class="map-card">
             <h3>${a.nombre}</h3>
-            <address>${a.direccion}, ${a.ciudad}, ${a.provincia}${a.cp ? ` (${a.cp})` : ''}</address>
-            <div class="map-meta"><span>${a.horario}</span>${TEXTOS.mapaNota ? html`<span>${TEXTOS.mapaNota}</span>` : ''}</div>
+            <address>${dir}${UBICACION.cp ? ` (${UBICACION.cp})` : ''}</address>
+            <div class="map-meta"><span>${UBICACION.horario}</span>${TEXTOS.mapaNota ? html`<span>${TEXTOS.mapaNota}</span>` : ''}</div>
             <div class="row">
               <a class="btn" id="mapGo" href="${mapa}" target="_blank" rel="noopener">Cómo llegar</a>
               <button class="btn outline" type="button" id="copyAddr">Copiar dirección</button>

@@ -1,3 +1,5 @@
+> **Documento histórico** de la etapa de bocetos. El panel y la base de datos propios aquí descritos fueron eliminados: la arquitectura vigente (contenido administrado por Kuro) está en `README.md`.
+
 # Plantilla web para agencias de viajes: propuesta
 
 Estado: **bocetos para aprobar**. Todavía no hay cliente; la agencia de los bocetos es ficticia ("Arrecife Viajes") y se usa la dirección José Hernández 110, Villa Carlos Paz, Córdoba, como ejemplo.

@@ -1,24 +1,27 @@
-import { datosSitio, urlBase } from '@/lib/datos';
+import { urlBase } from '@/lib/base';
+import { urlViaje } from '@/lib/formato';
 import { esc } from '@/lib/html';
+import { cargarSitio } from '@/lib/sitio/cargar';
 
 export const dynamic = 'force-dynamic';
 
+/** Solo lo publicado en Kuro: un paquete retirado deja de figurar en el próximo pedido. */
 export async function GET(req: Request) {
-  const d = await datosSitio();
   const base = urlBase(req);
-  const ultimo = d.paquetes.reduce((m, p) => (p.actualizado > m ? p.actualizado : m), new Date(0));
-  const urls: [string, Date | null, string][] = [
-    ['/', ultimo.getTime() ? ultimo : null, '1.0'],
-    ...d.paquetes.map(p => [`/paquetes/${p.slug}`, p.actualizado, '0.8'] as [string, Date, string]),
-    ['/arrepentimiento', null, '0.2'], ['/privacidad', null, '0.2'], ['/terminos', null, '0.2'], ['/cookies', null, '0.1'],
+  let d;
+  try { d = await cargarSitio(); } catch (e) {
+    console.error('[sitemap] Kuro no disponible');
+    return new Response('Servicio no disponible', { status: 503, headers: { 'Retry-After': '30', 'Cache-Control': 'no-store' } });
+  }
+  const ultimo = d.viajes.reduce((m, v) => (v.publicado > m ? v.publicado : m), new Date(0));
+  const urls = [
+    `<url><loc>${esc(base + '/')}</loc>${ultimo.getTime() ? `<lastmod>${ultimo.toISOString()}</lastmod>` : ''}<priority>1.0</priority></url>`,
+    ...d.viajes.map(v => `<url><loc>${esc(base + urlViaje(v))}</loc><lastmod>${v.publicado.toISOString()}</lastmod><priority>0.8</priority>${v.fotos.slice(0, 5).map(f => `<image:image><image:loc>${esc(f.url)}</image:loc></image:image>`).join('')}</url>`),
+    ...['/arrepentimiento', '/privacidad', '/terminos', '/cookies'].map(u => `<url><loc>${esc(base + u)}</loc><priority>0.2</priority></url>`),
   ];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${urls.map(([u, f, pr]) => {
-    const p = d.paquetes.find(x => `/paquetes/${x.slug}` === u);
-    const imgs = (p?.fotos || []).slice(0, 5).map(i => `<image:image><image:loc>${esc(i.startsWith('http') ? i : base + i)}</image:loc></image:image>`).join('');
-    return `<url><loc>${esc(base + u)}</loc>${f ? `<lastmod>${f.toISOString()}</lastmod>` : ''}<priority>${pr}</priority>${imgs}</url>`;
-  }).join('\n')}
+${urls.join('\n')}
 </urlset>`;
-  return new Response(xml, { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=0, s-maxage=600' } });
+  return new Response(xml, { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } });
 }

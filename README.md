@@ -1,112 +1,78 @@
-# Plantilla web para agencias de viajes
+# Web de agencia de viajes sobre Kuro (web piloto)
 
-Sitio público animado con temática de isla tropical y panel de gestión para que la agencia cargue paquetes, ofertas, precios y reseñas sin depender de un programador.
+Frontend de **presentación** de una agencia de viajes cuyo contenido administra **Kuro**.
 
-- **Sitio público**: portada con video, postales de destinos, ofertas con cuenta regresiva, paquetes con filtros, ficha de cada paquete (`/paquetes/<nombre>`), preguntas frecuentes, formulario de presupuesto, mapa, club de ofertas, páginas legales y botón de arrepentimiento.
-- **Panel** (`/panel`, no está enlazado desde el sitio): resumen con Google Analytics y Search Console, paquetes (fotos, itinerario, precios por habitación, salidas, SEO), ofertas (varias a la vez, programadas, con o sin contador), reseñas, consultas (con descarga a Excel), configuración de la agencia, usuarios con roles y actividad del equipo.
+> **Kuro conoce los datos. La web conoce cómo mostrarlos.**
+
+```
+Super admin Kuro → Cliente/usuarios → Panel Kuro → contenido publicado
+        → Kuro Content API v1 → esta web → visitante
+```
+
+- **La web no tiene CMS, panel, usuarios, base de datos ni subida de archivos.** Hay una sola fuente de verdad: Kuro.
+- La web **solo consume contenido publicado** por la Content API v1 (`/api/v1/sites/{siteKey}/…`). Lo que se retira en Kuro deja de verse en el siguiente pedido (el contenido se pide siempre con `no-store` durante el piloto).
+- No habla con Supabase, PostgREST ni Storage: las fotos se usan **tal cual** vienen en `photos[].url`.
+- Si Kuro falla se muestra una página de error controlada (503) y se registra en el servidor, sin secretos. **Nunca** se cae a otra fuente de datos.
+
+## Configuración
+
+Solo hacen falta dos variables, ambas públicas (ver `.env.example`):
+
+| Variable | Qué es |
+| --- | --- |
+| `KURO_CONTENT_API_URL` | Origen de la Content API, sin `/api/v1` (p. ej. `https://api.kuroautomation.com`). Debe estar disponible **también durante el build**: de ahí sale el origen permitido para imágenes en la CSP. |
+| `KURO_SITE_KEY` | Identificador público (no secreto) del sitio: `site_` + 24 hex. |
+
+La web jamás recibe claves privilegiadas, URL de base de datos ni tokens administrativos.
+
+Opcionales (integraciones propias de la web, sin panel): `SITE_URL`, `GA_MEASUREMENT_ID` (GA4, solo con consentimiento de cookies), `GOOGLE_SITE_VERIFICATION` (Search Console), `TURNSTILE_SITE_KEY`/`TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`/`EMAIL_FROM`/`NOTIFY_EMAIL` (constancia del botón de arrepentimiento).
+
+## Qué viene de Kuro y qué queda en código
+
+| Viene de Kuro (Content API) | Queda en código (presentación) |
+| --- | --- |
+| Site: nombre, zona horaria, idioma, moneda | Diseño, layout, componentes, animaciones, CSS |
+| Contacto: email, teléfono, WhatsApp, dirección | Copy decorativo (`src/contenido/sitio.ts`) |
+| Mi web: logo, anuncio, SEO, FAQs, legales (razón social, CUIT, habilitación, notas), mensaje de WhatsApp | Textos legales modelo (`src/plantillas/legales.ts`) |
+| Paquetes: título, resumen, descripción, destinos, origen, modalidad, duración, fotos, itinerario, salidas, tarifas, hoteles/régimen, cuotas, depósito, condiciones, incluye/no incluye, etiqueta, destacado, contenido (ficha técnica, FAQs, insignias, documentos) | Ubicación, horario, redes y Data Fiscal de la agencia (`src/contenido/agencia.ts`) — **pendiente en Kuro** |
+| Ofertas (vinculadas al paquete solo por `publicId`) | Reseñas de ejemplo (`src/contenido/resenas.ts`) — Kuro aún no tiene módulo de testimonios |
+| Consultas: terminan en Kuro (`POST /inquiries`, con `Idempotency-Key`) | Región (agrupación para filtros), deducida del destino (`src/lib/sitio/adaptador.ts`) |
+
+### Reglas de lectura del contrato
+- **Identidad = `publicId`.** La URL de la ficha es `/paquetes/<slug-bonito>-<publicId>`; si el slug cambia, redirige (308) a la URL vigente. Un paquete retirado devuelve 404.
+- **Precio «desde»**: solo salidas consultables (abiertas, no vencidas, dentro de su fecha límite) y tarifas vigentes con importe > 0, en una sola moneda (la del sitio si tiene tarifas) y una sola unidad (base doble primero). Si no corresponde, se muestra «Consultar». El depósito se muestra como porcentaje; no se convierte a importe.
+- No se inventan datos: lo que falta no se muestra. No se envía `context` a las consultas porque el formulario no pide pasajeros.
+- **Fotos**: solo `photos[].url`. El adaptador descarta cualquier URL que sea ruta de almacenamiento, host de base de datos o URL firmada. La CSP permite imágenes únicamente del origen de `KURO_CONTENT_API_URL`; fotos o logo alojados en un CDN externo del cliente requerirían ampliar `img-src`.
 
 ## Estructura
 
 | Carpeta | Qué hay |
 | --- | --- |
-| `src/app` | Rutas: páginas públicas, panel y API (`/api/...`) |
-| `src/plantillas` | HTML de las páginas del sitio (se genera en el servidor, sin JavaScript de más) |
-| `src/contenido/sitio.ts` | Textos fijos del sitio (portada, preguntas frecuentes, pasos). Se editan acá |
-| `src/lib` | Base de datos, seguridad, SEO, emails, Google, subida de fotos |
-| `public/assets` | Estilos y scripts del sitio (`sitio.*`) y del panel (`panel.*`) |
-| `public/media` | Video de portada y fotos de ejemplo (créditos en `CREDITOS.md`) |
-| `drizzle` | Migraciones de la base de datos (se aplican solas al arrancar) |
-| `bocetos` | Bocetos aprobados (referencia de diseño, no se publican) |
+| `src/lib/kuro/` | **Capa Kuro reutilizable**: `client.ts` (fetch + timeout + validación), `schemas.ts` (contrato público en Zod), `errors.ts`, `config.ts`, `adapters.ts` (fechas del sitio, salidas, tarifas, precio «desde», fotos seguras) |
+| `src/lib/sitio/` | **Presentación de esta web**: modelos de vista, adaptador Kuro → vista, carga de datos |
+| `src/plantillas`, `src/app` | HTML (se genera en el servidor), rutas, `/api/consultas` y `/api/arrepentimiento` |
+| `src/contenido` | Datos y textos que viven en código |
+| `public/assets`, `public/media` | Estilos, scripts y medios decorativos de la web |
 
-## Probar en la computadora
+## Botón de arrepentimiento (sin base de datos)
+La solicitud queda registrada como consulta en la bandeja de Kuro (con código de trámite, DNI y reserva) y, si Resend está configurado, se envía constancia al cliente y aviso a la agencia. Se responde «recibida» solo si al menos uno de los dos registros se hizo; si ninguno, se informa el error. El texto legal es un modelo: **tiene que revisarlo un profesional** con los datos reales de la agencia.
 
-```bash
-npm install
-npm run dev
-```
-
-- Sitio: http://localhost:3000
-- Panel: http://localhost:3000/panel · email `admin@agencia.local` · contraseña `Arrecife2026!`
-
-Sin `DATABASE_URL` se usa una base Postgres embebida que se guarda en `.data/` (se borra con `rm -rf .data`). Las fotos subidas en local quedan en `.data/uploads`.
-
-## Publicar en Vercel
-
-1. **Importar el proyecto**: vercel.com → *Add New* → *Project* → elegir este repositorio de GitHub. Vercel detecta Next.js solo; no cambies nada todavía.
-2. **Base de datos**: en el proyecto → *Storage* → *Create Database* → **Neon (Postgres)** → conectarla al proyecto. Esto crea `DATABASE_URL` sola.
-3. **Fotos**: *Storage* → *Create* → **Blob** → conectarlo al proyecto. Crea `BLOB_READ_WRITE_TOKEN`.
-4. **Variables** (*Settings* → *Environment Variables*), como mínimo:
-   - `ADMIN_EMAIL`: email de quien administra.
-   - `ADMIN_PASSWORD`: contraseña inicial (8 caracteres, mayúscula, número y símbolo).
-   - `SEED_DEMO`: `true` para arrancar con los paquetes de ejemplo, `false` para arrancar vacío.
-   - El resto está explicado en `.env.example` (emails, anti-robots, Google).
-5. **Deploy** (o *Redeploy* si ya se había publicado antes de cargar las variables).
-6. Entrar a `https://<proyecto>.vercel.app/panel` con `ADMIN_EMAIL` y `ADMIN_PASSWORD`. La primera vez se crea la cuenta; después cambiá la contraseña con **Cambiar mi contraseña** (abajo a la izquierda).
-7. **Dominio propio**: *Settings* → *Domains* → agregar `www.tuagencia.com.ar` y seguir las instrucciones de DNS. Después cargá `SITE_URL=https://www.tuagencia.com.ar` y hacé *Redeploy*.
-
-Cada cambio que se sube a GitHub se publica solo. Los cambios que hace la agencia desde el panel se ven en la web en menos de un minuto, sin volver a publicar.
-
-Las publicaciones de prueba (*Preview*) no se indexan en Google: `robots.txt` las bloquea.
-
-### Emails (opcional, recomendado)
-
-Con [Resend](https://resend.com) (gratis hasta 3.000 emails por mes): crear cuenta, verificar el dominio de la agencia y cargar `RESEND_API_KEY` y `EMAIL_FROM`. Con eso:
-
-- la agencia recibe un email por cada consulta de la web (respondiendo, le contesta directo al viajero);
-- quien pide el botón de arrepentimiento recibe su código por email (Res. 424/2020);
-- las invitaciones al panel y la recuperación de contraseña llegan por email.
-
-Sin Resend todo funciona igual: las consultas quedan en el panel y los enlaces de invitación se copian desde **Usuarios**.
-
-### Anti-robots (opcional)
-
-Los formularios ya tienen un campo trampa y límite de envíos por conexión. Para sumar Cloudflare Turnstile (gratis): crear un widget en dash.cloudflare.com → Turnstile con el dominio de la web y cargar `TURNSTILE_SITE_KEY` y `TURNSTILE_SECRET_KEY`.
-
-### Google Analytics y Search Console
-
-1. **Medir visitas**: en el panel → *Configuración* → *Google*, cargar el **ID de medición** de GA4 (`G-XXXXXXX`). La web solo lo activa si el visitante acepta las cookies.
-2. **Ver métricas en el resumen del panel**:
-   1. En console.cloud.google.com crear un proyecto, habilitar **Google Analytics Data API** y **Google Search Console API**.
-   2. *IAM* → *Cuentas de servicio* → crear una → *Claves* → *Agregar clave* → JSON. Copiar el contenido del archivo en la variable `GOOGLE_SERVICE_ACCOUNT` y hacer *Redeploy*.
-   3. En el panel → *Configuración* → *Google*, cargar el **ID de propiedad** de GA4 (número) y la **propiedad de Search Console** (`sc-domain:tuagencia.com.ar`). El panel muestra el email de la cuenta de servicio: agregarlo como *Lector* en Analytics y como usuario *Restringido* en Search Console.
-3. En Search Console, enviar el sitemap: `https://www.tuagencia.com.ar/sitemap.xml`.
-
-## Adaptar para otra agencia
-
-- Datos, logo, WhatsApp, horario, redes, legajo, CUIT, Data Fiscal, dólar de referencia y puntaje de Google: desde el panel (*Configuración*).
-- Paquetes, ofertas y reseñas: desde el panel. Con `SEED_DEMO=false` arranca vacío.
-- Textos fijos (título de portada, preguntas frecuentes, pasos, “por qué elegirnos”): `src/contenido/sitio.ts`.
-- Video y fotos de portada: `public/media` (el script `herramientas/preparar-medios.mjs` los descarga y optimiza).
-- Mapa ilustrado del contacto: está dibujado para Villa Carlos Paz en `public/assets/sitio.js` (`MapView`).
-- Los textos legales son un modelo para Argentina: **tiene que revisarlos un abogado** con los datos reales de cada agencia.
-
-## Conectar con el panel Kuro (opcional)
-
-Con `KURO_API_URL`, `KURO_ANON_KEY` y `KURO_SITE_HOST` cargadas (ver `.env.example`):
-
-- **Paquetes**: la web muestra lo que la agencia publica en el panel Kuro (título, destinos, itinerario, qué incluye, fotos, salidas y precio «desde» por persona). El precio se recalcula en cada visita: una tarifa vencida o una salida cerrada dejan de mostrarse solas.
-- **Consultas**: el formulario las envía a la bandeja de Kuro (asociadas al paquete si el destino coincide). El aviso por email de esta web sigue funcionando.
-- **Ofertas**: la sección de ofertas (tarjetas de embarque) muestra las que la agencia carga en Kuro → Ofertas, en el orden elegido y solo mientras están vigentes. Si la oferta es de un paquete, la tarjeta lleva a su ficha y el paquete muestra el precio de oferta; si es suelta (un aéreo, un crucero), se muestra igual, sin ficha. La cuenta regresiva, los lugares, la etiqueta y la aclaración del precio también vienen de Kuro.
-- **Panel propio**: Paquetes y Ofertas pasan a ser de solo lectura y avisan que se cargan desde Kuro. Reseñas y los datos de la agencia se siguen editando acá.
-- **Todavía no vienen de Kuro**: país, código de aeropuerto, hotel, estrellas, régimen, cuotas y cupos de los paquetes (Kuro aún no los guarda); la región se deduce del destino.
-
-Sin esas variables la web funciona exactamente como antes. La conexión está en `src/lib/kuro.ts`.
+## Reseñas
+Testimonios editoriales de ejemplo en código. Mientras sean de ejemplo no se muestra puntaje ni se emite `aggregateRating`. Un módulo editable de testimonios podría sumarse a Kuro si el producto lo necesita.
 
 ## Seguridad
-
-- Contraseñas con scrypt, reglas de 8 caracteres + mayúscula + número + símbolo, bloqueo de 15 minutos tras 5 intentos fallidos, límite de intentos por conexión.
-- Sesiones de 8 horas en cookie `HttpOnly`, `Secure`, `SameSite=Strict` (`__Host-`), guardadas como hash en la base.
-- Roles: Administración (todo), Edición (contenido y consultas), Ventas (solo consultas). Registro de actividad de cada persona.
-- Todas las escrituras verifican que el pedido venga del propio sitio (CSRF) y validan los datos en el servidor.
-- Cabeceras: CSP sin scripts en línea, HSTS, `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`. El panel y la API no se indexan.
-- Las fotos se vuelven a codificar en el servidor (se eliminan metadatos y contenido oculto).
-- Formularios públicos: campo trampa, límite por conexión y Turnstile opcional.
+CSP (imágenes solo de la Content API; sin Supabase), HSTS, `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`. Los pedidos a Kuro son server-side (no hay `connect-src` hacia Kuro). Formularios: Zod, campo trampa, mismo origen, límite por conexión en memoria (ayuda de frontend: la autoridad es el rate limiting de Kuro), Turnstile opcional. Un test estático falla si el runtime contiene rastros de la arquitectura anterior.
 
 ## Comandos
+`npm ci` · `npm run dev` · `npm run typecheck` · `npm test` · `npm run build` · `npm start`
 
-| Comando | Para qué |
-| --- | --- |
-| `npm run dev` | Desarrollo local |
-| `npm run build` / `npm start` | Compilar y correr como en producción |
-| `npm run typecheck` | Revisar tipos |
-| `npm run db:generar` | Generar una migración nueva después de cambiar `src/lib/db/schema.ts` |
+## Crear otra web con Kuro
+1. **Crear el sitio/cliente en Kuro** (rubro correspondiente) y publicar contenido.
+2. **Obtener el `siteKey`** (público).
+3. **Configurar** `KURO_CONTENT_API_URL` y `KURO_SITE_KEY`.
+4. **Consumir el contrato del rubro**: copiar `src/lib/kuro/` (client, schemas, errors, config) y agregar los schemas/adapters del vertical (propiedades, habitaciones, productos…).
+5. **Diseñar libremente la presentación**: modelos de vista y plantillas propios, como `src/lib/sitio/` y `src/plantillas/`.
+6. **Enviar consultas a Kuro** con `POST /inquiries`, `Idempotency-Key` e ítems por `publicId`.
+
+## Pendientes conocidos
+Ubicación/horario/redes/Data Fiscal y testimonios no están en Kuro; región por heurística; sin caché (no-store) hasta diseñar invalidación; fotos externas al origen de la Content API no se muestran por CSP.
