@@ -2,7 +2,7 @@ import { and, asc, desc, eq, gt, lte } from 'drizzle-orm';
 import { getDb } from './db';
 import { configuracion, ofertas, paquetes, resenas, type ConfigDatos, type Oferta, type Paquete, type Resena } from './db/schema';
 import { CONFIG_INICIAL } from './db/semilla';
-import { kuroActivo, ofertasKuro, paquetesKuro, type OfertaConPaquete } from './kuro';
+import { kuroActivo, ofertasKuro, paquetesKuro, sitioKuro, type OfertaConPaquete } from './kuro';
 
 /** Oferta con su paquete; las de Kuro traen además `kuro` (ver lib/kuro). */
 export type OfertaVigente = OfertaConPaquete;
@@ -29,12 +29,29 @@ export async function leerConfig(): Promise<ConfigDatos> {
 export async function datosSitio(): Promise<DatosSitio> {
   const db = await getDb();
   if (kuroActivo()) {
-    // Paquetes y ofertas desde el panel Kuro. Configuración y reseñas siguen en esta web.
-    const [cfg, pqs, rs] = await Promise.all([
+    // En QA funcional, Kuro también manda el perfil público del sitio (nombre/contacto/logo).
+    const [cfgLocal, sitio, pqs, rs] = await Promise.all([
       leerConfig(),
+      sitioKuro(),
       paquetesKuro(),
       db.select().from(resenas).where(eq(resenas.activa, true)).orderBy(asc(resenas.orden), desc(resenas.creado)),
     ]);
+    const contacto = sitio?.contact ?? {};
+    const cfg: ConfigDatos = {
+      ...cfgLocal,
+      agencia: {
+        ...cfgLocal.agencia,
+        ...(sitio?.name ? { nombre: sitio.name } : {}),
+        ...(contacto.address ? { direccion: contacto.address } : {}),
+        ...(contacto.phone ? { telefono: contacto.phone } : {}),
+        ...(contacto.whatsapp ? { whatsapp: contacto.whatsapp } : {}),
+        ...(contacto.email ? { email: contacto.email } : {}),
+        ...(contacto.hours ? { horario: contacto.hours } : {}),
+        ...(contacto.instagram ? { instagram: contacto.instagram } : {}),
+        ...(contacto.facebook ? { facebook: contacto.facebook } : {}),
+      },
+      ...(sitio?.web?.logo ? { logo: sitio.web.logo } : {}),
+    };
     return { cfg, paquetes: pqs, ofertas: await ofertasKuro(pqs), resenas: rs };
   }
   const ahora = new Date();
