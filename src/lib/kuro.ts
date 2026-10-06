@@ -49,6 +49,29 @@ export class ErrorKuro extends Error {
   }
 }
 
+
+export type SitioKuro = {
+  name: string;
+  contact: {
+    email?: string;
+    phone?: string;
+    whatsapp?: string;
+    address?: string;
+    hours?: string;
+    instagram?: string;
+    facebook?: string;
+  } | null;
+  web: {
+    logo?: string;
+  } | null;
+};
+
+/** Configuración pública del sitio en Kuro para reflejar cambios del panel en esta web QA. */
+export async function sitioKuro(): Promise<SitioKuro | null> {
+  const filas = await rpc<SitioKuro[]>('resolve_site', { p_hostname: process.env.KURO_SITE_HOST });
+  return filas[0] ?? null;
+}
+
 // ---- Forma pública de un paquete en Kuro (PublicPackage de @kuro/core) ----
 
 type Tarifa = { id: string; label: string; unit: string; currency: 'ARS' | 'USD'; amount: number; validFrom: string; validUntil: string };
